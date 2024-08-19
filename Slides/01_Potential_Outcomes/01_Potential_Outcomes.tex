@@ -1,0 +1,873 @@
+\documentclass[aspectratio=169,t,11pt,table]{beamer}
+\usepackage{../../slides,../../math}
+
+% Optionally define `accent`/`accent2` colors for theme customization
+% I recommend changing the top slider on this: https://hslpicker.com/#1e9400
+\definecolor{accent}{HTML}{2B5269}
+\definecolor{accent2}{HTML}{9D2235}
+
+\title{Topic 1: Introduction to Causal Inference and Potential Outcomes Framework}
+\subtitle{\it  ECON 5783 — University of Arkansas}
+\date{Fall 2024}
+\author{Prof. Kyle Butts}
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[noframenumbering,plain]
+  \maketitle
+
+  % \bottomleft{\footnotesize $^*$A bit of extra info here. Add an asterich to title or author}
+\end{frame}
+% ------------------------------------------------------------------------------
+
+\section{Difficulties of Establishing Causality}
+
+\begin{frame}{Causal Inference}
+  The goal of the class is to think about establishing \emph{causal} relationships:
+  \begin{itemize}
+    \item Given some outcome, $Y$, that we care about, we want to know if changing $X$ \emph{causes} a change in $Y$
+  \end{itemize}
+    
+  \pause
+  \bigskip
+  In the real world, we can only observe whether $X$ and $Y$ co-move but trying to know if $X$ caused $Y$ is much more difficult a problem
+  \begin{itemize}
+    \item We will try to tackle this problem, but be humble of the difficulties of this task
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Correlation does not imply Causality}
+  \begin{columns}[T]
+    \begin{column}{.6\textwidth}\vspace*{-\bigskipamount}
+      \begin{center}
+        \includegraphics[width = 0.75\textwidth]{figures/rooster_crowing_at_sun.jpg}
+      \end{center}
+    \end{column}
+    \begin{column}{.4\textwidth}
+      Rooster crowing does not cause sun to rise
+      \begin{itemize}
+        \item The rooster crows every morning when the sun comes up
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% \begin{frame}{Correlation does not imply causation}
+%   \begin{columns}[T]
+%     \begin{column}{.6\textwidth}\vspace*{-\bigskipamount}
+%       \begin{center}
+%         \includegraphics[width = 0.75\textwidth]{figures/sleeping_with_shoes.png}
+%       \end{center}
+%     \end{column}
+%     \begin{column}{.4\textwidth}
+%       Sleeping with one's shoes on is strongly correlated with waking up with a headache.
+% 
+%       \begin{itemize}
+%         \item A common cause that leads to sleeping with shoes on and waking up with a headache
+%       \end{itemize}
+%     \end{column}
+%   \end{columns}
+% \end{frame}
+
+\begin{frame}{Correlation does not imply causation}
+  \begin{columns}[T]
+    \begin{column}{.6\textwidth}\vspace*{-\bigskipamount}
+      \begin{center}
+        \includegraphics[width = 0.75\textwidth]{figures/wine_and_health.png}
+      \end{center}
+    \end{column}
+    \begin{column}{.4\textwidth}
+      Drinking wine is correlated with improved health
+
+      \begin{itemize}
+        \item Drinking wine is also correlated with income $\dots$
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Causality does not imply correlation}
+  \begin{columns}[T]
+    \begin{column}{.6\textwidth}\vspace*{-\bigskipamount}
+      \begin{center}
+        \includegraphics[width = \textwidth]{figures/scottboat.jpg}
+      \end{center}
+    \end{column}
+    \begin{column}{.4\textwidth}
+      A boat is traveling on a windy day
+      \begin{itemize}
+        \item The sailor turns the rudder back and forth
+        \item Boat moves in a straight line
+      \end{itemize}
+      \bigskip
+      No correlation between rudder direction and boat direction; but the rudder still \emph{causes} the boat to change direction
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Causality does not imply correlation}
+  \begin{columns}[T]
+    \begin{column}{.6\textwidth}
+			\vspace*{-\bigskipamount}
+      \begin{center}
+        \includegraphics[width = \textwidth]{figures/fed_balance_grey.jpg}
+      \end{center}
+    \end{column}
+    \begin{column}{.4\textwidth}
+      The federal reserve changes interest rates back and forth to try and keep inflation around target of 2\% 
+      \begin{itemize}
+        \item When things are going well, no correlation between interest rate and inflation rate
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Lurking variables}
+  Correlations can often arise due to the presence of some third underlying variable that is driving both. We call this a \alert{lurking variable}
+  \begin{itemize}
+    \item Housing prices go up in places where they're building new apartments
+    
+    \item Employment goes up after places raise their minimum wage
+    
+    \item Schools with more arts spending have higher test scores
+    
+    \item Correlates of food consumption and health
+    
+    % \item Places with more police officers have more crime 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Lurking variables}
+  In all of these examples, there seems to be other explanations \alert{lurking around the corner}:
+  \begin{itemize}
+    \item New apartments are built in neighborhoods with growing demand
+    
+    \item The minimum wage is passed in places with a growing economy
+    
+    \item Schools with more arts spending are in wealthier school districts
+    
+    \item Food consumption and health are both correlated with income
+    
+    % \item Places with more crime have more police officer
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Reverse Causality}
+  Sometimes we have the order of causation \emph{reversed}:
+  \begin{itemize}
+    \item People who drink more coffee have more anxiety
+    
+    \item Places with more police officers have more crime 
+    
+    \item People who try new medicines have higher mortality rates
+  \end{itemize}
+
+  \bigskip
+  We want to think carefully if $X$ causes $Y$ or $Y$ causes $X$
+\end{frame}
+
+\section{Counterfactual Thinking and Potential Outcomes}
+
+\begin{frame}{What is causality?}
+  The goal of \alert{causality} is to try and figure out how if I were to change some variable $X$ \emph{at some point in time}, how would the value of $Y$ change for that person
+  \begin{itemize}
+    \item We have some notion of `changing' $X$ in some `experimental' or `random' way
+  \end{itemize}
+
+  \pause
+  \bigskip
+  \alert{PROBLEM:} we can \emph{never} observe both states of the world \emph{at the same point in time}.
+\end{frame}
+
+\begin{frame}{Observational Studies}
+  When we look out into the world, people have different $X$s. Why can we not just compare $Y$s for people with different values of $X$? 
+  
+  \begin{itemize}
+    \item As economists, we know that people are optimizers. They chose their `optimal' $X$ for different reasons. 
+    
+    \item People's background characteristics and environment shape what is the optimal $X$ and these factors likely shape their value of $Y$ too.
+  \end{itemize}
+
+  \pause
+  \bigskip
+  So comparing people with different $X$s often involves comparing people with different lurking variables, $\bm{Z}$, too
+  \begin{itemize}
+    \item Is it $X$ causing the change in $Y$ or is it the multiude of lurking variables?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Notions of Counterfactual}
+  Causal inference is looking for some notion of a \alert{counterfactual} world:
+  \begin{itemize}
+    \item What would have happened to home prices if the new apartments were not built? 
+    
+    \item What would have happened to employment if the minimum wage was not increased? 
+    
+    \item What would have happened to a patient had they taken a different medicine or no medicine at all?
+  \end{itemize}
+
+  To be clear, these counterfactual worlds are \alert{made up}. They do not exist. This notion is straight out of sci-fi parallel universe kind of thinking.
+\end{frame}
+
+\begin{frame}{Notions of Counterfactual}
+  The job of causal inference is to \emph{make assumptions} about the counterfactual world to take our best guess at that world
+  \begin{itemize}
+    \item Bad assumption in $\implies$ bad answer out
+  \end{itemize}
+
+  \bigskip
+  Causal effects are a hard thing to identify; researchers do their best. I think the best researchers:
+  \begin{enumerate}
+    \item Articulate the assumptions clearly
+    
+    \item Worry deeply about lurking variables (not sweep them under)
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Notions of Counterfactual}{Trying to determine the counterfactual}
+  At the end of the day, our job will be to find a way to `impute' the missing counterfactual. Finding a reasonable way to \emph{predict the missing counterfactual} is the hard part
+
+  \bigskip
+  \begin{itemize}
+    \item Look at similar neighborhoods that did not have new apartments  built? 
+    \begin{itemize}
+      \item Pennington (2023) look at San Francisco neighborhoods where a fire burns down a single family home
+    \end{itemize}
+    
+    \pause
+    \item What would have happened to employment if the minimum wage was not increased? 
+    \begin{itemize}
+      \item Dube et. al. (2010) use counties on the other side of a state border
+    \end{itemize}
+    
+    \pause
+    \item What would have happened to a patient had they taken a different medicine or no medicine at all?
+    \begin{itemize}
+      \item Health care industry runs thousands of randomized control trials every year
+    \end{itemize} 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Potential Outcome Framework}
+  The \alert{Potential Outcome Framework} was first introduced by Donald Rubin in a series of articles starting in 1974. It is \emph{incredibly} influential and most people doing work in causal inference think and talk in terms of potential outcomes and counterfactual thinking.
+  \begin{itemize}
+    \item Sometimes called Neyman-Rubin framework because Neyman presented this framework in the context of randomized controlled trials in 1923 in a master's thesis
+  \end{itemize}
+
+  \pause
+  \bigskip
+  We will first present the original framework and then I will try to zoom out a bit and tell you why I think potential outcomes thinking is so powerful
+\end{frame}
+
+
+\begin{frame}{Potential Outcome Framework}{}
+  We will use the example of building a new apartment building in a neigborhood. 
+  There are two parallel universes, one where the apartment is built and the other where it is not built.
+
+  \bigskip
+  Our outcome variable of interest the average rent in the neighborhood.
+  \begin{itemize}
+    \item In the present world, we can only prices if the apartment is built \emph{OR} if the apartment was not built. This is the fundamental problem of causal inference (Holland, 1986)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Potential Outcome Framework}{}
+  There are $n$ neighborhoods and we observe $(D_i, Y_i)$ for each neighborhood. $D_i$ denotes whether a new apartment is built or not; $Y_i$ denotes the average rent in the neighborhood. 
+  
+  \pause
+  \bigskip
+  The potential outcome framework expresses rent $Y_i$ as a \emph{function} of the new apartment building, $Y_i(D_i)$.
+  \begin{itemize}
+    \item $Y_i(1)$ is the average rent \emph{in the counterfactual world} where the new apartment is built
+    \item $Y_i(0)$ is the average rent \emph{in the counterfactual world} where the new apartment is not built
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Potential Outcome Framework}{}
+  \begin{itemize}
+    \item There are $n$ neighborhoods and we observe $(D_i, Y_i)$ for each neighborhood. $D_i$ denotes whether a new apartment is built or not; $Y_i$ denotes the average rent in the neighborhood. 
+
+    \item The potential outcome framework expresses rent $Y_i$ as a \emph{function} of the new apartment building, $Y_i(D_i)$.
+    \begin{itemize}
+      \item $Y_i(1)$ is the average rent \emph{in the counterfactual world} where the new apartment is built
+      \item $Y_i(0)$ is the average rent \emph{in the counterfactual world} where the new apartment is not built
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Unit-level treatment effect}
+  Define the \alert{unit-level treatment effect} to be $\tau_i = Y_i(1) - Y_i(0)$
+  \begin{itemize}
+    \item Measures the effect of $D_i$ from $0$ to $1$ on unit $i$
+  \end{itemize}
+
+  \bigskip
+  Note this is for the \emph{same unit} at \emph{the same point in time}!
+  
+  \pause
+  \begin{itemize}
+    \item I am \emph{not} saying a neighborhood before and after the apartment is built (though this could be a way of trying to estimate a causal effect)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{What do we oberve?}
+  In our dataset, we observe average rent $Y_i$ and whether or not the aparmtent is built, $D_i$. How does this relate to potential outcomes?
+  
+  \bigskip
+  The \alert{`switching equation'} relates potential outcomes to observed outcomes:
+  $$
+    Y_i = Y_i(1) D_i + Y_i(0) (1 - D_i)
+  $$
+
+  \pause
+  \bigskip
+  When $D_i = 1$, we have $Y_i = Y_i(1)$ and when $D_i = 0$ we have $Y_i = Y_i(0)$. That is, we observe \emph{one} of the two potential outcomes for each unit.
+\end{frame}
+
+\begin{frame}{Missing potential outcomes}
+  \begin{columns}[T]
+    \begin{column}{.4\textwidth}
+      Here is the complete dataset
+      \only<2>{
+        \begin{itemize}
+          \item However, we cannot actually observe the potential missing outcome!
+          
+          \item The goal is to use the \textbf{observed} observations to ``fill in'' the unobserved missing potential outcome
+        \end{itemize}
+      }
+    \end{column}
+    \begin{column}{.6\textwidth}\vspace*{-\bigskipamount}
+      \begin{center}
+        
+        \begin{tabular}{@{}
+          c@{\extracolsep{8pt}}cccc
+        @{}} 
+          \toprule
+          $i$ & $D_i$ & $Y_i$ & $Y_i(1)$ & $Y_i(0)$ \\
+          \midrule
+
+          1 & 1 & \$1200 & \$1200 & \only<1>{\$1225}\only<2>{\color{alice} ?} \\
+          2 & 0 & \$1000 & \only<1>{\$950}\only<2>{\color{alice} ?} & \$1000 \\
+          3 & 1 & \$1150 & \$1150 & \only<1>{\$1150}\only<2>{\color{alice} ?}\\
+          & & \vdots & & \\
+          n & 0 & \$1100 & \only<1>{\$1090}\only<2>{\color{alice} ?} & \$1100 \\
+      
+          \bottomrule
+        \end{tabular}
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Causal Estimands}
+  \begin{columns}[T]
+    \begin{column}{.4\textwidth}
+      Recall our \alert{unit-level treatment effect} to be $\tau_i = Y_i(1) - Y_i(0)$
+    \end{column}
+    \begin{column}{.6\textwidth}\vspace*{-\bigskipamount}
+      \begin{center}
+        
+        \begin{tabular}{@{}
+          c@{\extracolsep{8pt}}ccccc
+        @{}} 
+          \toprule
+          $i$ & $D_i$ & $Y_i$ & $Y_i(1)$ & $Y_i(0)$ & $\tau_i$ \\
+          \midrule
+
+          1 & 1 & \$1200 & \$1200 & \$1225 & -\$25 \\
+          2 & 0 & \$1000 & \$950 & \$1000 & \$50 \\
+          3 & 1 & \$1150 & \$1150 & \$1150 & \$0 \\
+          & & \vdots & & \\
+          n & 0 & \$1100 & \$1090 & \$1100 & -\$10 \\
+      
+          \bottomrule
+        \end{tabular}
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Averaging unit-level treatment effects}
+  Recall our \alert{unit-level treatment effect} to be $\tau_i = Y_i(1) - Y_i(0)$
+  \begin{itemize}
+    \item There is no reasonable way to estimate individual-level treatment effects (too much noise!)\pause, so we will aim to estimate \emph{averages} of them
+  \end{itemize}
+
+  \pause
+  \bigskip
+  The \alert{Average Treatment Effect} (ATE) is given by
+  $$
+    \tau_{\text{ATE}} = \expec{\tau_i} = \expec{Y_i(1) - Y_i(0)}
+  $$
+  \begin{itemize}
+    \item This averages over every unit in your population (with equal weights), including those who never receive treatment
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Causal Estimands}
+  The ATE is useful if you are trying to understand the \textbf{average} effect of treatment on the entire population you are sampling from. 
+  \begin{itemize}
+    \item E.g. you are launching a pilot that you intend to scale up to the school level
+    \pause
+    \item Be careful; when scaling up a treatment, general equilibrium can change the impact of treatment! 
+    \begin{itemize}
+      \item One person getting resume tips is more useful then everyone getting resume tips
+    \end{itemize}
+  \end{itemize}
+
+  \bigskip
+  \pause
+  This is less useful if you are trying to estimate the effect on a specific sub-population 
+  \begin{itemize}
+    \item Testing the effects of medicine on outcomes \emph{for the population with a disease}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Causal Estimands}
+  There is the \alert{Average Treatment Effect on the Treated} (ATT) that averages over only units that receive treatment:
+  $$
+    \tau_{\text{ATT}} = \expec{\tau_i}{D_i = 1} = \expec{Y_i(1) - Y_i(0)}{D_i = 1}
+  $$
+
+  \bigskip
+  \begin{itemize}
+    \item In some cases, this will be the only estimate we can credibly identify
+    
+    \item If the treated population looks very different from the population as a whole, you face the risk of \alert{external validity} 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Causal Estimands}
+  Likewise the \alert{Average Treatment Effect on the Control} (ATC) averages over only units that do not receive treatment:
+  $$
+    \tau_{\text{ATC}} = \expec{\tau_i}{D_i = 0} = \expec{Y_i(1) - Y_i(0)}{D_i = 0}
+  $$
+\end{frame}
+
+\begin{frame}{Causal Estimands}
+  All three estimands relate via the law of conditional expectations. Define $\pi = \prob{D_i = 1}$ be the probability of a unit being in treatment. 
+  \begin{align*}
+    \tau_{\text{ATE}} 
+    &= \expec{\tau_i} = \expec{\expec{\tau_i}{D_i}} \\
+    \pause
+    &= \prob{D_i = 1} \expec{\tau_i}{D_i = 1} + \prob{D_i = 0} \expec{\tau_i}{D_i = 0} \\
+    \pause
+    &= \pi \tau_{\text{ATT}} + (1 - \pi) \tau_{\text{ATC}}  
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Conditional ATE}
+  While an overall treatment effect is a useful summary measure, we often want to summarize treatment effects for \emph{groups of units with the same charactersitics}, e.g. gender, race, income, age, etc.
+  
+  \bigskip
+  We define the \alert{Conditional Average Treatment Effect} (CATE) as:
+  $$
+    \tau_{\text{CATE}}(x) = \expec{\tau_i}{X_i = x} = \expec{Y_i(1) - Y_i(0)}{X_i = x}
+  $$
+  \begin{itemize}
+    \item $X_i$ is some characteristic of the population
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Conditional ATE versus ATE}
+  There is a strong relationship between the CATE and the ATE/ATT:
+  $$
+    \tau_{\text{ATE}} = \expec{\tau_i} = \expec{\expec{\tau_i}{X_i}}
+  $$
+  \begin{itemize}
+    \item The latter averages over CATE with weights proportional to the distribution of $X_i$ in the population
+  \end{itemize}
+
+
+  \pause
+  \bigskip
+  Likewise, we could average over the distribution of $X_i$ for the treated units
+  $$
+    \tau_{\text{ATT}} = \expec{\tau_i} = \expec{\tau_{\text{CATE}}(x)} = \expec{\expec{\tau_i}{X_i}}{D_i = 1}
+  $$
+\end{frame}
+
+\begin{frame}{Problems with observational data}
+  Our treatment effect parameter is given by 
+  $$
+    \tau_{\text{ATE}} = \expec{Y_{i}(1)} - \expec{Y_{i}(0)}
+  $$
+  
+  \bigskip
+  What if we replace expectations with sample averages for the treated and control groups?
+  $$
+    \hat{\tau}_{\text{DIM}} = \expec{Y_{i}}{D_i = 1} - \expec{Y_{i}}{D_i = 0}
+  $$
+  \begin{itemize}
+    \item This is called the \alert{difference-in-means estimator}
+  \end{itemize}
+\end{frame}
+
+% \begin{frame}{Difference-in-means estimator}
+%   What does the difference-in-means estimator identify?
+%   \begin{align*}
+%     \hat{\tau}_{\text{DIM}} &= \expec{Y_{i}}{D_i = 1} - \expec{Y_{i}}{D_i = 0} \\
+%     &= \expec{Y_{i}(1)}{D_i = 1} - \expec{Y_{i}(0)}{D_i = 0} \\
+%     &= \expec{Y_{i}(1)}{D_i = 1} - \expec{Y_{i}(0)}{D_i = 0} \\
+%     &\quad\quad - \expec{Y_{i}(1)} + \expec{Y_{i}(1)} - \expec{Y_{i}(0)} + \expec{Y_{i}(0)} \\[1em]
+%     \pause
+%     &= \tau_{\text{ATE}} + \left( \expec{Y_{i}(1)}{D_i = 1} - \expec{Y_{i}(1)} \right) - \left( \expec{Y_{i}(0)}{D_i = 0} - \expec{Y_{i}(0)} \right)
+%   \end{align*}  
+% 
+%   So we identify the ATE plus two additional terms. Let's break them down
+% \end{frame}
+% 
+% \begin{frame}{Difference-in-means estimator}
+%   \vspace*{-2\bigskipamount}
+%   $$
+%     \hat{\tau}_{\text{DIM}} = 
+%       \tau_{\text{ATE}} + {\color{ruby} \left( \expec{Y_{i}(1)}{D_i = 1} - \expec{Y_{i}(1)} \right) - \left( \expec{Y_{i}(0)}{D_i = 0} - \expec{Y_{i}(0)} \right) }
+%   $$
+% 
+%   The difference-in-means estimator will (generally) be not equal to the ATE if either of these terms are non-zero. 
+%   
+%   % TODO: Selection Bias
+% \end{frame}
+
+\begin{frame}{Difference-in-means estimator}
+  What does the difference-in-means estimator identify? We can use the common ``add and subtract'' trick:
+  \begin{align*}
+    \hat{\tau}_{\text{DIM}} &= \expec{Y_{i}}{D_i = 1} - \expec{Y_{i}}{D_i = 0} \\
+    &= \expec{Y_{i}(1)}{D_i = 1} - \expec{Y_{i}(0)}{D_i = 0} \\
+    &= \expec{Y_{i}(1)}{D_i = 1} - \expec{Y_{i}(0)}{D_i = 0} - \expec{Y_{i}(0)}{D_i = 1} + \expec{Y_{i}(0)}{D_i = 1} \\[1em]
+    \pause
+    &= \tau_{\text{ATT}} + \left( \expec{Y_{i}(0)}{D_i = 1} - \expec{Y_{i}(0)}{D_i = 0} \right)
+  \end{align*}  
+
+  \bigskip
+  The difference-in-means estimator equals the ATT plus an additional term.
+\end{frame}
+
+\begin{frame}{`Selection Bias'}
+  We refer to the last term as {\color{ruby} selection bias}
+  $$
+    \hat{\tau}_{\text{DIM}} = \tau_{\text{ATT}} + {\color{ruby} \left( \expec{Y_{i}(0)}{D_i = 1} - \expec{Y_{i}(0)}{D_i = 0} \right) }
+  $$
+
+  \begin{itemize}
+    \item If the treated group has a different mean untreated potential outcome than the control group, our estimator is biased.
+  \end{itemize}
+
+  \pause
+  \bigskip
+  For example, in our appartment example, the neighborhoods where apartments are built would have a higher \emph{counterfactual rent} (in the absence of a new apartment) than the untreated neighborhoods
+  \begin{itemize}
+    \item We would mistakingly claim this is due to new apartments being built!
+  \end{itemize}
+\end{frame}
+
+% \begin{frame}{Selection bias}
+%   We can rewrite this term in another way (see chapter 4 of the Mixtape). For the average treatment effect, we can show there are actually three possible selection biases: 
+%   \begin{enumerate}
+%     \item Selection on $Y_i(1)$: You chose the treatment because of what will
+%     happen if you didn't
+%     \item Selection on $Y_i(0)$: You chose the treatment because of what will happen if you do
+%     \item Selection on $\tau_i$: You chose the treatment because the net benefits were positive
+%   \end{enumerate}
+% \end{frame}
+
+\section{Randomized Experiments}
+
+\begin{frame}{When is selection bias not present?}
+  \vspace*{-\bigskipamount}
+  $$
+    \hat{\tau}_{\text{DIM}} = \tau_{\text{ATT}} + {\color{ruby} \left( \expec{Y_{i}(0)}{D_i = 1} - \expec{Y_{i}(0)}{D_i = 0} \right) }
+  $$
+
+  \bigskip
+  The leading example of when selection bias is not present is when $D_i$ is randomly assigned.
+  
+  \pause
+  \bigskip
+  When $D_i$ is randomly assigned, we have that the untreated potential outcome and treatment are independent: $(Y_i(0) \Perp D_i)$
+  \begin{itemize}
+    \item If $(Y_i(0) \Perp D_i)$, then $\expec{Y_{i}(0)}{D_i} = \expec{Y_{i}(0)}$ and selection bias is 0.
+
+    \pause 
+    \item Technically, we only need `mean-independence' which is the latter term; but in experiments, we have full independence.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Experiments and causal estimands}
+  In fact, experiments help us estimate more than the ATT. Note that if we randomly assign treatment, then $(Y_i(1), Y_i(0)) \Perp D_i$. This means: 
+  $$
+    \expec{Y_i(1) - Y_i(0)}{D_i} = \expec{Y_i(1) - Y_i(0)}
+  $$
+  and hence $\text{ATE} = \text{ATT} = \text{ATC}$
+
+  \begin{itemize}
+    \item Since we randomly assign treatment, the treated group looks like the control group looks like the population as a whole.
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Quasi- and Natural Experiments}{Writing about Empirical Work}
+  Often you will hear the terms `natural experiment' and `quasi-experimental design' in applied work
+  \begin{itemize}
+    \item There are appropriate and inappropriate usages of this term (in my opinion)
+  \end{itemize}
+
+  \bigskip
+  If there are features of a research question in which we can think of $D_i$ as being randomly assigned (for a subgroup), then we can use the term `natural experiment' (in that it is naturally occuring)
+  \begin{itemize}
+    \item Angist (1990) uses the randomly assigned Vietnam-war draft
+    \item Imbens, Rubin, and Sacerdote (2001) uses lottery winners which is randomly assigned among people who play the lottery
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Observational Studies and ``Exogenous Variation''}{Writing about Empirical Work}
+  In most contexts, you will not have a natural experiment. Instead, you will leverage variation in policies that we think is `exogenous' (e.g. the roll-out of policies or using details of the policy)
+
+  \begin{itemize}
+    \item In general, these papers require more work to do a good job at causally identifying effects
+    
+    \item E.g. states roll-out policies in response to their outcomes causing selection bias
+  \end{itemize}
+
+  \pause
+  \bigskip
+  All hope is not lost, though. The rest of the course will teach you strategies for estimating a causal effect
+\end{frame}
+
+\subsection{Estimation via Regression}
+
+\begin{frame}{Regression estimates for experiments}
+  The difference-in-means estimate is $\expec{Y_i}{D_i = 1} - \expec{Y_i}{D_i = 0}$
+  \begin{itemize}
+    \item We could, of course, estimate these means by hands (and you will be asked to do so on your assignment). 
+  \end{itemize}
+
+  However it is typically far simpler to run a regression because it will also give you (robust) standard errors. 
+\end{frame}
+
+\begin{frame}{Regression}
+  The regression we will run is as follows:
+  $$
+    Y_i = \alpha + \tau D_i + \varepsilon_i
+  $$
+  Since $D_i$ is a dummy variable and $\alpha$ is the intercept, regression mechanics (which we'll talk about more in the next topic) tells us that 
+  \begin{itemize}
+    \item $\hat{\alpha} = \expechat{Y_i}{D_i = 0}$ and $\hat{\tau} = \expechat{Y_i}{D_i = 1} - \expechat{Y_i}{D_i = 0}$
+  \end{itemize}
+
+  \bigskip
+  $\hat{\tau}$ is equal to our difference-in-means estimates! 
+\end{frame}
+
+\begin{frame}{Inference}
+  Of course, we want to provide some measure of noise around our treatment effect estimates and be able to test the null that the ATE is equal to 0. 
+  
+  \bigskip
+  Our difference-in-means estimator is given by
+  $$
+    \hat{\tau}_{\text{DIM}} = \frac{1}{n_1} \sum_{D_i = 1} Y_i - \frac{1}{n_0} \sum_{D_i = 0} Y_i
+  $$
+
+	\bigskip
+  We will use the `weak null' (more on this in a second) that $\tau_{\text{ATT}} = 0$. 
+	\begin{itemize}
+		\item We will return in a few slides to discuss weak versus sharp null
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Inference}
+  The variance, under the null that $\tau = 0$, is given by
+  $$
+    \var{\hat{\tau}_{\text{DIM}}} = \expec{ \left( \frac{1}{n_1} \sum_{D_i = 1} Y_i - \frac{1}{n_0} \sum_{D_i = 0} Y_i \right)^2 }
+  $$
+
+  With a little algebra we can find
+	\begin{align*}
+		\var{\hat{\tau}_{\text{DIM}}} = \frac{1}{n_1} \var{Y_{i}(1)} + \frac{1}{n_0} \var{Y_{i}(0)}
+	\end{align*}
+	\begin{itemize}
+		\item These variances can be estimated based on the variance within $D_i =
+			1$ and $D_i = 0$ respectively. Randomization ensures consistency
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Inference via Regression}
+  Recall the regression we run is: 
+	$$
+    Y_i = \alpha + \tau D_i + \varepsilon_i
+  $$
+
+	Using robust standard errors, the variance estimate for $\hat{\tau}$ is approximately equal to the one on the previous slide. 
+	\begin{itemize}
+		\item Using HC2 standard errors give exact variance from above
+	\end{itemize}
+\end{frame}
+
+% TODO: Randomization Inference
+
+
+
+\subsection{LaLonde Dataset}
+
+\begin{frame}{The start of the credibility revolution}
+  LaLonde (1986) is a seminal work in the onset of the `credibility revolution' of causal inference to economics. The paper uses an experiment called the National Supported Work Demonstration (NSW) program
+
+  \bigskip
+  The program targeted randomly assigned a job training program to participants. The participants were drawn from `ex-drug addicts, ex-criminal offenders, and high-school dropouts'. 
+\end{frame}
+
+\begin{frame}{Experimental effects}
+  Since treatment was randomly assigned, we can use the difference-in-means estimator to estimate the $\text{ATE} = \text{ATT} = \text{ATC}$
+  \begin{itemize}
+    \item Note that in the context of this experiment, the `population' we are thinking about is among the pool of participants
+    \item It is not the ATE of the entire US population
+  \end{itemize}
+	
+	\bigskip
+	LaLonde found experimental evidence of about \$886 for male participants and \$851 for female participants
+\end{frame}
+
+\begin{frame}{LaLonde's test}
+  LaLonde wanted to see what would happen if instead of using the experimental control group, he used observation data
+	\begin{itemize}
+		\item LaLonde brought in data from the Community Population Survey (CPS) and the Panel Study on Income Dynamics (PSID)  
+	\end{itemize}
+
+	\bigskip
+	The `observational dataset', as he called it, consists of the treated units from the experiment and the control group from the survey data
+	\pause
+	\begin{itemize}
+		\item Control group looks very different from the treated group (higher income, better job market attachments, higher education, etc.)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{LaLonde's test}
+	He used a simple regression:
+	$$
+		\text{wages}_i = \alpha + \tau D_i + X_i \beta + \varepsilon_i
+	$$
+	\begin{itemize}
+		\item $X_i$ were a vector of controls (age, education, and race)
+	\end{itemize}
+
+	\pause \bigskip
+	The estimates from this regression using the nonexperimental sample yielded significantly different results with many estimates coming out as negative!
+\end{frame}
+
+\begin{frame}{LaLonde's test}
+	This was a very clever thing to do and led to many response articles trying to defend the then current methods
+	\begin{itemize}
+		\item Imbens and Xu (2024) present a really riviting account of the paper, responses, and modern solutions aimed to improve observational treatment effect estimates
+	\end{itemize}
+
+	\pause
+	\bigskip
+	Robert Lalonde, Orley Ashenfelter, David Card, and others in the Princeton Industrial Relations Section in the 1980s were drivers of the `credibility revolution'
+\end{frame}
+
+
+
+
+\section{A/B Testing}
+
+\begin{frame}{A/B Testing}
+  It is \emph{incredibly} common for firms to run many sets of experiments, which they call A/B testing
+  \begin{itemize}
+    \item Typically, it asks ``which performs better, version A or version B''
+  \end{itemize}
+
+	\bigskip
+	For example, Youtubers will try to change their thumbnails randomly to different viewers and compare how often people click on the video 
+\end{frame}
+
+\begin{frame}{Difficulties with A/B Testing}
+	Since this is effectively an experiment, understanding A/B testing should be simple; but it comes with some challenges:
+  \begin{itemize}
+		\item There can be many, many different `arms' in the experiment so you have many comparisons to make 
+
+		\item As the experiment goes on, it is common to subset experimentation to the best-performing arms while dropping the worst performing (`adaptive bandit')
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Multi-arm treatment effect estimates in A/B Testing}
+  Our previous logic of randomization extends to an experiment where $D_i \in \{0, 1, \dots, K \}$ where $K + 1$ is the number of arms in the experiment.
+
+	\bigskip
+	Potential outcomes are given by $Y_i(D_i)$ and treatment effects are given by $\tau_i(d) = Y_{i}(d) - Y_{i}(0)$
+	\pause
+	\begin{itemize}
+		\item If there is no natural `control group', then pick one randomly to normalize. Treatment effects are then `relative' to treatment 0
+	\end{itemize}
+
+	\bigskip
+	Randomization ensures that $\left\{ Y_i(d) \right\}_{d=0}^K \Perp D_i$
+\end{frame}
+
+\begin{frame}{Multi-arm treatment effect estimates in A/B Testing}
+	Treatment effects can be estimated using regression:
+	$$
+		Y_i = \alpha + \sum_{d = 1}^K \one{D_i = d} \tau^d + \varepsilon_i
+	$$
+
+	$\hat{\tau}^d$ are our treatment effect estimates
+	\begin{itemize}
+		\item Consistency comes from randomization (using similar math to the single treatment case)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Finding the `best' treatment}
+	Say you want to chose treatment $d$ that has the largest treatment effect:
+	$$
+		\hat{d} = \argmax_{d \in \{1, \dots, K\}} \hat{\tau}(d)
+	$$
+	\begin{itemize}
+		\item As the number of observations in each arm grows, this procedure asymptotically will select the best treatment arm
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{The Winner's Curse}
+	For smaller sample sizes, this will face the `winner's curse' (Andrews, Kitagawa, and McCloskey (2024))
+	\begin{itemize}
+		\item The one with the highest effect is biased upwards by selecting on the error term
+		\pause
+		\item I've heard stories of tech companies running hundreds of arms with only a few observations per arm before picking a winner
+	\end{itemize}
+
+	\pause
+	\bigskip
+	The term comes from auction theory where $K$ bidders bid for the same product
+	\begin{itemize}
+		\item Even if each bidder can consistenly estimate the value, the highest bidder will have the highest valuation and overvalue the good
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Finding the `best' treatment}
+	Solutions to winner's curse:
+	\begin{itemize}
+		\item Use adaptive inference from Andrews, Kitagawa, and McCloskey (2024)
+	\end{itemize}
+
+	\bigskip
+	What about doing more experimentation on the best arm's to disentangle?
+\end{frame}
+
+\begin{frame}{Multi-arm Bandit}
+	A \alert{Multi-arm bandit} (sometimes called adaptive experiments) is a method of experimentation where the probability of being assigned to any arm changes over the course of the experiment
+	\begin{itemize}
+		\item It is costly to experiment, so lower the probability of treatment for arms that seem to not be good
+	\end{itemize}
+
+	\pause
+	\bigskip
+	This creates issues with inference since each observation depends on all previous observations (inducing dependence)
+	\begin{itemize}
+		\item Solutions exist, but we will skip the details in this class. See Hadad, Hirshberg, Zhan, Wager, and Athey (PNAS, 2021) for an example
+	\end{itemize}
+\end{frame}
+
+
+% TODO: Covariates in Experiments
+
+\end{document}

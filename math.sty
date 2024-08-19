@@ -83,6 +83,17 @@
     }
   }
 }
+\NewDocumentCommand{\expechat}{o g g}{%
+  \IfNoValueTF{#2}{%
+    \operatorname{\hat{\mathbb{E}}}\IfValueT{#1}{_{#1}}%
+  }{%
+    \IfNoValueTF{#3}{%
+      \,\hat{\mathbb{E}}\IfValueT{#1}{_{#1}}{\bp{#2}}
+    }{%
+      \,\hat{\mathbb{E}}\IfValueT{#1}{_{#1}}{ \left( #2 \ |\ #3 \right)}
+    }
+  }
+}
 
 % Probability
 \RenewDocumentCommand{\P}{o g g}{%
@@ -135,11 +146,12 @@
 }
 
 % Indicator
+\usepackage{dsfont}
 \NewDocumentCommand{\one}{g}{%
   \IfNoValueTF{#1}{
-    \operatorname{\mathbb{1}}
+    \operatorname{\mathds{1}}
   }{%
-  \,\mathbb{1}{\bs{#1}}}
+  \,\mathds{1}{\bs{#1}}}
 }
 
 % Trace
@@ -173,5 +185,8 @@
 % \bar and \ubar
 \usepackage{accents}
 \newcommand{\ubar}[1]{\underaccent{\bar}{#1}}
+
+% Independent symbol
+\newcommand{\Perp}{\perp\,\!\,\!\,\!\,\!\,\!\,\!\,\!\!\!\!\perp}
 
 

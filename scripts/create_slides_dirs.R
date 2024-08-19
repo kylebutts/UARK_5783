@@ -1,9 +1,8 @@
 create_dir <- function(topic_num, topic_title, topic_stub) {
   raw_doc <- sprintf(
     r'(\documentclass[aspectratio=169,t,11pt,table]{beamer}
-\usepackage{../../slides}
-\usepackage{../../math}
-\definecolor{accent}{HTML}{9D2235}
+\usepackage{../../slides,../../math}
+\definecolor{accent}{HTML}{2B5269}
 \definecolor{accent2}{HTML}{9D2235}
 
 \title{Topic %s: %s}
