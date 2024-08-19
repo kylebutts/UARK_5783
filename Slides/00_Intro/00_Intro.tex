@@ -1,10 +1,9 @@
 \documentclass[aspectratio=169,t,11pt,table]{beamer}
-\usepackage{../../slides}
-\usepackage{../../math}
+\usepackage{../../slides,../../math}
 
 % Optionally define `accent`/`accent2` colors for theme customization
 % I recommend changing the top slider on this: https://hslpicker.com/#1e9400
-\definecolor{accent}{HTML}{9D2235}
+\definecolor{accent}{HTML}{2B5269}
 \definecolor{accent2}{HTML}{9D2235}
 
 \title{Course Introduction}
@@ -68,26 +67,27 @@
   You will need to download \emph{two} programs:
   \begin{enumerate}
     \item Install \texttt{R} from \url{https://cloud.r-project.org/}.
-    \item Install Positron (or RStudio) from \url{https://github.com/posit-dev/positron/releases}. 
+    \item Install \texttt{Positron} from \url{https://github.com/posit-dev/positron/releases}. 
   \end{enumerate}
 
   \bigskip
   If you do not have experience in \texttt{R}, then I encourage you to spend a few hours learning basics of loading and working with data
   \begin{itemize}
-    \item If you have Stata experience, you can use https://stata2r.github.io/ to help transition
+    \item \url{https://github.com/cobriant/tidyverse_koans} and \url{https://r4ds.hadley.nz/} are good resources for learning \texttt{R}
+    \item If you have Stata experience, you can use \url{https://stata2r.github.io/} to help transition
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Course Materials}{Textbooks}
   Our primary text for the course is \href{https://mixtape.scunning.com/}{Causal Inference: The Mixtape} by Scott Cunningham. 
   \begin{itemize}
-    \item For free online
+    \item Available free online
   \end{itemize}
   
   \bigskip
   Will use review articles for overviews of methodologies and academic articles for examples of empirical usage
   \begin{itemize}
-    \item In the `Literature/` folder in the GitHub repository
+    \item In the \texttt{`Literature/`} folder in the GitHub repository
   \end{itemize} 
 \end{frame}
 
@@ -95,16 +95,16 @@
   I have tried to incorporate practical advice on doing applied research throughout this class. 
   
   \bigskip
-  In particular, I try to teach you about how to properly talk about research,  how to clearly lay out assumptions and how to assess their plausibility, and how to avoid saying incorrect things
+  In particular, I try to teach you about how to \emph{properly talk about causal research},  how to clearly lay out assumptions and how to assess their plausibility, and how to avoid saying incorrect things
   \begin{itemize}
-    \item E.g. you can never `validate' or `prove' an assumption. Do not write this
+    \item E.g. you can never `validate' or `prove' an assumption. \alert{Do not write this}
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Assignments}{Problem Sets}
   Problems sets will be assigned for each topic we cover in the course
   \begin{itemize}
-    \item Will require you to analyze datasets, run monte carl simulations, and answer interpretative questions
+    \item Will require you to analyze datasets, run Monte Carlo simulations, and answer interpretative questions
     \item Solutions in \texttt{R}, but you can use whatever language you want
   \end{itemize}
 
@@ -114,6 +114,12 @@
 
 \begin{frame}{Assignments}{Exams}
   Two exams on October 7th and November 13th, but subject to change +/- a class
+
+  \begin{itemize}
+    \item Each exam covers half of the course material
+    
+    \item Will ask you to think about novel examples and think about causal assumptions
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Assignments}{Final Project}
@@ -123,7 +129,7 @@
   \end{itemize}  
 
   \bigskip
-  You will be graded on your ability to discuss these issues and not whether or not you have a flawless research design
+  You will be graded on your ability to discuss the assumptions needed to establish causality and \textbf{not whether or not you have a flawless research design}
   \begin{itemize}
     \item Non-PhD Students may work in a group of two and (ii) are recommended but not required to include a brief literature review
 
