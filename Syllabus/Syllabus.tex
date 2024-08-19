@@ -1,0 +1,141 @@
+\documentclass[12pt]{article}
+\usepackage{../paper,../math}
+\usepackage{../uark_colors}
+% \addbibresource{references.bib}
+\hypersetup{
+  pdftitle = {UARK ECON 5783 Syllabus},
+  pdfauthor = {Kyle Butts},
+}
+
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  linkbordercolor = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+% New emphasis style: Bold and underlined
+\newcommand{\emf}[1]{\textbf{\textcolor{ozark_mountains}{#1}}}
+
+
+\usepackage{fontawesome} % For icons
+\usepackage{setspace, titling}
+\title{
+  \vspace{-2em}
+	{\huge \ttfamily \textbf{Applied Microeconometrics}} \\[-0.75em]
+  {\Large \ttfamily [ECON 5783]} \\[-0.5em]
+	{\Large Fall 2024 Syllabus}
+}
+\author{}
+\date{}  % Toggle commenting to test
+
+\begin{document}
+\maketitle
+
+\vspace*{-7em}
+\begin{table}[!ht]
+	\renewcommand{\arraystretch}{1.2}
+  \centering
+  \begin{tabular}{@{\extracolsep{5pt}} lll @{}}
+    \toprule
+
+    \faUser & Professor & {\bfseries\color{ozark_mountains} Kyle Butts, PhD} \\
+    \faPaperPlaneO & Email & \href{mailto:kbutts@uark.edu?subject=ECON5783}{kbutts@uark.edu} (include ``\texttt{ECON5783}'' in subject) \\
+    \faChevronRight & Website & \href{https://kylebutts.com/}{https://kylebutts.com/} \\
+
+    \addlinespace[0.25em]
+    \midrule
+    \addlinespace[0.25em]
+    
+    \faClockO & Lecture & RCED 103 MW 1--2:15pm \\
+    \faBuildingO & Office Hours & WCOB 408 MW 11am--1pm \\
+    \faChevronRight & Course Materials & \url{https://github.com/kylebutts/UARK_5783_F2024/} \\
+    
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+\section*{Course Summary}
+
+This course will provide an introduction to forecasting methods. The class will teach you how to take a set of input variables and produce predictions of some outcome variable. We will survey a set of forecasting methods for your toolbox including: bivariate and multivariate regression; smoothing methods; time-series regression; and ARIMA methods. The class will teach these methods theoretically and also teach you to estimate these models in the \texttt{R} programming language.
+
+Though the class will also teach you fundamental principles of forecasting: goals of forecasting, fitting of models, evaluating model fit, and limitations of the models. By doing this, the class will equip you with the foundations to expand your toolbox over time. 
+
+Last, the course will try to highlight limitations of forecasting methods; trade-offs between forecasting methods (e.g. interpretability versus predictive accuracy); and help you understand what forecasting methods can not due (e.g. establish causality). 
+
+
+\section*{Course Materials}
+
+Our primary text for the course is \href{https://mixtape.scunning.com/}{Causal Inference: The Mixtape} by Scott Cunningham. The textbook is available for free online. You may buy a print version, but it is not necessary for the course. The course will also use review articles for overviews of methodologies and academic articles for examples of empirical usage. Articles will appear in the `Literature/` folder in the GitHub repository.
+
+\subsection*{Coding Software}
+
+You will need to download \emph{two} programs:
+\begin{enumerate}
+  \item Install R from \url{https://cloud.r-project.org/}.
+  \item Install Positron (or RStudio) from \url{https://github.com/posit-dev/positron/releases}. 
+\end{enumerate}
+
+\bigskip
+Mastering \texttt{R} will take time and dedication, but it is a powerful and adaptable tool that is highly valued by many employers. Invest the necessary effort and time, and you will see the benefits.
+
+% TODO: 
+% Your first assignment will be to download the software and compile an \texttt{.Rmd} file.
+
+
+\section*{Assignments}
+
+\textbf{Problem sets} will usually be due two weeks after assigned. 
+The problem sets will require you to analyze datasets using techniques discussed in class. 
+Students are encouraged to work in groups to discuss how the approach the problem sets, but each student must hand in his or her own set of answers. 
+Missing or late problem sets will receive no credit.
+
+\textbf{Exams} will be held during class time on October 7th and November 13th.
+
+For the ﬁnal project, you will write an empirical paper using microeconometric data. 
+A complete project must include a research question in the form of "the impact of X on Y", descriptions of context, empirical strategy (including why the chosen strategy is valid for the question/data), results, and a brief discussion on limitations. 
+It is okay if your project has issues in establishing causality; you will be graded on your ability to discuss these issues and not whether or not you have a flawless research project.
+You also will need to present a preliminary draft in the last 3 weeks of class.
+
+\textbf{Non-PhD economics students}: (i) may work in a group of two; and (ii) are recommended but not required to include a brief literature review. 
+\textbf{PhD economics students} should submit a
+single-authored paper and include a brief literature review.
+
+
+
+\section*{Course Outline}
+
+\subsection*{Tentative Schedule}
+
+This is a tentative schedule. This is the first time I've taught this course, so take this with a heavy dose of skepticism. In particular, do not set up holidays a class before or after the midterm. 
+
+\begin{landscape}
+  \input{schedule.tex}
+\end{landscape}
+
+
+
+
+
+
+
+\section*{Policies}
+
+The student who missed exam must provide an official proven emergency which prevents you from attending class on the scheduled exam date within 24 hours after the missed exam to be allowed to take a makeup. Otherwise the student is not eligible to take a makeup exam and the missed exam equals zero points.
+
+There will be due dates on the assignments. Like you, I am a busy person. I may grade the next day or a few days later. You have until I start grading assignments to turn it in without penalty, so take your chances. 
+
+If you have any questions during the lecture, feel free to ask right away. Your questions can benefit both you and other students who might have the same questions. If you arrive late or need to leave early, please sit near the door to minimize disruption to the class.
+
+\subsection*{Access and Accommodations}
+
+Your experience in this class is important to me. University of Arkansas Academic \href{https://policies.uark.edu/academic/152010.php}{Policy Series 1520.10} requires that students with disabilities are provided reasonable accommodations to ensure their equal access to course content. If you have already established accommodations with the Center for Educational Access (CEA), please request your accommodations letter early in the semester and contact me privately, so that we have adequate time to arrange your approved academic accommodations.
+
+If you have \textbf{not} yet established services through CEA, but have a documented disability and require accommodations (conditions include but not limited to: mental health, attention-related, learning, vision, hearing, physical, health  or temporary impacts), contact CEA directly to set up an Access Plan. CEA facilitates the interactive process that establishes reasonable accommodations.  For more information on CEA registration procedures contact 479—575—3104, ada@uark.edu or visit cea.uark.edu.
+
+% ------------------------------------------------------------------------------
+% \printbibliography
+% \newpage~\appendix
+% ------------------------------------------------------------------------------
+\end{document}
