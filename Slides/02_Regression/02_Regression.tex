@@ -326,6 +326,23 @@
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Preview of Conditional Expectation Function usages}
+  One main reason why we care about modeling $Y$ is because causal inference is a missing data problem
+  \begin{itemize}
+    \item For the treated units, we do not observe what their outcomes would be in the absence of treatment, $Y(0)$
+    \item For the control units, we do not observe their $Y(1)$
+  \end{itemize}
+
+  \pause
+  \bigskip
+  If we fit a model for $\expec{Y_i(0)}{X_i = x}$, we can use this to make predictions for the treated units 
+  
+  \pause
+  \begin{itemize}
+    \item The model predicting out of sample for our treated group requires certain conditions we'll discuss in topic 3
+  \end{itemize}
+\end{frame}
+
 
 \section{Omitted Variable Bias (OVB)}
 
@@ -352,9 +369,10 @@
 \begin{frame}{Omitted Variable Bias}
   \vspace*{-\bigskipamount}
   $$
-  y_i = \beta_0 + X_{i1} \beta_1 + X_{i2} \beta_2 + \varepsilon_i \quad\text{ and }\quad y_i = \delta_0 + X_{i1} \delta_1 + error
+    \underbrace{y_i = \beta_0 + X_{i1} \beta_1 + X_{i2} \beta_2 + \varepsilon_i}_{\text{``long regression''}} \quad\text{ and }\quad \underbrace{y_i = \delta_0 + X_{i1} \delta_1 + \text{error}_i}_{\text{``short regression''}}
   $$
 
+  \bigskip
   We have the following relationship:
   \begin{align*}
     \delta_1 
@@ -366,22 +384,27 @@
 
 \begin{frame}{Omitted Variable Bias}
   $$
-    \delta_1 = \beta_1 + \beta_2 \frac{\cov{X_1, X_2}}{\var{X_1}} 
+    \hat{\delta}_1 = \beta_1 + \beta_2 \frac{\cov{X_1, X_2}}{\var{X_1}} 
   $$
 
+  \bigskip
   The reason this is true is due to regression being a prediction model!
   \begin{itemize}
-    \item If $X_1$ and $X_2$ are correlated, then knowing about $X_1$ tells me information on $X_2$.
+    \item If $X_1$ and $X_2$ are correlated, then knowing about $X_1$ tells me information on $X_2$
     
     \item I would want to use that implicit information on $X_2$ to predict $y$ as well! 
   \end{itemize}
+
+  \bigskip
+  $\implies$ take the effect of $\beta_2$ times how I think $X_1$ tells me about $X_2$
 \end{frame}
 
 \begin{frame}{Omitted Variable Bias}
   $$
-    \delta_1 = \beta_1 + \beta_2 \frac{\cov{X_1, X_2}}{\var{X_1}} 
+    \hat{\delta}_1 = \beta_1 + \beta_2 \frac{\cov{X_1, X_2}}{\var{X_1}} 
   $$
 
+  \bigskip
   We can often times `sign' the bias:
   \begin{itemize}
     \item The sign of $\beta_2$ is what we think the effect of $X_2$ is on $y$
@@ -404,12 +427,15 @@
       \bottomrule
     \end{tabular}
   \end{center}
+
+  \bigskip
+  If $X_2$ is unrelated to $X_1$ \emph{or} $X_2$ has no effect on $y$, then we have no problem
 \end{frame}
 
 \subsection{Reinterpreting selection bias as OVB}
 
 \begin{frame}{Omitted Variable Bias}
-  When $X_1$ is an indicator variable, call it $D$. 
+  Let $X_1$ is an indicator variable, call it $D$. 
   \begin{align*}
     \cov{D, X_2} 
     &= \expec{ (D - \expec{D}) (X_2 - \expec{X_2})} \\
@@ -417,7 +443,7 @@
     &= \expec{X_2}{D = 1} - \expec{X_2}
   \end{align*}
 
-  Let $\pi = \prob{D = 1}$. Then,
+  Let $\pi = \prob{D = 1}$ and note from definition, $\var{D} = \pi (1 - \pi)$. Then,
   $$
     \delta_1 = \beta_1 + \frac{\beta_2}{\pi (1 - \pi)} \left( \expec{X_2}{D = 1} - \expec{X_2} \right)
   $$
@@ -426,7 +452,7 @@
 \begin{frame}{Selection Bias}
   \vspace*{-\bigskipamount}
   $$
-    \delta_1 = \beta_1 + \frac{\beta_2}{\pi (1 - \pi)} \expec{X_2 - \expec{X_2}}{D = 1}
+    \delta_1 = \beta_1 + \frac{\beta_2}{\pi (1 - \pi)} \left( \expec{X_2}{D = 1} - \expec{X_2} \right)
   $$
 
   \bigskip
@@ -495,10 +521,10 @@
   \pause 
   If we assume that the CEF $\expec{y_i}{X_i} = X_i' \beta$, then we can go further and say 
   $$
-    \expec{\hat{\varepsilon}_i}{X_i} = 0
+    \expec{\hat{\varepsilon}_i}{X_i = x} = 0
   $$
   \begin{itemize}
-    \item the remaining variation in $y_i$, given by $\hat{\varepsilon}_i$, is unpredictable given $X$
+    \item the remaining variation in $y_i$, given by $\hat{\varepsilon}_i$, is unpredictable given $X_i$
   \end{itemize}
 \end{frame}
 
@@ -528,7 +554,10 @@
   \pause
   The estimate $\hat{\tau}_{\texttt{FWL}}$ is going to be \emph{numerically identical} to $\hat{\tau}_{\texttt{OLS}}$.
   \begin{itemize}
-    \item Up to degree-of-freedom correction, the standard errors will be identical as well (the FWL regression pretends we didn't estimate the $K$ coefficients on $W_i$)
+    \item Up to degree-of-freedom correction, the standard errors will be identical as well (including robust and clustered standard errors)
+    \begin{itemize}
+      \item The final regression pretends we didn't estimate the $K$ coefficients on $W_i$
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -545,10 +574,19 @@
 \end{frame}
 
 \begin{frame}{Example of Frisch-Waugh-Lovell Thinking}
-  Say $D_i$ is an indicator for a person going to college and $y_i$ is the worker's earnings at age 25. $W_i$ is a vector of covariates we think are important determinents of college attendance and/or earnings
+  We want to know the causal effect of college on earnings
   \begin{itemize}
-    \item We want to know the causal effect of college on earnings
+    \item $D_i$ is an indicator for a person going to college
+    
+    \item $y_i$ is the worker's earnings at age 25
+    
+    \item $W_i$ is a vector of covariates we think are important determinents of college attendance and/or earnings
   \end{itemize}
+
+  Run this regression:
+  $$
+    y_i = \tau D_i + W_i' \beta + u_i
+  $$
 
 \end{frame}
 
@@ -564,7 +602,15 @@
   It is important therefore to know a lot about your subject and know what causes treatment uptake $D_i$
 \end{frame}
 
+\begin{frame}{Example of Frisch-Waugh-Lovell Thinking}{College attendance}
+  Like with omitted variable bias, this is a story of what variables did we not include. In our college attendance example, say $W_i$ is parental income and GPA. 
+  \begin{itemize}
+    \item Both are important drivers of college attendance, but not the only ones
+  \end{itemize}
 
+  \bigskip
+  What are examples of other variables that can drive attendance?
+\end{frame}
 
 
 
@@ -573,25 +619,47 @@
 \begin{frame}{Partially linear model}
   The \alert{Partially linear model} mixes high model flexibility in a key variable we care about and linear model for the rest of the covariates:
   $$
-    y_i = f(X_i) + W_i' \beta + u_i
+    y_i = \mu(X_i) + W_i' \beta + u_i
   $$
   \begin{itemize}
-    \item $f(X_i)$ is a highly flexible function
-    \item $W_i' \beta$ is a set of linear control variables
+    \item $\mu(X_i)$ is a highly flexible function
+    \item $W_i'$ is a set of \emph{linear} control variables
   \end{itemize}
 
   \bigskip
-  The key advantage is you can control for important factors $W_i$ and still present a bivariate scatter plot that summarizes the (conditional) relationship between $X$ and $y$
+  This allows you to prevent the curse of dimensionality by linearly controlling for most of the variables. Allows a flexible model for the key variable of interest, $X_i$, that is good for graphing
 \end{frame}
 
-\begin{frame}{Visual Display of Variation}
-
+\begin{frame}{Partially linear model}
+  $$
+    y_i = \mu(X_i) + W_i' \beta + u_i
+  $$
+  One recent way of estimating this is using a `binscatter' regression 
+  \begin{itemize}
+    \item Raj Chetty and coauthors use this method a lot since they have too many observations for normal scatterplots
+  \end{itemize}
 \end{frame}
 
+\begin{frame}{Binscatter Regression}
+  $$
+    y_i = \mu(X_i) + W_i' \beta + u_i
+  $$
+  One recent way of estimating this is using a `binscatter' regression:
+  \begin{enumerate}
+    \item Chop $X$ variable into $J$ bins with an equal number of observations into each bin
+    
+    \item Fit some polynomial of $X$ just within each bin (interact $X$ polynomial with bin indicators)
+  \end{enumerate}
+\end{frame}
+
+\imageframe{figures/ex_binsreg_raw.pdf}
+\imageframe{figures/ex_binsreg_split_into_bins.pdf}
+\imageframe{figures/ex_binsreg_bins.pdf}
+\imageframe{figures/ex_binsreg_bins_add_linear.pdf}
+\imageframe{figures/ex_binsreg_bins_add_smooth.pdf}
 
 
-
-\section{Binary Outcome Variable}
+% \section{Binary Outcome Variable}
 
 
 
