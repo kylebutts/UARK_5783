@@ -27,20 +27,26 @@ colors <- c(
 )
 
 # %%
-parcels <- open_dataset("/Users/kylebutts/Library/CloudStorage/Dropbox/Zoning-and-Housing-Supply/data/base/MA-parcels_panel_geocoded.parquet")
+# set.seed(20240904)
+# parcels <- open_dataset("/Users/kylebutts/Library/CloudStorage/Dropbox/Zoning-and-Housing-Supply/data/base/MA-parcels_panel_geocoded.parquet")
+#
+# sample <- parcels |>
+#   filter(between(year_built, 1900, 2023)) |>
+#   filter(total_value < 2e6) |>
+#   filter(between(use_code, 101, 110)) |>
+#   select(latitude, longitude, year_built, total_value, lot_size_acres, n_rooms) |>
+#   collect() |>
+#   slice_sample(n = 100000)
+#
+# write_parquet(sample, here("Slides/02_Regression/data/MA_parcels_sample.parquet"))
 
-sample <- parcels |>
-  filter(between(year_built, 1900, 2023)) |>
-  filter(total_value < 2e6) |>
-  filter(between(use_code, 101, 110)) |>
-  _[1:1000000, ] |>
-  collect() |>
-  slice_sample(n = 100000)
+# %%
+parcels <- read_parquet(here("Slides/02_Regression/data/MA_parcels_sample.parquet"))
 
 # %%
 opt_binsreg <- binsregselect(
-  y = sample$total_value,
-  x = sample$year_built
+  y = parcels$total_value,
+  x = parcels$year_built
 )
 
 # %%
@@ -82,19 +88,19 @@ predictions <- create_predict_grid(knots, n_pts = 30) |>
 
 est <- feols(
   total_value ~ 0 + bins(year_built, p = 0, s = 0, n_bins = Jopt),
-  data = sample
+  data = parcels
 )
 predictions$y_hat <- predict(est, newdata = predictions)
 
 est_p_1_s_0 <- feols(
   total_value ~ 0 + bins(year_built, p = 1, s = 0, n_bins = Jopt),
-  data = sample
+  data = parcels
 )
 predictions$y_hat_p_1_s_0 <- predict(est_p_1_s_0, newdata = predictions)
 
 est_p_2_s_2 <- feols(
   total_value ~ 0 + bins(year_built, p = 2, s = 2, n_bins = Jopt),
-  data = sample
+  data = parcels
 )
 predictions$y_hat_p_2_s_2 <- predict(est_p_2_s_2, newdata = predictions)
 
@@ -102,9 +108,9 @@ predictions$y_hat_p_2_s_2 <- predict(est_p_2_s_2, newdata = predictions)
 (p_raw <- ggplot() +
   geom_point(
     aes(x = year_built, y = total_value),
-    data = sample |> slice_sample(n = 5000),
+    data = parcels |> slice_sample(n = 5000),
     alpha = 0.1, shape = 20
-    # data = sample,
+    # data = parcels,
     # alpha = 0.05, shape = 20
   ) +
   labs(x = "Year Built", y = "Value of Property (\\$100K)") +
