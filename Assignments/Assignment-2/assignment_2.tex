@@ -1,0 +1,72 @@
+\documentclass[12pt]{article}
+\usepackage{../../lecture_notes}
+\usepackage{../../math}
+\usepackage{../../uark_colors}
+
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\begin{document}
+\begin{center}
+  {\Huge\bf Assignment \#2}
+  
+  \smallskip
+  {\large\it  ECON 5783 — University of Arkansas}
+
+  \medskip
+  {\large Prof. Kyle Butts}
+\end{center}
+
+These assignments should be completed in groups of 1 or 2 but submitted individually. My preference is for you to use Rmarkdown files to have your code, results, and your answers to the questions intermixed. Since I am not requiring you to code in R for these assignments, you can use latex or microsoft word to write up answers alternatively. Not that in these cases, I would like you to upload your code seperately. 
+
+\section*{Theoretical Questions}
+
+\begin{enumerate}
+  \item Define the following conditional expectation function: $$
+    p(n) \equiv \expec{\text{Home Value}_i}{\text{Num Rooms}_i = n},
+  $$
+  where $i$ denotes a given home in Massachusetts. 
+  \begin{enumerate}
+    \item In words, describe how to think about $p(2)$.
+    
+    \item Say you have a sample of parcels, how would you go about estimating $p(n)$? How would you estimate this in a regression?
+    
+    \item How does the ``fully-flexible'' conditional expecation function differ from a linear regression model where $\text{Home Value}_i = \text{Num Rooms}_i \beta + u_i$?
+    
+    \item Why might we not believe that $p(3) - p(2)$ be the causal effect of increasing from 4 to 5 rooms on homeprice?
+  \end{enumerate}
+
+  \item Now let's think about a more complicated conditional expectation of worker's wages as a function of sex (M/F) and having a college-degree (0/1):
+  $$
+    w(g, d) \equiv \expec{\text{Wages}_i}{\text{Gender}_i = g, \text{College Degree}_i = 1}
+  $$
+  \begin{enumerate}
+    \item Say I include a set of indicator variables for gender and for whether or not the worker has a college degree in a regression. Describe a scenario where this regression model is not the conditional expecation function (hint: think about interactions).
+  \end{enumerate}
+\end{enumerate}
+
+
+
+\section*{Coding Exercise}
+
+This exercise involves a sample dataset of homes in Massachussets. A randomly selected sample of the dataset appears in this folder \texttt{data/MA\_parcels\_sample.parquet}. You can open this dataset using \texttt{arrow::read\_parquet("data/MA\_parcels\_sample.parquet")} after installing the arrow package in R. 
+
+\begin{enumerate}
+  \item Estimate the conditional expecation function from the theoretical question using regression (the \texttt{i} function from the \texttt{fixest} package will help you): $$
+    p(n) \equiv \expec{\text{Home Value}_i}{\text{Num Rooms}_i = n}.
+  $$
+  What is the predicted change in home price from going from 4 to 5 rooms?
+
+  \item Now estimate a linear regression of Home Value on the number of rooms. What is the predicted change in home price from going from 4 to 5 rooms? How does it differ from part (i)
+  
+  \item Now I want to use binscatter regression to estimate the relationship between the lot size of the home to the total value controlling (linearly) for the number of rooms. Use the \texttt{binsreg} package to do this. Use the setting \texttt{line = c(0, 0)} and \texttt{line = c(2, 2)}. 
+  
+  \item Do you think this is the causal effect of lot size on home value? Why or why not?
+\end{enumerate}
+
+
+\end{document}
