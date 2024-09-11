@@ -27,18 +27,20 @@ colors <- c(
 )
 
 # %%
-# set.seed(20240904)
-# parcels <- open_dataset("/Users/kylebutts/Library/CloudStorage/Dropbox/Zoning-and-Housing-Supply/data/base/MA-parcels_panel_geocoded.parquet")
-#
-# sample <- parcels |>
-#   filter(between(year_built, 1900, 2023)) |>
-#   filter(total_value < 2e6) |>
-#   filter(between(use_code, 101, 110)) |>
-#   select(latitude, longitude, year_built, total_value, lot_size_acres, n_rooms) |>
-#   collect() |>
-#   slice_sample(n = 100000)
-#
-# write_parquet(sample, here("Slides/02_Regression/data/MA_parcels_sample.parquet"))
+set.seed(20240904)
+parcels <- open_dataset("/Users/kylebutts/Library/CloudStorage/Dropbox/Zoning-and-Housing-Supply/data/base/MA-parcels_panel_geocoded.parquet")
+
+sample <- parcels |>
+  filter(between(year_built, 1900, 2023)) |>
+  filter(total_value < 2e6) |>
+  filter(between(use_code, 101, 110)) |>
+  filter(between(n_rooms, 3, 8)) |>
+  filter(between(lot_size_acres, 0.05, 4)) |>
+  select(latitude, longitude, year_built, total_value, lot_size_acres, n_rooms) |>
+  collect() |>
+  slice_sample(n = 100000)
+
+write_parquet(sample, here("Slides/02_Regression/data/MA_parcels_sample.parquet"))
 
 # %%
 parcels <- read_parquet(here("Slides/02_Regression/data/MA_parcels_sample.parquet"))

@@ -440,19 +440,19 @@
     \cov{D, X_2} 
     &= \expec{ (D - \expec{D}) (X_2 - \expec{X_2})} \\
     &= \expec{D (X_2 - \expec{X_2})} \\
-    &= \expec{X_2}{D = 1} - \expec{X_2}
+    &= \pi \expec{X_2}{D = 1} - \pi \expec{X_2}
   \end{align*}
 
   Let $\pi = \prob{D = 1}$ and note from definition, $\var{D} = \pi (1 - \pi)$. Then,
   $$
-    \delta_1 = \beta_1 + \frac{\beta_2}{\pi (1 - \pi)} \left( \expec{X_2}{D = 1} - \expec{X_2} \right)
+    \delta_1 = \beta_1 + \frac{\beta_2}{(1 - \pi)} \left( \expec{X_2}{D = 1} - \expec{X_2} \right)
   $$
 \end{frame}
 
 \begin{frame}{Selection Bias}
   \vspace*{-\bigskipamount}
   $$
-    \delta_1 = \beta_1 + \frac{\beta_2}{\pi (1 - \pi)} \left( \expec{X_2}{D = 1} - \expec{X_2} \right)
+    \delta_1 = \beta_1 + \frac{\beta_2}{(1 - \pi)} \left( \expec{X_2}{D = 1} - \expec{X_2} \right)
   $$
 
   \bigskip
