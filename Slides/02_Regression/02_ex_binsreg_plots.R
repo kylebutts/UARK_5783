@@ -31,7 +31,7 @@ set.seed(20240904)
 parcels <- open_dataset("/Users/kylebutts/Library/CloudStorage/Dropbox/Zoning-and-Housing-Supply/data/base/MA-parcels_panel_geocoded.parquet")
 
 sample <- parcels |>
-  filter(between(year_built, 1900, 2023)) |>
+  filter(between(year_built, 1901, 2023)) |>
   filter(total_value < 2e6) |>
   filter(between(use_code, 101, 110)) |>
   filter(between(n_rooms, 3, 8)) |>
@@ -46,6 +46,12 @@ write_parquet(sample, here("Slides/02_Regression/data/MA_parcels_sample.parquet"
 parcels <- read_parquet(here("Slides/02_Regression/data/MA_parcels_sample.parquet"))
 
 # %%
+tictoc::tic("binsreg")
+binsreg_est <- binsreg(
+  y = parcels$total_value,
+  x = parcels$year_built
+)
+tictoc::toc()
 opt_binsreg <- binsregselect(
   y = parcels$total_value,
   x = parcels$year_built
@@ -80,7 +86,6 @@ create_predict_grid <- function(knots, n_pts = 5) {
   return(grid)
 }
 
-
 knots <- opt_binsreg$knot
 Jopt <- length(knots) - 1
 
@@ -88,11 +93,13 @@ Jopt <- length(knots) - 1
 predictions <- create_predict_grid(knots, n_pts = 30) |>
   rename(year_built = x)
 
+tictoc::tic("fixest")
 est <- feols(
   total_value ~ 0 + bins(year_built, p = 0, s = 0, n_bins = Jopt),
   data = parcels
 )
 predictions$y_hat <- predict(est, newdata = predictions)
+tictoc::toc()
 
 est_p_1_s_0 <- feols(
   total_value ~ 0 + bins(year_built, p = 1, s = 0, n_bins = Jopt),
@@ -162,6 +169,15 @@ predictions$y_hat_p_2_s_2 <- predict(est_p_2_s_2, newdata = predictions)
   ))
 
 # %%
+(p_just_smooth <- p_raw +
+  geom_line(
+    aes(x = year_built, y = y_hat_p_2_s_2, group = bin_id),
+    data = predictions,
+    color = colors["red_pink"],
+    linewidth = 2.2
+  ))
+
+# %%
 kfbmisc::tikzsave(
   here::here("Slides/02_Regression/figures/ex_binsreg_raw.pdf"),
   plot = p_raw, width = 8, height = 4.2
@@ -181,4 +197,16 @@ kfbmisc::tikzsave(
 kfbmisc::tikzsave(
   here::here("Slides/02_Regression/figures/ex_binsreg_bins_add_smooth.pdf"),
   plot = p_bins_add_smooth, width = 8, height = 4.2
+)
+kfbmisc::tikzsave(
+  here::here("Slides/02_Regression/figures/ex_binsreg_just_smooth.pdf"),
+  plot = p_just_smooth, width = 8, height = 4.2
+)
+
+# %%
+library(patchwork)
+p_comparison <- p_raw + p_just_smooth
+kfbmisc::tikzsave(
+  here::here("Slides/02_Regression/figures/ex_binsreg_comparison.pdf"),
+  plot = p_comparison, width = 8, height = 4.2
 )

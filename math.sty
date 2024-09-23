@@ -66,9 +66,9 @@
     \operatorname{\mathbb{E}}\IfValueT{#1}{_{#1}}%
   }{%
     \IfNoValueTF{#3}{%
-      \,\mathbb{E}\IfValueT{#1}{_{#1}}{\bp{#2}}
+      \,\mathbb{E}\IfValueT{#1}{_{#1}}{\bs{#2}}
     }{%
-      \,\mathbb{E}\IfValueT{#1}{_{#1}}{ \left( #2 \ |\ #3 \right)}
+      \,\mathbb{E}\IfValueT{#1}{_{#1}}{ \bs{#2 \ |\ #3}}
     }
   }
 }
@@ -77,9 +77,9 @@
     \operatorname{\mathbb{E}}\IfValueT{#1}{_{#1}}%
   }{%
     \IfNoValueTF{#3}{%
-      \,\mathbb{E}\IfValueT{#1}{_{#1}}{\bp{#2}}
+      \,\mathbb{E}\IfValueT{#1}{_{#1}}{\bs{#2}}
     }{%
-      \,\mathbb{E}\IfValueT{#1}{_{#1}}{ \left( #2 \ |\ #3 \right)}
+      \,\mathbb{E}\IfValueT{#1}{_{#1}}{ \bs{#2 \ |\ #3}}
     }
   }
 }
@@ -88,9 +88,9 @@
     \operatorname{\hat{\mathbb{E}}}\IfValueT{#1}{_{#1}}%
   }{%
     \IfNoValueTF{#3}{%
-      \,\hat{\mathbb{E}}\IfValueT{#1}{_{#1}}{\bp{#2}}
+      \,\hat{\mathbb{E}}\IfValueT{#1}{_{#1}}{\bs{#2}}
     }{%
-      \,\hat{\mathbb{E}}\IfValueT{#1}{_{#1}}{ \left( #2 \ |\ #3 \right)}
+      \,\hat{\mathbb{E}}\IfValueT{#1}{_{#1}}{ \bs{#2 \ |\ #3}}
     }
   }
 }
@@ -122,12 +122,12 @@
 % Variance
 \NewDocumentCommand{\var}{o g g}{%
   \IfNoValueTF{#2}{%
-    \operatorname{\operatorname{var}}\IfValueT{#1}{_{#1}}%
+    \operatorname{\text{Var}}\IfValueT{#1}{_{#1}}%
   }{%
     \IfNoValueTF{#3}{%
-      \,\operatorname{var}\IfValueT{#1}{_{#1}}{\bp{#2}}
+      \,\operatorname{\text{Var}}\IfValueT{#1}{_{#1}}{\bp{#2}}
     }{%
-      \,\operatorname{var}\IfValueT{#1}{_{#1}}{ \left( #2 \ |\ #3 \right)}
+      \,\operatorname{\text{Var}}\IfValueT{#1}{_{#1}}{ \left( #2 \ |\ #3 \right)}
     }
   }
 }
@@ -135,12 +135,12 @@
 % Covariance
 \NewDocumentCommand{\cov}{o g g}{%
   \IfNoValueTF{#2}{%
-    \operatorname{\operatorname{cov}}\IfValueT{#1}{_{#1}}%
+    \operatorname{\text{Cov}}\IfValueT{#1}{_{#1}}%
   }{%
     \IfNoValueTF{#3}{%
-      \,\operatorname{cov}\IfValueT{#1}{_{#1}}{\bp{#2}}
+      \,\operatorname{\text{Cov}}\IfValueT{#1}{_{#1}}{\bp{#2}}
     }{%
-      \,\operatorname{cov}\IfValueT{#1}{_{#1}}{ \left( #2 \ |\ #3 \right)}
+      \,\operatorname{\text{Cov}}\IfValueT{#1}{_{#1}}{ \left( #2 \ |\ #3 \right)}
     }
   }
 }
