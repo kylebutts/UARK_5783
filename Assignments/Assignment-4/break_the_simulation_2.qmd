@@ -1,0 +1,238 @@
+---
+title: "Break the Simulation 1"
+author: "Your Name"
+format: pdf
+---
+```{r setup}
+#| include: false
+library(fixest)
+library(assertthat)
+library(ggplot2)
+library(purrr)
+```
+
+# Break the Simulation #2
+
+## Original Simulation
+
+```{r}
+# This is the original code and should not be changed
+dgp_clean <- function(true_te = 10) {
+  n <- 100
+  x <- runif(n = n, -5, 5)
+
+  # generate propensity score (following logit equation)
+  pi <- 1 / (1 + exp(-1 * (0 + 0.25 * x)))
+
+  # generate treatment according to propensity score
+  d <- as.numeric(runif(n = n, 0, 1) < pi)
+
+  # generate observed Y
+  u <- rnorm(n = n, mean = 0, sd = 2)
+  y <- d * true_te + x * 2 + u
+
+  # return as data.framt
+  df <- data.frame(
+    x = x, treat = d, y = y
+  )
+  return(df)
+}
+
+check_df <- function(df) { 
+  # Assertions to make sure you modifications are not going to break this
+  df_has_correct_columns <- all(c("treat", "y") %in% colnames(df))
+  assert_that(df_has_correct_columns, msg = "`df` must contain the columns `treat` and `y`.")
+  
+  is_treatment_dummy <- all(c(0, 1) %in% unique(df$treat))
+  assert_that(is_treatment_dummy, msg = "`df$d` must be a 0/1 treatment indicator variable.")
+}
+
+estimate_diff_in_means <- function(df) { 
+  check_df(df)
+
+  # difference-in-means estimator
+  est <- feols(
+    y ~ 1 + i(treat, ref = 0), data = df
+  )
+  coef(est)["treat::1"]
+}
+```
+
+```{r estimators}
+# estimate regression adjustment
+estimate_regadj <- function(df) { 
+  est_y0 <- feols(
+    y ~ 1 + x,
+    data = subset(df, treat == 0)
+  )
+  est_y1 <- feols(
+    y ~ 1 + x,
+    data = subset(df, treat == 1)
+  )
+  y0_hat <- predict(est_y0, newdata = df)
+  y1_hat <- predict(est_y1, newdata = df)
+  tau_hat <- mean(y1_hat) - mean(y0_hat)
+  return(tau_hat)
+}
+
+# estimate iptw
+estimate_iptw <- function(df, type = "hajek") {
+  est_propensity <- feglm(
+    treat ~ 1 + x,
+    data = df, family = "logit"
+  )
+  pi_hat <- predict(est_propensity, newdata = df)
+  D <- df$treat
+  y <- df$y
+  w_1 <- D / pi_hat
+  w_0 <- (1 - D) / (1 - pi_hat)
+
+  if (type == "hajek") {
+    w_1 <- w_1 / mean(w_1)
+    w_0 <- w_0 / mean(w_0)
+  }
+
+  tau_hat <- mean(w_1 * y) - mean(w_0 * y)
+  return(tau_hat)
+}
+
+# doubly-robust estimator
+estimate_aiptw <- function(df, type = "hajek") {
+  est_y0 <- feols(
+    y ~ 1 + x,
+    data = subset(df, treat == 0)
+  )
+  est_y1 <- feols(
+    y ~ 1 + x,
+    data = subset(df, treat == 1)
+  )
+  est_propensity <- feglm(
+    treat ~ 1 + x,
+    data = df, family = "logit"
+  )
+  
+  y0_hat <- predict(est_y0, newdata = df)
+  y1_hat <- predict(est_y1, newdata = df)
+  pi_hat <- predict(est_propensity, newdata = df)
+  D <- df$treat
+  y <- df$y
+  
+  w_1 <- D / pi_hat
+  w_0 <- (1 - D) / (1 - pi_hat)
+
+  if (type == "hajek") {
+    w_1 <- w_1 / mean(w_1)
+    w_0 <- w_0 / mean(w_0)
+  }
+
+  tau_hat <- (mean(y1_hat) - mean(y0_hat)) + 
+    (mean((w_1 * (y - y1_hat))[D == 1]) - mean((w_0 * (y - y0_hat))[D == 0]))
+  return(tau_hat)
+}
+```
+
+## Simulation using clean dgp
+
+```{r mc_dgp_clean}
+true_te <- 10
+
+# This is what the monte carlo simulation looks when the dgp satisfies the assumptions of the difference-in-means estimator:
+set.seed(20240917)
+
+iter_i <- function(i) {
+  df <- dgp_clean(true_te = true_te)
+  tau_hat_dim <- estimate_diff_in_means(df)
+  tau_hat_ra <- estimate_regadj(df)
+  tau_hat_iptw <- estimate_iptw(df)
+  
+  estimates <- data.frame(iter = i, tau_hat_dim = tau_hat_dim, tau_hat_ra = tau_hat_ra, tau_hat_iptw = tau_hat_iptw)
+}
+mc_dgp_clean <- purrr::list_rbind(purrr::map(1:500, iter_i))
+
+ggplot(data = mc_dgp_clean) + 
+  geom_density(
+    aes(x = tau_hat_dim, color = "Difference-in-means"),
+    linewidth = 2
+  ) +
+  geom_density(
+    aes(x = tau_hat_ra, color = "Regression Adjustment"),
+    linewidth = 2
+  ) +
+  geom_density(
+    aes(x = tau_hat_iptw, color = "IPTW Estimator"),
+    linewidth = 2
+  ) +
+  scale_color_manual(values = c("#B3114B", "#2DB25F", "#ffc517")) + 
+  geom_vline(xintercept = true_te, linetype = "dashed") + 
+  labs(
+    title = "DGP: `dgp_clean`",
+    x = "Difference-in-means Estimate", y = "Count"
+  ) +
+  theme_bw(base_size = 12) 
+```
+
+
+## Question 1
+
+This is the *only* code block that you should modify!
+
+```{r}
+dgp_broken <- function(true_te = 10) {
+  n <- 100
+  x <- runif(n = n, -5, 5)
+
+  # generate propensity score (following logit equation)
+  pi <- 1 / (1 + exp(-1 * (0 + 0.25 * x)))
+
+  # generate treatment according to propensity score
+  d <- as.numeric(runif(n = n, 0, 1) < pi)
+
+  # generate observed Y
+  u <- rnorm(n = n, mean = 0, sd = 2)
+  y <- d * true_te + x * 2 + u
+
+  # return as data.framt
+  df <- data.frame(
+    x = x, treat = d, y = y
+  )
+  return(df)
+}
+```
+
+```{r mc_dgp_broken}
+true_te <- 10
+set.seed(20240917)
+
+iter_i <- function(i) {
+  df <- dgp_broken(true_te = true_te)
+  tau_hat_dim <- estimate_diff_in_means(df)
+  tau_hat_ra <- estimate_regadj(df)
+  tau_hat_iptw <- estimate_iptw(df)
+  
+  estimates <- data.frame(iter = i, tau_hat_dim = tau_hat_dim, tau_hat_ra = tau_hat_ra, tau_hat_iptw = tau_hat_iptw)
+}
+mc_dgp_broken <- purrr::list_rbind(purrr::map(1:500, iter_i))
+
+
+ggplot(data = mc_dgp_broken) + 
+  geom_density(
+    aes(x = tau_hat_dim, color = "Difference-in-means"),
+    linewidth = 2
+  ) +
+  geom_density(
+    aes(x = tau_hat_ra, color = "Regression Adjustment"),
+    linewidth = 2
+  ) +
+  geom_density(
+    aes(x = tau_hat_iptw, color = "IPTW Estimator"),
+    linewidth = 2
+  ) +
+  scale_color_manual(values = c("#B3114B", "#2DB25F", "#ffc517")) + 
+  geom_vline(xintercept = true_te, linetype = "dashed") + 
+  labs(
+    title = "DGP: `dgp_clean`",
+    x = "Difference-in-means Estimate", y = "Count"
+  ) +
+  theme_bw(base_size = 12) 
+```
+

@@ -1,0 +1,38 @@
+\documentclass[12pt]{article}
+\usepackage{../../lecture_notes}
+\usepackage{../../math}
+\usepackage{../../uark_colors}
+
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\begin{document}
+\begin{center}
+  {\Huge\bf Assignment \#3}
+  
+  \smallskip
+  {\large\it  ECON 5783 — University of Arkansas}
+
+  \medskip
+  {\large Prof. Kyle Butts}
+\end{center}
+
+These assignments should be completed in groups of 1 or 2 but submitted individually. My preference is for you to use Rmarkdown files to have your code, results, and your answers to the questions intermixed. Since I am not requiring you to code in R for these assignments, you can use latex or microsoft word to write up answers alternatively. Not that in these cases, I would like you to upload your code seperately. 
+
+\section*{Coding Exercise}
+
+This assignment serves as an introduction to Monte-Carlo simulations and will assess your understanding of causal assumptions needed in different methods (today's is difference-in-means). Monte-Carlo simulations are a common strategy to assess the performance of estimators. The main idea is that you generate a dataset that either does or does not satisfy the underlying assumptions of a method and assess how the estimator does. 
+
+We will generate the data that satisfies the conditional indepedence assumption, so that any of the estimators we have studied could possibly work. 
+
+In the file \texttt{break\_the\_simulation\_2.qmd}, there is a complete example of a monte carlo simulation. Your task is to break the regression adjustment estimator *without* breaking the IPTW estimator. 
+
+
+After doing so, describe what you did in the \texttt{\#\# Describe your thinking} section.
+
+
+\end{document}
