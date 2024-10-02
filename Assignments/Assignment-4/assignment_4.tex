@@ -12,7 +12,7 @@
 
 \begin{document}
 \begin{center}
-  {\Huge\bf Assignment \#3}
+  {\Huge\bf Assignment \#4}
   
   \smallskip
   {\large\it  ECON 5783 — University of Arkansas}
@@ -23,16 +23,101 @@
 
 These assignments should be completed in groups of 1 or 2 but submitted individually. My preference is for you to use Rmarkdown files to have your code, results, and your answers to the questions intermixed. Since I am not requiring you to code in R for these assignments, you can use latex or microsoft word to write up answers alternatively. Not that in these cases, I would like you to upload your code seperately. 
 
+
+\section*{Theoretical Questions}
+
+\begin{enumerate}
+  \item Say you believe that conditional on age, treatment is randomly assigned $(Y_i(1), Y_i(0)) \Perp D_i \ |\ \text{Age}_i$. 
+  \begin{enumerate}
+    \item How would you estimate the conditional average treatment effect for 30 year olds?
+    
+    \item Say you repeat this for all the ages in your sample (say 25-55 years old). How would you aggregate these to the overall average treatment effect?
+  \end{enumerate}
+
+  \item For the following 3 examples, tell me if you believe the conditional independence assumption. If you do not, try to `tell me a story' of selection bias (i.e. give an example of some unobservable confounder).
+  \begin{enumerate}
+    \item A researcher is trying to estimate the returns to taking an online coding class. Since they are concerned about selection into treatment, they condition on having a college degree (a proxy for `motivation').
+ 
+    \item A researcher wants to estimate the effect of new apartment construction on home prices. They think that conditional on a neighborhood's average income, which neighborhoods get a new apartment is randomly assigned.
+    
+    \item A researcher wants to estimate the impact of smoking on later life health outcomes. They are concerned smoking is correlated with other risky behavior, so you want to match individuals based on their average amount of weekly drinking.
+  \end{enumerate}
+\end{enumerate}
+
+
 \section*{Coding Exercise}
 
-This assignment serves as an introduction to Monte-Carlo simulations and will assess your understanding of causal assumptions needed in different methods (today's is difference-in-means). Monte-Carlo simulations are a common strategy to assess the performance of estimators. The main idea is that you generate a dataset that either does or does not satisfy the underlying assumptions of a method and assess how the estimator does. 
-
-We will generate the data that satisfies the conditional indepedence assumption, so that any of the estimators we have studied could possibly work. 
-
-In the file \texttt{break\_the\_simulation\_2.qmd}, there is a complete example of a monte carlo simulation. Your task is to break the regression adjustment estimator *without* breaking the IPTW estimator. 
+We are going to try using some conditional independence estimators today. We will use the Almond, Chay, Lee (2005, QJE) dataset thinking about mother's smoking on child's birthweight (you can use \texttt{haven::read\_dta} to open \texttt{data/almond\_chay\_lee.dta}.). The variables are listed below. Our outcome is \texttt{bweight} and treatment is \texttt{mbsmoke}. A complete codebook is at the end of this document
 
 
-After doing so, describe what you did in the \texttt{\#\# Describe your thinking} section.
+
+
+
+\begin{enumerate}
+  \item Let's try to make an argument that the unconditional independence assumption is not valid. To do so, let's conduct a balance check. You can follow the steps of the `Check Initial Imbalance' section of \url{https://kosukeimai.github.io/MatchIt/articles/MatchIt.html#check-initial-imbalance} conduct a balance check using some important covariates (pick a few) to see if treatment is correlated with these variables. Report your findings.
+  
+  \item Now let's try to perform a matching estimator. To do so, you will use the \texttt{MatchIt} package. Use the \texttt{matchit()} function to perform nearest neighbor matching. Let's match exactly on \texttt{mmaried}, \texttt{mhisp}, and \texttt{alcohol}. Let's nearest neighbor match for \texttt{mage} and \texttt{medu}. 
+  
+  Then, get the matched dataset using \texttt{match.data()} on the result of \texttt{matchit()}. With the matched dataset, estimate the difference-in-means estimator. Interpret your estimate in words
+
+
+  \item Now let's estimate a regression adjustment by hand. Use the same varaibles as before: \texttt{mmaried}, \texttt{mhisp}, \texttt{alcohol}, \texttt{mage}, and \texttt{medu}.
+  
+  
+  \item Last, we will estimate the IPTW esitmator using the \texttt{WeightIt} package. Use \texttt{weightit()} to estimate propensity scores.
+  
+  \begin{enumerate}
+    \item Check for balance after weighting by the estimate propensity score using the \texttt{bal.tab()} function. Comment on the results.
+    
+    \item Using \texttt{lm\_weightit()} function to estimate the IPW estimator using the results from \texttt{weightit()}. See the first example in the help menu of \texttt{lm\_weightit()} for details.
+  \end{enumerate}
+\end{enumerate}
+
+
+% \section*{Break the Simulation}
+% 
+% The file \texttt{break\_the\_simulation\_2.qmd} contains a monte carlo simulation testing out the selection on observables assumption. Compile the file and submit the resulting pdf document. 
+
+
+
+\begin{table}[!hb]
+	\renewcommand{\arraystretch}{1.2}
+  \centering
+  \caption{Almond, Chay, and Lee (2005) Dataset}
+  \begin{tabular}{@{\extracolsep{5pt}} ll @{}}
+    \toprule
+
+    \textbf{Variable} & \textbf{Description} \\
+
+    \midrule
+
+    \texttt{bweight} & infant birthweight (grams) \\
+    \texttt{mmarried} & 1 if mother married \\
+    \texttt{mhisp} & 1 if mother hispanic \\
+    \texttt{fhisp} & 1 if father hispanic \\
+    \texttt{foreign} & 1 if mother born abroad \\
+    \texttt{alcohol} & 1 if alcohol consumed during pregnancy \\
+    \texttt{deadkids} & previous births where newborn died \\
+    \texttt{mage} & mother's age \\
+    \texttt{medu} & mother's education attainment \\
+    \texttt{fage} & father's age \\
+    \texttt{fedu} & father's education attainment \\
+    \texttt{nprenatal} & number of prenatal care visits \\
+    \texttt{monthslb} & months since last birth \\
+    \texttt{order} & order of birth of the infant \\
+    \texttt{msmoke} & cigarettes smoked during pregnancy \\
+    \texttt{mbsmoke} & 1 if mother smoked \\
+    \texttt{mrace} & 1 if mother is white \\
+    \texttt{frace} & 1 if father is white \\
+    \texttt{prenatal} & trimester of first prenatal care visit \\
+    \texttt{birthmonth} & month of birth \\
+    \texttt{lbweight} & 1 if low birthweight baby \\
+    \texttt{fbaby} & 1 if first baby \\
+    \texttt{prenatal1} & 1 if first prenatal visit in 1 trimester \\
+    
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 
 \end{document}

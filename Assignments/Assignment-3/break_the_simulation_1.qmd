@@ -1,0 +1,155 @@
+---
+title: "Break the Simulation 1"
+author: "Your Name"
+format: pdf
+---
+```{r setup}
+#| include: false
+library(fixest)
+library(assertthat)
+library(ggplot2)
+```
+
+# Break the Simulation #1
+
+## Describe your thinking
+
+In order to break the simulation, I ...
+
+
+## Original Simulation
+
+```{r}
+# This is the original code and should not be changed
+dgp_clean <- function(true_te = 10) {
+  n <- 100
+  x <- runif(n = n, 0, 10)
+
+  d <- as.numeric(runif(n = n, 0, 1) > 0.5)
+
+  u <- rnorm(n = n, mean = 0, sd = 2)
+
+  y <- d * true_te + x * 2 + u
+
+  df <- data.frame(
+    x = x, treat = d, y = y
+  )
+  return(df)
+}
+```
+
+```{r}
+check_df <- function(df) { 
+  # Assertions to make sure you modifications are not going to break this
+  df_has_correct_columns <- all(c("treat", "y") %in% colnames(df))
+  assert_that(df_has_correct_columns, msg = "`df` must contain the columns `treat` and `y`.")
+  
+  is_treatment_dummy <- all(c(0, 1) %in% unique(df$treat))
+  assert_that(is_treatment_dummy, msg = "`df$d` must be a 0/1 treatment indicator variable.")
+}
+
+estimate_diff_in_means <- function(df) { 
+  check_df(df)
+
+  # difference-in-means estimator
+  est <- feols(
+    y ~ 1 + i(treat, ref = 0), data = df
+  )
+  coef(est)["treat::1"]
+}
+```
+
+```{r mc_dgp_clean}
+true_te <- 10
+
+# This is what the monte carlo simulation looks when the dgp satisfies the assumptions of the difference-in-means estimator:
+set.seed(20240917)
+mc_dgp_clean <- purrr::map_dbl(1:1000, function(i) {
+  df <- dgp_clean(true_te = true_te)
+  estimate_diff_in_means(df)
+})
+
+ggplot() + 
+  geom_histogram(aes(x = mc_dgp_clean), fill = "#3b3b9a") +
+  geom_vline(xintercept = true_te, linetype = "dashed") + 
+  labs(
+    title = "DGP: `dgp_clean`",
+    x = "Difference-in-means Estimate", y = "Count"
+  ) +
+  theme_bw(base_size = 12) 
+```
+
+
+## Breaking the Simulation
+
+This is the *only* code block that you should modify!
+
+```{r}
+dgp_broken <- function(true_te = 10) {
+  n <- 100  
+
+  x <- runif(n = n, 0, 10)
+  
+  z <- runif(n = n, 0, 10)
+
+  d <- as.numeric(runif(n = n, 0, 1) > 0.5)
+
+  # r <- runif(n = n, 0, 1)
+  # cutoff <- 0.6 * (x > 5) + 0.4 * (x < 4)
+  # d <- as.numeric(r > cutoff)
+  # ^ P(D = 1 | X_i = x) != P(D = 1)
+
+  # d <- as.numeric(x > 5)
+
+  # u <- rnorm(n = n, mean = d, sd = 2)
+
+  u <- rnorm(n = n, mean = x, sd = 2)
+
+  y <- d * true_te + x * 2 + z * 3 + u * 1
+  df <- data.frame(
+    x = x, treat = d, y = y, u = u, z = z
+  )
+  return(df)
+}
+```
+
+```{r}
+#| include: FALSE
+# This code is here if you want to test your `dgp_broken`
+df <- dgp_broken(true_te = 10)
+check_df(df)
+estimate_diff_in_means(df)
+```
+
+```{r}
+etable(
+  feols(y ~ i(treat) + x, data = df),
+  feols(y ~ i(treat) + x + z, data = df)
+)
+
+```
+
+```{r mc_dgp_broken}
+true_te <- 10
+
+set.seed(20240917)
+mc_dgp_broken <- purrr::map_dbl(1:1000, function(i) {
+  df <- dgp_broken(true_te = true_te)
+  estimate_diff_in_means(df)
+})
+
+ggplot() + 
+  geom_histogram(aes(x = mc_dgp_broken), fill = "#20B2AA") +
+  geom_vline(xintercept = true_te, linetype = "dashed") + 
+  labs(
+    title = "DGP: `dgp_broken`",
+    x = "Difference-in-means Estimate", y = "Count"
+  ) +
+  theme_bw(base_size = 12) 
+```
+
+
+
+
+
+
