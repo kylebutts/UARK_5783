@@ -25,3 +25,7 @@ Textbooks/*
 *.nav
 *.snm
 *.*-SAVE-ERROR
+*.listing
+*.vrb
+
+Slides/03_Selection_on_Observables/extra_slides.*

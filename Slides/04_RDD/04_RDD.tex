@@ -148,6 +148,7 @@
   \end{itemize}
 \end{frame}
 
+\section{Formalizing RDD Identification Arguments}
 
 \begin{frame}{Formalizing RDD (Take 1)}{``Noisy'' running variable}
   Let's use a canonical example of students taking a test ($X_i$) and students above a certain cutoff, $c$, are treated (e.g. put in honor's class).
@@ -518,48 +519,119 @@ rdwinselect(
 
 \imageframe{figures/hansen_raw_avgs.pdf}
 
-\begin{frame}[fragile]{RDD by hand}{}
+\begin{frame}[fragile]{RDD by hand: Randomization-based estimation}
 	\begin{codeblock}
 feols(
-  recidivism ~ 1 + over_limit + bac1_centered + over_limit * bac1_centered,
-  data = subset(hansen, bac1 >= 0.08 - 0.04 & bac1 <= 0.08 + 0.04)
+  recidivism ~ 1 + over_limit,
+  data = subset(hansen, bac1 >= 0.07 & bac1 <= 0.09)
 )
 	\end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{RDD by hand: Randomization-based estimation}
+  \begin{codeblock}[{}]
+OLS estimation, Dep. Var.: recidivism
+Observations: 18,897
+Standard-errors: IID 
+                Estimate Std. Error  t value   Pr(>|t|)    
+(Intercept)     0.114784   0.003253 35.28149  < 2.2e-16 ***
+over_limitTRUE -0.017903   0.004472 -4.00349 6.2652e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  \end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{RDD by hand: Locally-linear estimation}
+  \vspace{-\bigskipamount}
+	\begin{codeblock}
+feols(
+  recidivism ~ 1 + over_limit + 
+    I(bac1 - 0.08) + I(bac1 - 0.08) * over_limit,
+  data = subset(hansen, bac1 >= 0.04 & bac1 <= 0.12)
+)
+	\end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{RDD by hand: Locally-linear estimation}
+  \begin{codeblock}[{}]
+OLS estimation, Dep. Var.: recidivism
+Observations: 72,880
+Standard-errors: IID 
+                                Estimate Std. Error  t value   Pr(>|t|)    
+(Intercept)                    0.113956   0.003718 30.65215  < 2.2e-16 ***
+over_limitTRUE                -0.020381   0.004694 -4.34212 1.4131e-05 ***
+I(bac1 - 0.08)                -0.312061   0.226113 -1.38011 1.6756e-01    
+over_limitTRUE:I(bac1 - 0.08)  0.707713   0.254253  2.78350 5.3790e-03 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  \end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{RDD plot using \texttt{rdplot} from \texttt{rdrobust}}{}
+	\begin{codeblock}
+library(rdrobust)
+rdplot(y = hansen$recidivism, x = hansen$bac1, c = 0.08, h = 0.4)
+	\end{codeblock}
+\end{frame}
+
+\imageframe{figures/hansen_rdplot_bw_0pt4.pdf}
+
+\begin{frame}[fragile]{RDD using \texttt{rdrobust}}{}
+  \begin{codeblock}
+est <- rdrobust(
+  y = hansen$recidivism, x = hansen$bac1, c = 0.08
+)
+summary(est)
+  \end{codeblock}
 \end{frame}
 
 \begin{frame}[fragile]{RDD using \texttt{rdrobust}}{}
-	\begin{codeblock}
-rdplot(y = hansen$recidivism, x = hansen$bac1, c = 0.08, h = bw)
-rdrobust(
-  y = hansen$recidivism, x = hansen$bac1, c = 0.08
-)
-	\end{codeblock}
+  \begin{codeblock}[{}]
+... Details ...
+
+=============================================================================
+        Method     Coef. Std. Err.         z     P>|z|      [ 95% C.I. ]       
+=============================================================================
+  Conventional    -0.018     0.006    -3.083     0.002    [-0.030 , -0.007]    
+        Robust         -         -    -2.452     0.014    [-0.031 , -0.003]    
+=============================================================================
+  \end{codeblock}
 \end{frame}
 
-\begin{frame}{Maniuplation of the running variable}{}
 
+\begin{frame}{Sorting based on the running variable}{}
+  As we discussed before, our main threat to the continuity assumption is that units are `sorting' onto either side of the cutoff based on their observable characteristics
+
+  There are two standard `gut checks' that folks will want to see
 \end{frame}
 
 \begin{frame}{Check 1: Balance}{}
+  First, if we have any `pre-determined' covariates, we want see that there are no jumps in the average of covariates at the cutoff
+  \begin{itemize}
+    \item Rerun RDD estimator using $X_i$ as the outcome variable. Test $\hat{\tau}_{\texttt{RD}}= 0$
+  \end{itemize}
 
+  \bigskip
+  Use covariates that you would likely see a jump in if there was sorting (e.g. a proxy for `motivation' for SAT example)
 \end{frame}
 
-\begin{frame}[fragile]{Balance Check By Hand}{}
-	\begin{codeblock}
-	\end{codeblock}
-\end{frame}
-
-\begin{frame}[fragile]{Balance Check using \texttt{rdrobust}}{}
-	\begin{codeblock}
-	\end{codeblock}
-\end{frame}
+\imageframe{figures/hansen_balance_check_male.pdf}
+\imageframe{figures/hansen_balance_check_white.pdf}
 
 \begin{frame}{Check 2: McCrary Density}{}
+  If you don't have extra covariates, you can check for `continuous density' a la McCrary (2006, JOE)
 
+  \bigskip
+  The idea is that if we think there is no sorting, then we would expect to see no strong `jump' in the histogram of the running variable
+  \begin{itemize}
+    \item A jump at the discontinuity suggests that agents are sorting onto one side of the border (assuming the density would be smooth in the absence of the cutoff policy)
+  \end{itemize}
 \end{frame}
 
-\begin{frame}{Real example}{Camacho and Conover (2011, AEJ: EP)}
-  Camacho and Conover (2011, AEJ: EP) discuss a real example of sorting
+\imageframe{figures/hansen_density_bac1.pdf}
+
+\begin{frame}{Example}{Camacho and Conover (2011, AEJ: EP)}
+  Camacho and Conover (2011, AEJ: EP) discuss a real example of `manipulation'
   \begin{itemize}
     \item Towns in Colombia receive social programs if their poverty index score is below a cutoff
      
@@ -569,7 +641,7 @@ rdrobust(
 
 \imageframe{figures/camacho_conover_2011.png}
 
-\begin{frame}{Real example}{Camacho and Conover (2011, AEJ: EP)}
+\begin{frame}{Example}{Camacho and Conover (2011, AEJ: EP)}
   The authors show in their paper that the towns that corruptly gamed their score looked different than those that did not
   \begin{itemize}
     \item Those that gamed their scores had more political competition
@@ -579,11 +651,44 @@ rdrobust(
   In this setting, if we saw a big jump at the poverty index cutoff, then we can't know if it's from the social programs or from the higher-level of political competition 
 \end{frame}
 
-\begin{frame}[fragile]{Density Check using \texttt{rddensity}}{}
-	\begin{codeblock}
-	\end{codeblock}
+% TODO: Discuss "optimal" bandwidth selection
+\begin{frame}{Optimal Bandwidth selection}
+  As we discussed before, there is a tension with selection of bandwidth:
+  \begin{itemize}
+    \item Smaller bandwidths use data closer to the cutoff and rely less on functional form
+    
+    \item Larger bandwidths lets you use more data to estimate RD
+  \end{itemize}
+
+  All identification relies on the bandwidth getting smaller as the sample size grows
+  \begin{itemize}
+    \item But we are left wondering what the `optimal bandwidth' is given a finite sample
+  \end{itemize}
 \end{frame}
 
+
+\begin{frame}{Optimal Bandwidth selection}
+  Calonico, Cattaneo and Farrell (2018, Economics Journal) use statistical methods to identify the `optimal' bandwidth. The optimal bandwith is based on the following:
+  \begin{itemize}
+    \item Of course, the bandwidth should shrink as the sample size grows
+
+    \item If the curvature of $\expec{Y_i}{X_i = x}$ is more wiggly, the bandwidth should be smaller
+
+    \item If the variance of $Y_i$ near the cutoff is larger, then you should use a larger bandwidth
+  \end{itemize}
+
+  \pause
+  \bigskip 
+  The upshot is this is done automatically for you with \texttt{rdrobust}
+  \begin{itemize}
+    \item See Cattaneo et. al.'s review article for more details
+  \end{itemize}
+\end{frame}
+
+% TODO: Discuss discrete ?
+
+
+\section{Spatial RDD}
 \begin{frame}{Spatial RDD}{}
 
 \end{frame}

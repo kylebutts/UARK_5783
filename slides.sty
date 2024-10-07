@@ -68,6 +68,46 @@
 % increase spacing between lines
 \addtolength{\jot}{0.6em}
 
+
+% Load tcolorbox and tikz ------------------------------------------------------
+\usepackage{ifthen}
+\usepackage[most,skins]{tcolorbox}
+\tcbuselibrary{breakable}
+
+\usepackage[beamer,customcolors]{hf-tikz}
+\usetikzlibrary{calc, fit, shapes.misc}
+\usetikzlibrary{shadows, arrows.meta}
+
+% https://tex.stackexchange.com/questions/89588/positioning-relative-to-page-in-tikz
+% Defining a new coordinate system for the page:
+%
+% --------------------------
+% |(-1,1)    (0,1)    (1,1)|
+% |                        |
+% |(-1,0)    (0,0)    (1,0)|
+% |                        |
+% |(-1,-1)   (0,-1)  (1,-1)|
+% --------------------------
+\makeatletter
+\def\parsecomma#1,#2\endparsecomma{\def\page@x{#1}\def\page@y{#2}}
+\tikzdeclarecoordinatesystem{page}{
+    \parsecomma#1\endparsecomma
+    \pgfpointanchor{current page}{north east}
+    % Save the upper right corner
+    \pgf@xc=\pgf@x%
+    \pgf@yc=\pgf@y%
+    % save the lower left corner
+    \pgfpointanchor{current page}{south west}
+    \pgf@xb=\pgf@x%
+    \pgf@yb=\pgf@y%
+    % Transform to the correct placement
+    \pgfmathparse{(\pgf@xc-\pgf@xb)/2.*\page@x+(\pgf@xc+\pgf@xb)/2.}
+    \expandafter\pgf@x\expandafter=\pgfmathresult pt
+    \pgfmathparse{(\pgf@yc-\pgf@yb)/2.*\page@y+(\pgf@yc+\pgf@yb)/2.}
+    \expandafter\pgf@y\expandafter=\pgfmathresult pt
+}
+\makeatother
+
 % Latex Programming tools ------------------------------------------------------
 % \AtBeginEnvironment
 % https://tex.stackexchange.com/questions/33576/conditional-typesetting-build
@@ -86,9 +126,9 @@
 \usepackage{inputenc}
 
 % Serif option:
-% Libertine for serif text font
+% % Libertine for serif text font
 % \usepackage{libertine}
-% Source Code Pro for monospace font
+% % Source Code Pro for monospace font
 % \usepackage[scale=0.88]{plex-mono}
 % \renewcommand{\ttdefault}{\plexmonofamily}
 
@@ -224,9 +264,6 @@
 }
 
 % Block ------------------------------------------------------------------------
-\usepackage{tcolorbox}
-\usepackage{ifthen}
-
 \defbeamertemplate{block begin}{framed}[1][] {
   \begin{tcolorbox}[
     colback=zinc50,colframe=zinc200,arc=0mm,
@@ -303,6 +340,60 @@
 }{%
   \vskip\smallskipamount\end{tcolorbox}
 }
+
+% Code listings ----------------------------------------------------------------
+\usepackage{listings}
+\tcbuselibrary{listings,listingsutf8,skins}
+% \tcbset{
+%   codelanguage/.style={language = #1},
+%   codelanguage/.default = R,
+%   % basicstyle = \small\ttfamily,
+%   % columns = fixed, 
+%   % keepspaces = true
+% }
+
+\DeclareTCBListing{codeblock}{ !O{R} }{
+  listing only,
+  interior hidden,
+  top = -6pt, 
+  bottom = -6pt,
+  left = 4pt, 
+  right = 0pt,
+  boxrule = 0pt, 
+  frame hidden, 
+  sharp corners, 
+  borderline west = {2pt}{0pt}{zinc400}, 
+  enhanced,
+  breakable,
+  listing options={
+    basicstyle = \small\ttfamily,
+    columns = fixed,
+    keepspaces = true,
+    language = #1
+  }
+}
+
+% \newtcblisting{codeblock}{
+%   listing only,
+%   interior hidden,
+%   top = -6pt, 
+%   bottom = -6pt,
+%   left = 4pt, 
+%   right = 0pt,
+%   boxrule = 0pt, 
+%   frame hidden, 
+%   sharp corners, 
+%   borderline west = {2pt}{0pt}{zinc400}, 
+%   enhanced,
+%   breakable,
+%   listing options={
+%     basicstyle = \small\ttfamily,
+%     columns = fixed,
+%     keepspaces = true,
+%     language = R
+%   }
+% }
+
 
 % Bullet points ----------------------------------------------------------------
 
@@ -426,9 +517,7 @@
 
 % Table Highlighting -----------------------------------------------------------
 % Create top-left and bottom-right markets in tabular cells with a unique matching id and these commands will outline those cells
-\usepackage[beamer,customcolors]{hf-tikz}
-\usetikzlibrary{calc}
-\usetikzlibrary{fit,shapes.misc}
+
 
 % To set the hypothesis highlighting boxes red.
 \newcommand\marktopleft[1]{%
