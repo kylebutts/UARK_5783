@@ -347,6 +347,11 @@ rdwinselect(
   \end{itemize}
 \end{frame}
 
+% TODO: Generate fake data where SAT cutoff is known and family-income is correlated with retaking the exam near the cutoff
+% RD plot of future earnings on going to top college
+% RD plot of average family income
+
+
 \begin{frame}{Why might continuity fail?}{}
   One of the main concerns people have with an RDD empirical application is that units are `sorting' near the cutoff:
   \begin{itemize}
@@ -405,7 +410,6 @@ rdwinselect(
 \imageframe{figures/mhe_ex_linear.pdf}
 \imageframe{figures/mhe_ex_nonlinear.pdf}
 \imageframe{figures/mhe_ex_mistake.pdf}
-
 
 \begin{frame}{Difference-in-means estimation}{}
   For now, take the window to be $(c-h, c+h)$; we will return to the choice of $h$ later in the slides
@@ -628,7 +632,8 @@ summary(est)
   \end{itemize}
 \end{frame}
 
-\imageframe{figures/hansen_density_bac1.pdf}
+\imageframe{figures/hansen_hist_bac1.pdf}
+\imageframe{figures/hansen_rddensity_bac1.pdf}
 
 \begin{frame}{Example}{Camacho and Conover (2011, AEJ: EP)}
   Camacho and Conover (2011, AEJ: EP) discuss a real example of `manipulation'
@@ -651,7 +656,6 @@ summary(est)
   In this setting, if we saw a big jump at the poverty index cutoff, then we can't know if it's from the social programs or from the higher-level of political competition 
 \end{frame}
 
-% TODO: Discuss "optimal" bandwidth selection
 \begin{frame}{Optimal Bandwidth selection}
   As we discussed before, there is a tension with selection of bandwidth:
   \begin{itemize}
@@ -660,6 +664,7 @@ summary(est)
     \item Larger bandwidths lets you use more data to estimate RD
   \end{itemize}
 
+  \bigskip
   All identification relies on the bandwidth getting smaller as the sample size grows
   \begin{itemize}
     \item But we are left wondering what the `optimal bandwidth' is given a finite sample
@@ -685,22 +690,195 @@ summary(est)
   \end{itemize}
 \end{frame}
 
-% TODO: Discuss discrete ?
+% TODO: Discuss discrete running variable?
 
 
 \section{Spatial RDD}
-\begin{frame}{Spatial RDD}{}
+
+\begin{frame}{Spatial RDD}{Example}
+  Dell (2010, ECTA) considers the impact of historical colonizer institutions on long-run impacts:
+  \begin{itemize}
+    \item In now Peru and Bolivia, there was a set of Spanish mines that had a catchment area called the `Mita'
+  \end{itemize}
+
+  \bigskip
+  The boundary was drawn somewhat arbitrarily around the mines, so either side of the Mita boundary should have the same `latent opportunity' (in 2000) except for the fact of the Mita boundary 
+  \begin{itemize}
+    \item This argument is that $\expec{Y(0)}$ would be continuous right around the border 
+  \end{itemize}
+\end{frame}
+
+\imageframe{figures/dell_2010_1.png}
+\imageframe{figures/dell_2010_2.png}
+
+\begin{frame}{Spatial RDD Setup}
+  Units have a location in geographic space $(x_{1,i}, x_{2,i})$ and there is some border consisting of lines in $X_1/X_2$ space
+
+  \begin{itemize}
+    \item The borders will separate units into $D_i = 0$ and $D_i = 1$ space.
+  \end{itemize}
+
+  \pause
+  \bigskip
+  Since we are in two-dimensions, it's not immediately clear how to think about ``approaching the border''. For now, let's use the Euclidean distance to the closest point on the border
+  \begin{itemize}
+    \item Positive distances are within $D_i = 1$ area; negative distances are outside $D_i = 1$ areas
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Spatial RDD Idea}
+  Let $\text{dist}_i$ be the distance to the closest border with a positive sign if on the $D_i = 1$ area and negative sign if in the $D_i = 0$ area
+  \begin{itemize}
+    \item The cutoff $c$ is therefore $\text{dist}_i = 0$
+  \end{itemize}
+
+  \bigskip
+  The RDD identification assumption is the same as before viewing $\text{dist}_i$ as the single running variable
+  \begin{itemize}
+    \item We assume $\expec{Y_i}{\text{dist}_i = d}$ does not jump at the boundary
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Discontinuity in Dell (2010)}
+  In the context of Dell (2010), the assumption is that in the absence of the Mita boundaries, the outcomes
+  \begin{itemize}
+    \item Most of the boundary was at the base of the Andes mountain, so this assumption is implausible there
+    \item Dell argues that the part of the boundary she uses was a bit `randomly drawn' in the sense that it was not place on some obvious cutoff
+  \end{itemize}
+
+  \bigskip
+  To bolster her argument, she presents some evidence that the boundary was not 
+\end{frame}
+
+\begin{frame}{Discontinuities are much more likely with spatial boundaries}
+  Turner et. al. (2014, ECTA) used data at the city/town-level for their analysis, so their borders primarily were at the town level
+  \begin{itemize}
+    \item They need to make the strong assumption that on either side of a town-border did not differ in ways that would impact home prices in a way that is correlated with zoning laws
+  \end{itemize}
+
+  \bigskip
+  This seems unlikely because, for example, towns with more restrictive zoning laws tend to have higher school budgets
+\end{frame}
+
+\begin{frame}{Multiple Treatments at Boundaries}
+  We have already discussed one concern regarding sorting onto sides of the border. Another common problem is that multiple treatments might turn on at a border
+  \begin{itemize}
+    \item E.g. many policy differences across town borders
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Multiple Treatments at Boundaries}
+  Grembi et. al. (2018, AJPS) look at a common occurence of `population threshholds' for policies to take place 
+  \begin{itemize}
+    \item Since policymakers chose arbitrary numbres, they usually pick nice round numbers
+    \item Also common is some mulitple of the federal poverty line
+  \end{itemize}
+
+  \bigskip
+  This creates a bundle of different treatments that turn on at a threshhold
+  \begin{itemize}
+    \item How do you disentangle effects from different policies?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{}
+  \begin{columns}[T]
+    \begin{column}{0.53\textwidth}
+      \includegraphics[width = \textwidth]{figures/grembi_et_al_2018.png}
+    \end{column}
+    \hfill
+    \begin{column}{0.45\textwidth}
+      \bigskip
+      From Grembi et. al. (2018, AJPS)
+      
+      \bigskip
+      Many `round' population threshholds have multiple policy changes
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{Solution Idea \#1: Find better cutoffs}
+  The first idea is to find better borders where we more confidently think there aren't other policy changes
+
+  \bigskip
+  E.g. Kulka, Sood, and Chiumenti (2023, WP) look at the impact of zoning changes on home prices like in Turner et. al.
+  \begin{itemize}
+    \item They have zoning microdata and only compare zoning borders that fall within town and school-districts 
+    \begin{itemize}
+      \item Compare homes within the same town and school district on opposite side of zoning borders
+    \end{itemize}
+  \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Spatial RDD}{Complications}
+\begin{frame}{Solution Idea \#2: Compare before and after a policy is put into place}
+  In some cases, you can observe units before vs. after a new policy is put into place
 
+  \bigskip
+  If all other policies are in place and all sorting has already taken place, we can estimate an RD before and an RD after
+  \begin{itemize}
+    \item The RD before the new policy is put into place tells you about the jump in $Y_i(0)$ that already exists (from sorting and the treatment effect of other policies)
+    
+    \pause
+    \item The RD after the new policy still has the previous jump, but also a new jump from the new policy
+  \end{itemize}
+
+  \bigskip
+  The `difference-in-jumps` estimates the effect of the new policy
 \end{frame}
 
-\begin{frame}{A lot of things change at a border}{}
+\begin{frame}{Difference in discontinuities}
+  This method was first proposed by Grembi et. al. (2016, AEJ Applied) and they coined it `difference in discontinuities' (we will see why later)
 
+  \bigskip
+  This relies on two assumptions:
+  \begin{enumerate}
+    \item The jump in $Y_i(0)$ stays constant over time, so that we can estimate it using the pre-period
+    \begin{itemize}
+      \item There is no \emph{new} effect and no \emph{new} sorting from \emph{previous} treatments
+    \end{itemize}
+    
+    \item The $Y_i(1)$ curve will also have a jump of the same magnitude as $Y_i(0)$
+    \begin{itemize}
+      \item There is no \emph{additional} sorting occuring from the \emph{new} policy
+    \end{itemize}
+  \end{enumerate}
 \end{frame}
 
+\begin{frame}{RDD at $t = 0$}
+  \begin{columns}[T]
+    \begin{column}{.65\textwidth}\vspace*{-\bigskipamount}
+      \includegraphics[width = \textwidth]{figures/diff_in_disc_pre.pdf}
+    \end{column}
+    \begin{column}{.35\textwidth}
+      Pre-treatment RD informs us of effects of other policy changes and non-treatment based-sorting
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{RDD at $t = 1$}
+  \begin{columns}[T]
+    \begin{column}{.65\textwidth}\vspace*{-\bigskipamount}
+      \includegraphics[width = \textwidth]{figures/diff_in_disc_post.pdf}
+    \end{column}
+    \begin{column}{.35\textwidth}
+      Difference of post RD and pre RD is the treatment effect of interest
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{Implementing Diff-in-disc}
+  Butts (2021, AEL) (that's me) shows an easy way to estimate the difference-in-discontinuities:
+
+  \begin{itemize}
+    \item Instead of doing two RDs and taking the difference, do an RD on first-differenced data 
+  \end{itemize}
+
+  \bigskip
+  I.e. use \texttt{rdrobust} using \texttt{df\$y1 - df\$y0} as the outcome variable
+\end{frame}
 
 \end{document}
     

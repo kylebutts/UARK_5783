@@ -3,6 +3,7 @@ library(tidyverse)
 library(fixest)
 library(rdrobust)
 library(rdlocrand)
+library(rddensity)
 hansen <- haven::read_dta(here::here("Slides/04_RDD/data/hansen_dwi.dta"))
 hansen <- hansen |>
   mutate(
@@ -144,7 +145,7 @@ kfbmisc::tikzsave(
     aes(x = bac1, fill = over_limit, group = over_limit),
     data = hansen, color = "white",
     # bins = 50, 
-    breaks = seq(0, 0.16, by = 0.005)
+    breaks = seq(0.000, 0.160, by = 0.004)
   ) + 
   scale_fill_manual(
     values = c("TRUE" = "#2DB25F", "FALSE" = "#b21010"),
@@ -154,9 +155,29 @@ kfbmisc::tikzsave(
   kfbmisc::theme_kyle(base_size = 14)
 )
 
+# %% 
 kfbmisc::tikzsave(
-  here::here("Slides/04_RDD/figures/hansen_density_bac1.pdf"),
-  density_bac1, width = 8, height = 4.2
+  here::here("Slides/04_RDD/figures/hansen_hist_bac1.pdf"),
+  hist_bac1, width = 8, height = 4.2
 )
 
+# %% 
+hansen$bac1_noise <- hansen$bac1 + rnorm(nrow(hansen), 0, sd = 0.0003)
+dens_est <- rddensity::rddensity(
+  X = hansen$bac1_noise, c = 0.08
+)
+rdplot_est <- rddensity::rdplotdensity(dens_est, X = hansen$bac1_noise, noPlot = TRUE)
+(rddens_plot_themed <- rdplot_est$Estplot +
+  labs(x = "Blood-alcohol Content", y = NULL, title = NULL) +
+  guides(color = guide_none(), linetype = guide_none()) + 
+  kfbmisc::theme_kyle() + 
+  theme(
+    axis.title = element_text(size = rel(1/1.25)),
+    axis.text = element_text(size = rel(1/1.25))
+  )
+)
 
+kfbmisc::tikzsave(
+  here::here("Slides/04_RDD/figures/hansen_rddensity_bac1.pdf"),
+  rddens_plot_themed, width = 8, height = 4.2
+)
