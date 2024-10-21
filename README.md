@@ -84,24 +84,24 @@ You also will need to present a preliminary draft in the last 3 weeks of class.
 This is a tentative schedule. This is the first time I've taught this course, so take this with a heavy dose of skepticism. In particular, do not set up holidays a class before or after the midterm. 
 
 <!-- Schedule -->
-| Week | Dates         | Monday                        | Wednesday                 | Assignments |
-|------|---------------|-------------------------------|---------------------------|-------------|
-| 1    | 08/19 - 08/21 | Syllabus + Potential Outcomes | Randomized Control Trials |             |
-| 2    | 08/26 - 08/28 | Randomized Control Trials     | Randomized Control Trials |             |
-| 3    | 09/02 - 09/04 | No Class                      | Regression Mechanics      |             |
-| 4    | 09/09 - 09/11 | Regression Mechanics          | Selection on Observables  |             |
-| 5    | 09/16 - 09/18 | Selection on Observables      | Selection on Observables  |             |
-| 6    | 09/23 - 09/25 | Selection on Observables      | Instrumental Variables    |             |
-| 7    | 09/30 - 10/02 | Instrumental Variables        | Instrumental Variables    |             |
-| 8    | 10/07 - 10/09 | Midterm                       | Regression Discontinuity  |             |
-| 9    | 10/14 - 10/16 | No Class                      | Regression Discontinuity  |             |
-| 10   | 10/21 - 10/23 | Regression Discontinuity      | Panel Data                |             |
-| 11   | 10/28 - 10/30 | Panel Data                    | Panel Data                |             |
-| 12   | 11/04 - 11/06 | Panel Data                    | Panel Data                |             |
-| 13   | 11/11 - 11/13 | Panel Data                    | Midterm                   |             |
-| 14   | 11/18 - 11/20 | Project Presentations         | Project Presentations     |             |
-| 15   | 11/25 - 11/27 | Project Presentations         | No Class                  |             |
-| 16   | 12/02 - 12/04 | Project Presentations         | Project Presentations     |             |
+| Week | Dates | Monday | Wednesday | Assignments |
+|----|----|----|----|----|
+| 1 | 08/19 - 08/21 | Syllabus + Potential Outcomes | Randomized Control Trials |  |
+| 2 | 08/26 - 08/28 | Randomized Control Trials | Randomized Control Trials |  |
+| 3 | 09/02 - 09/04 | No Class | Regression Mechanics |  |
+| 4 | 09/09 - 09/11 | Regression Mechanics | Selection on Observables |  |
+| 5 | 09/16 - 09/18 | Selection on Observables | Selection on Observables |  |
+| 6 | 09/23 - 09/25 | Selection on Observables | Selection on Observables |  |
+| 7 | 09/30 - 10/02 | Selection on Observables | Regression Discontinuity |  |
+| 8 | 10/07 - 10/09 | Regression Discontinuity | Regression Discontinuity |  |
+| 9 | 10/14 - 10/16 | No Class | Regression Discontinuity |  |
+| 10 | 10/21 - 10/23 | Midterm | Instrumental Variables |  |
+| 11 | 10/28 - 10/30 | Instrumental Variables | Instrumental Variables |  |
+| 12 | 11/04 - 11/06 | Panel Data | Panel Data |  |
+| 13 | 11/11 - 11/13 | Panel Data | Panel Data |  |
+| 14 | 11/18 - 11/20 | Panel Data | Project Presentations |  |
+| 15 | 11/25 - 11/27 | Project Presentations | No Class |  |
+| 16 | 12/02 - 12/04 | Project Presentations | Project Presentations |  |
 <!-- Schedule -->
 
 
@@ -118,7 +118,7 @@ This course was inspired by a lot of material that I have blended together into 
 - [Guido Imben's review article on unconfoundedness](https://direct.mit.edu/rest/article-abstract/86/1/4/57476/Nonparametric-Estimation-of-Average-Treatment?redirectedFrom=fulltext)
 - [Cattaneo, Idrobo, and Titiunik's review article on RDD](https://rdpackages.github.io/references/Cattaneo-Idrobo-Titiunik_2024_CUP.pdf)
 - [Stefan Wager's course](https://web.stanford.edu/~swager/stats361.pdf)
-
+- [Benjamin Elsner's slides](https://benjaminelsner.com)
 
 
 

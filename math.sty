@@ -138,9 +138,9 @@
     \operatorname{\text{Cov}}\IfValueT{#1}{_{#1}}%
   }{%
     \IfNoValueTF{#3}{%
-      \,\operatorname{\text{Cov}}\IfValueT{#1}{_{#1}}{\bp{#2}}
+      \operatorname{\text{Cov}}\IfValueT{#1}{_{#1}}{\bp{#2}}
     }{%
-      \,\operatorname{\text{Cov}}\IfValueT{#1}{_{#1}}{ \left( #2 \ |\ #3 \right)}
+      \operatorname{\text{Cov}}\IfValueT{#1}{_{#1}}{ \left( #2 \ |\ #3 \right)}
     }
   }
 }
