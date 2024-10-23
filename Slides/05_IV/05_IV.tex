@@ -1,0 +1,795 @@
+
+\documentclass[aspectratio=169,t,11pt,table]{beamer}
+\usepackage{../../slides,../../math}
+\definecolor{accent}{HTML}{2B5269}
+\definecolor{accent2}{HTML}{9D2235}
+
+\title{Topic 5: Instrumental Variables}
+\subtitle{\it  ECON 5783 — University of Arkansas}
+\date{Fall 2024}
+\author{Prof. Kyle Butts}
+
+\begin{document}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering,plain]
+\maketitle
+
+% \bottomleft{\footnotesize $^*$A bit of extra info here. Add an asterich to title or author}
+\end{frame}
+% -----------------------------------------------------------------------------
+
+\section{Introducing Instrumental Variables}
+
+\begin{frame}{Instrumental Variables}
+  Instrumental Variables are one of the oldest `causal' identification strategies
+  \begin{itemize}
+    \item Their roots go back to the early 1900s where economics was primarily the study of particular markets
+    
+    \item Demand and supply curves were a new phenomenon and economists wanted to try and estimate them 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Supply and Demand Curves}
+  Consider a simple supply and demand curve setup
+  \begin{align}
+    \text{quantity}_{d} &= \alpha_{d} + \text{price}\gamma_{d} + u_{d} \\
+    \text{quantity}_{s} &= \alpha_{s} + \text{price}\gamma_{s} + u_{s}
+  \end{align}
+  Here, this is the theoretical relationship between prices and quantity \emph{at the same point in time} (potential outcomes)
+  \begin{itemize}
+    \item Equilibrium is determined by the $\text{price}$ such that $\text{quantity}_{d} = \text{quantity}_{s}$
+  \end{itemize}
+
+  \bigskip
+  Note that `market conditions' (e.g. preferences, production technologies, etc.) are implicitly embedded in the coefficients
+\end{frame}
+
+\begin{frame}{Observed market outcomes}
+  What we observe is a set of markets $t$ with their corresponding price and quantities $(p_t, q_t)$
+
+  \bigskip
+  The problem here is that market-shocks could move both the demand curve and the supply curve
+  \begin{itemize}
+    \item[$\rightarrow$] The data is not tracing `along' the demand curve or the supply curve
+  \end{itemize}
+\end{frame}
+
+\imageframe{figures/ex_endogeneity_problem.pdf}
+
+\begin{frame}{Tracing out the demand curve}
+  Phillip Wright wrote a book in 1928 about `animal and vegetable oils'
+  \begin{itemize}
+    \item he was trying to argue that recent tariffs had negatively impacted the market
+  \end{itemize}
+
+  \bigskip
+  In this book, there is a now famous ``Appendix B'' proposing the first IV estimator
+  \begin{itemize}
+    \item There's debate who wrote this chapter: father or son. 
+    
+    \item It was likely the son; see Stock and Trebbi, 2003
+  \end{itemize} 
+\end{frame}
+
+\begin{frame}{Identifying movement along one curve}
+  As we saw in the previous graph, we can not take two points $(p_1, q_1)$ and $(p_2, q_2)$ and know if these fall on the same demand curve or the same supply curve
+
+  \bigskip
+  Say somehow we \emph{know} that one of the curves did not change from market $1$ to market $2$ (say from one day to the next)
+  \begin{itemize}
+    \item Then our two points both must fall on the curve that did not shift (equilibrium conditions)
+  \end{itemize}
+\end{frame}
+
+\imageframe{figures/ex_supply_shifters.pdf}
+\imageframe{figures/ex_demand_shifters.pdf}
+
+\begin{frame}{``Demand Shifters'' and ``Supply Shifters''}
+  Wright proposed to use a variable that shifts only one of the curves and not the other, what we now call instruments, to estimate the demand/supply curve:
+
+  \begin{itemize}
+    \item E.g. a demand shifter being the change in the price of a substitute good
+    \item E.g. a supply shifter being a change in rain from one year to the next
+  \end{itemize}
+
+  \pause
+  \bigskip 
+  Since these `shifters' only affect one curve and not the other, then we can leverage these to estimate the other curve (e.g. demand shifter to estimate supply) 
+\end{frame}
+
+\begin{frame}{Fulton Fish Market}
+  Angrist, Graddy, and Imbens (2000) give a great example of this. 
+
+  \bigskip
+  Graddy, then a graduate student, woke up every morning before sunrise and traveled from New Jersey to the Fulton Fish Market in downtown Manhattan
+  \begin{itemize}
+    \item Recorded data on the price and quantity sold of fish
+    
+    \item Also recorded each day's ocean-weather, an important supply curve shifter
+  \end{itemize}
+\end{frame}
+
+\imageframe{figures/fulton_fish_market.jpg}
+
+\begin{frame}{Fulton Fish Market IV Estimator}
+  Let $Z_t$ denote the weather observed in market $t$ (e.g. $Z_t$ is the wind speeds on the ocean). 
+  
+  \bigskip
+  The idea of the IV estimator we will present is to do two things:
+  \begin{enumerate}
+    \item First, see how weather, $Z_t$, impacts the (log) market price, $\log(p_t)$
+    
+    \item Second, see how weather, $Z_t$, impacts the (log) market quantity, $\log(q_t)$
+  \end{enumerate}
+
+  \bigskip
+  Since the demand elasticity is $\frac{\partial \log(q_t)}{\partial \log(p_t)}$, we can take the ratio of these two quantities to estimate the demand elasticity
+\end{frame}
+
+\begin{frame}{Fulton Fish Market IV Estimator}
+  Our IV estimator can be written as
+  $$
+    \hat{\tau}_{\texttt{IV}} = \frac{\cov{Z_t, q_t}}{\cov{Z_t, p_t}}
+  $$
+
+  \begin{itemize}
+    \item Weather causes a shift in $q_t$, $\cov{Z_t, q_t}$, and a shift in $p_t$, $\cov{Z_t, p_t}$
+  \end{itemize}
+
+  \bigskip
+  Our IV estimate compares how much weather changes the quantity sold in equilibrium to how much weather changes the price to estimate the demand curve
+\end{frame}
+
+\begin{frame}{Fulton Fish Market IV Estimator}
+  \vspace{-\bigskipamount}
+  $$
+    \hat{\tau}_{\texttt{IV}} = \frac{\cov{Z_t, q_t}}{\cov{Z_t, p_t}}
+  $$
+
+  \bigskip
+  Ideally these shifts come from only the supply curve moving; i.e. $Z_t$ has no effect on $\text{quantity}_t^d$ except from the price
+  \begin{itemize}
+    \item E.g. this requires fish demand not change with the weather, otherwise both curves would be moving
+  \end{itemize}
+\end{frame}
+
+\section{What makes a good instrument?}
+
+\begin{frame}{Generalizing the IV Estimator}
+  What are the ``essential'' ideas of this IV estimator? Say you want to know the causal effect of $X_i$ on some variable $y_i$. We are concerned there are some other variables (in the error term, $\varepsilon_i$) that determine both $X_i$ and $y_i$.
+
+  That is:
+  $$
+    y_i = X_i \beta + \varepsilon_i,
+  $$
+  where $\expec{\varepsilon_i}{X_i} \neq 0$
+\end{frame}
+
+\begin{frame}{Generalizing the IV Estimator}
+  \vspace{-\bigskipamount}
+  $$
+    y_i = X_i \beta + \varepsilon_i \ \text{ where }\ \expec{\varepsilon_i}{X_i} \neq 0
+  $$
+
+  \bigskip
+  Our IV Estimator compares the change in $y_i$ induced by $Z_i$ to the change in $X_i$ induced by $Z_i$ to estimate the slope parameter:
+  $$
+    \frac{\ \Delta y \text{\ \ \  \footnotesize induced by Z} }{ \Delta X \text{\ \ \footnotesize induced by Z} }
+  $$
+\end{frame}
+
+\begin{frame}{IV Requirements}
+  \vspace{-\bigskipamount}
+  $$
+    y_i = X_i \beta + \varepsilon_i \ \text{ where }\ \expec{\varepsilon_i}{X_i} \neq 0
+  $$
+  
+  \bigskip
+  We want an instrument $Z_i$ that does two things:
+  \begin{enumerate}
+    \item {\color{blue} (Relevancy Condition)} The instrument should cause a change in $X_i$, so that we could trace out the subsequence impact on $y_i$ 
+
+    \pause
+    \medskip
+    \item {\color{raspberry} (Exclusion Restriction)} The instrument $Z_i$ should change $y_i$ \emph{only through} changing $X_i$ 
+  \end{enumerate}
+
+  % \pause
+  % \bigskip
+  % The first tends to be the easier of the two to satisfy: we need a `shifter' of $X_i$. The second is the hard part...
+\end{frame}
+
+\begin{frame}{IV Estimand}
+  \vspace{-\bigskipamount}
+  \begin{align*}
+    \hat{\beta}_{\texttt{IV}} &= 
+    \frac{\cov{Z_i, y_i}}{\cov{Z_i, X_i}} \\
+    \pause
+    &= \frac{\cov{Z_i, X_i \beta + \varepsilon_i}}{\cov{Z_i, X_i}} \\
+    \pause
+    &= \frac{\cov{Z_i, X_i} \beta + \cov{Z_i, \varepsilon_i}}{\cov{Z_i, X_i}} \\
+    \pause
+    &= \beta + \frac{\cov{Z_i, \varepsilon_i}}{\cov{Z_i, X_i}}
+  \end{align*}
+\end{frame}
+
+\begin{frame}{IV Requirements}
+  \vspace{-\bigskipamount}
+  \begin{align*}
+    \hat{\beta}_{\texttt{IV}} = \frac{\cov{Z_i, X_i} \beta + \tcbhighmath{ \cov{Z_i, \varepsilon_i} }}{ \tcbhighmath[colback = bgBlue]{\cov{Z_i, X_i}} }
+  \end{align*}
+
+  % \devgrid 
+  \begin{tikzpicture}[remember picture, overlay]
+    \node [anchor = south, text width = 0.23\textwidth] at (page cs:0.56,0.22) {
+      \begin{center}
+        \setstretch{0.8}
+        {\footnotesize\color{raspberry} \emph{Exclusion Restriction}
+        
+        $= 0$}
+      \end{center}
+    };
+    
+    \node [anchor = north, text width = 0.23\textwidth] at (page cs:0.47,0.32) {
+      \begin{center}
+        \setstretch{0.8}
+        {\footnotesize\color{blue} \emph{Relevancy Condition} 
+        
+        not dividing by $0$}
+      \end{center}
+    };
+  \end{tikzpicture}
+
+  \bigskip\bigskip
+  \begin{enumerate}
+    \item {\color{blue} Relevancy Condition} requires $Z_i$ to actually shift $X_i$
+    
+    \item {\color{raspberry} Exclusion Restriction} requires $Z_i$ to be uncorrelated with other drivers of $y_i$
+  \end{enumerate}
+
+  \pause
+  \bigskip
+  The first tends to be the easier of the two to satisfy: we need a `shifter' of $X_i$. The second is the hard part...
+\end{frame}
+
+% \begin{frame}{Exclusion Restriction}
+%   \begin{center}
+%     ``The instrument $Z_i$ should change $y_i$ \emph{only through} changing $X_i$''
+%   \end{center}
+% 
+%   \bigskip
+%   $\cov{Z_i, y_i}$ will pick up on two things:
+% 
+%   \bigskip
+%   \begin{enumerate}
+%     \item The change on $y_i$ induced by a change in $X_i$: $\cov{Z_i, X_i} \beta$
+%     \begin{itemize}
+%       \item Dividing this by $\cov{Z_i, X_i}$ will identify the effect
+%     \end{itemize}
+% 
+%     \pause
+%     \medskip
+%     \item The relationship between the instrument and omitted variables: $\cov{Z_i, \varepsilon_i}$
+%     \begin{itemize}
+%       \item We want this to be 0
+%     \end{itemize}
+%   \end{enumerate}
+% \end{frame}
+% 
+
+
+\begin{frame}{Rainfall IV Example}
+  For example, consider trying to estimate on family income on the years of schooling children receive in the developing world. Papers have used rainfall as an instrument for income
+  \begin{itemize}
+    \item The idea is that rainfall is `random' year over year and so that creates `good variation' in family income
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Rainfall IV Example}
+  In essence, the IV estimator will compare families that had a good rainfall year (and hence more income than normal) to families with a bad rainfall year (and hence less money than expected)
+  \begin{itemize}
+    \item If high-rainfall families go to school at higher rates, the IV estimator attributes this to higher income
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Rainfall IV Exclusion Restriction failure}
+  The exclusion restriction assumes that rainfall only affects the school attendance rate \emph{only through} increasing family incomes
+  \begin{itemize}
+    \item Is this plausible?
+  \end{itemize}
+
+  \pause
+  \bigskip
+  Sarsons (2015, JDE) finds that lower rainfall in developing countries increases conflict between villages
+  \begin{itemize}
+    \item This means we can't say if the higher school attendance in high rain areas is due to more income from better crop-yields \emph{or} due to lower likelihood of conflict
+  \end{itemize}
+\end{frame}
+
+\section{Two-stage least squares estimator}
+
+\begin{frame}{Canonical IV Setup}
+  The canonical IV setup is as follows:
+  \begin{align*}
+    y_i &= X_i \beta + \varepsilon_i \\
+    X_i &= Z_i \pi + u_i,
+  \end{align*}
+  where $Z_i$ is our instrument and $X_i$ is the variable of interest
+
+\end{frame}
+
+\begin{frame}{Canonical IV setup}
+  \vspace{-\bigskipamount}
+  $$
+    y_i = X_i \beta + \varepsilon_i \ \text{ and }\  X_i = Z_i \pi  + u_i
+  $$
+
+  \bigskip
+  \only<1>{
+    In terms of this model, our problem is that $\expec{X_i \varepsilon_i} \neq 0$, i.e. that there are unobservables that are correlated with $X_i$ and have an impact on $y_i$
+  }
+
+  \only<2>{
+    We instead use an instrument $Z_i$. Our two requirements for the instrument can be written as follows: 
+    \begin{enumerate}
+      \item {\color{blue} (Relevance)} $\pi \neq 0$
+      \begin{itemize}
+        \item This is testable with $t$-test that $\pi = 0$ 
+        \item Later, problems with `weak' instruments where $\pi \approx 0$ (relative to noise)
+      \end{itemize} 
+      
+      \medskip
+      \item {\color{raspberry} (Exclusion)} $\expec{\varepsilon_i Z_i} = 0$
+      \begin{itemize}
+        \item Fundamentally untestable (it is an assumption)
+      \end{itemize}
+    \end{enumerate}
+  }
+\end{frame}
+
+\begin{frame}{Canonical IV setup}{Exclusion Restriction}
+  \vspace{-\bigskipamount}
+  $$
+    y_i = X_i \beta + \varepsilon_i \ \text{ and }\  X_i = Z_i \pi + u_i
+  $$
+
+  \bigskip
+  For example, say there is some variable $\mu_i$ that is part of the error term $\varepsilon_i = \mu_i + \upsilon_i$
+  \begin{itemize}
+    \item If $Z_i$ is correlated with $\mu_i$ (or affects $\mu_i$), then our exclusion restriction fails
+  \end{itemize}
+\end{frame}
+
+% TODO
+% \begin{frame}{Instrument Examples}{Example 1}
+%   
+% \end{frame}
+% 
+% \begin{frame}{Instrument Examples}{Example 2}
+%   
+% \end{frame}
+% 
+% \begin{frame}{Instrument Examples}{Example 3}
+%   
+% \end{frame}
+
+\begin{frame}{Two-stage least squares (2SLS)}
+  \vspace{-\bigskipamount}
+  $$
+    y_i = X_i \beta + \varepsilon_i \ \text{ and }\  X_i = Z_i \pi  + u_i
+  $$
+
+  The previous estimator is identical to the two-stage least squares estimator:
+  $$
+    \hat{\beta}_{\texttt{2SLS}} = \frac{ (X_i P_Z)' P_Z y_i }{ (X_i P_Z)' (P_Z X_i) } = \frac{\hat{X}_i' \hat{y}_i}{\hat{X}_i' \hat{X}_i},
+  $$
+  where $P_Z = Z (Z'Z)^{-1} Z'$ is the projection-matrix from ordinary least squares regression
+  
+  \pause
+  \begin{itemize}
+    \item This is numerically identical when $Z$ is a single instrument to our previous estimator $\cov{Z_i, y_i} / \cov{Z_i, X_i}$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Two-stage least squares Estimator (2SLS)}
+  \vspace*{-\bigskipamount}
+  $$
+    \hat{\beta}_{\texttt{IV}} = \frac{\hat{X}_i' \hat{y}_i}{\hat{X}_i' \hat{X}_i},
+  $$
+
+  \bigskip
+  Can think of this as being done in two-stages (hence the name):
+  \begin{itemize}
+    \item Predict $y_i$ and $X_i$ using the instrument $Z_i$ via separate regressions 
+    \item Regress $\hat{y}_i$ on $\hat{X}_i$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{OLS with Controls vs. IV}
+  The Frisch-Waugh-Lovell (FWL) theorem helped us understand what control variables do in a regression of $y_i$ on a varaible $X_i$ and controls $W_i$
+  \begin{itemize}
+    \item Use $W_i$ to \emph{predict} $X_i$ and $y_i$ and remove that predicted variation
+    
+    \item Regress $y_i - \hat{y}_i$ on $X_i - \hat{X}_i$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{OLS with Controls vs. IV}
+  Both estimators wants to use variation in $X_i$ that is `plausibly exogenous'; sometimes called `quasi-experimental variation'. 
+  
+  \bigskip
+  The IV estimator and OLS with controls try to get at `good' variation in $X_i$ in different ways:
+
+  \bigskip
+  \begin{enumerate}
+    \item OLS `removes bad variation'
+    \begin{itemize}
+      \item Use controls that you think pick up on variables (in $\varepsilon_i$) that are correlated with $X_i$
+      
+      % \begin{itemize}
+      %   \item Remove that variation in $X_i$
+      % \end{itemize}
+    \end{itemize}
+    
+    \medskip
+    \item IV `isolates good variation'
+    \begin{itemize}
+      \item Use an instrument that you think is \emph{not} correlated with $\varepsilon_i$ but that shift $X_i$ 
+      
+      % \begin{itemize}
+      %   \item Only use that variation in $X_i$
+      % \end{itemize}
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+
+
+\begin{frame}{Weak IV}
+  \vspace{-\bigskipamount}
+  $$
+    y_i = X_i \beta + \varepsilon_i \ \text{ and }\  X_i = Z_i \pi  + u_i
+  $$
+  
+  \bigskip
+  When our estimated $\hat{\pi} \approx 0$ we have a `weak instruments' problem
+  \begin{itemize}
+    \item I.e. close to zero relative to the noise
+  \end{itemize}
+
+  \pause
+  \bigskip
+  This means there is a small covariance between $X_i$ and $Z_i$:
+  \begin{itemize}
+    \item Since $\hat{\beta}_{\texttt{IV}}$ divides by $\cov{X_i, Z_i}$, the estimate is very noisy 
+    \begin{itemize}
+      \item $1/0.0001 = 10000$ vs. $1/0.00005 = 20000$
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Weak IV}
+  The rule of thumb is to use an instrument when the $F$-stat on the first-stage is $\geq 10$
+  \begin{itemize}
+    \item First-stage is $X_i = Z_i \pi + u_i$ 
+    
+    \item In case of single IV $Z_i$, equivalent to $t$-stat on $Z_i$ to be $\geq \sqrt{10} = 3.16$
+  \end{itemize}
+
+  \pause
+  \bigskip
+  Some recent work shows that 10 might be too small of a lower bound and you may prefer something like $F \geq 50$ ($t$-stat $\geq 7.07$), but it is unsettled debate
+\end{frame}
+
+\begin{frame}{Many Instruments}
+  Another problem comes in when you have a large number of instruments (relative to sample size)
+
+  \bigskip
+  Our 2SLS estimator regresses $P_Z y_i$ on $P_Z X_i$
+  \begin{itemize}
+    \item Increasing the size of $Z$ means we are going to necessarily predict $X_i$ and $y_i$ better and better
+    
+    \item Our $P_Z y_i \to y_i$ and $P_Z X_i \to X_i$
+  \end{itemize}
+
+  \bigskip
+  \pause
+  $\implies$ that with too many instruments we $\hat{\beta}_{\texttt{2SLS}} \approx \hat{\beta}_{\texttt{OLS}}$
+\end{frame}
+
+\begin{frame}{Many Instruments Example}
+  One common IV strategy is the `judge-leniency design' setting:
+  \begin{itemize}
+    \item Defendents are randomly assigned to different judges
+    \item Judges vary in how lenient they are in sentencing
+  \end{itemize}
+
+  
+  \bigskip
+  $\implies$ people with similar backgrounds will be randomly convicted/not-convicted
+  \begin{itemize}
+    \item Use as an instrument a set of dummy variables for each assigned judge (judge 1, judge 2, $\dots$)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Many Instruments}
+  The best way to fix the issue of many-instruments is using a JIVE estimator
+  \begin{itemize}
+    \item For observation $i$, predict $X_i$ using a leave-out regression of $X_j$ on $Z_j$ using all observations besides $i$: $\{ 1, \dots, n \} \setminus \{ i \}$
+  \end{itemize}
+
+  \pause
+  \bigskip
+  Call the predicted values of the leave-out regressions as $\hat{X}_{i, \texttt{lo}}$. Then we have 
+  $$
+    \hat{\beta}_{\texttt{JIVE}} \equiv \frac{\hat{X}_{i, \texttt{lo}}' y_i}{\hat{X}_{i, \texttt{lo}}' \hat{X}_{i, \texttt{lo}}}
+  $$
+
+  \begin{itemize}
+    \item $\hat{\beta}_{\texttt{JIVE}}$ avoids the problem of over-fitting on the instruments 
+    
+    \item See Kolesar (2013, Working Paper)
+  \end{itemize}
+\end{frame}
+
+% \begin{frame}
+%   \vspace{-\bigskipamount}
+%   $$
+%     y_i = X_i \beta + \varepsilon_i \ \text{ and }\  X_i = Z_i \pi  + u_i
+%   $$
+%   There is a rule that the $F$-stat that $\textrm{H}_0: \pi = 0$ should be $>= 10$; this corresponds to a $t$-stat of $\sqrt{10} = 3.16$. 
+%   \begin{itemize}
+%     \item The simulations used to show this relies on two-sided tests ($\pi \neq 0$)
+%   \end{itemize}
+% 
+%   \bigskip
+%   Angrist and Kolesar (2024, JOE) show if we assume the sign of $\pi \geq 0$ (or $\leq 0$), 
+%   \begin{itemize}
+%     \item This let's us use a one-sided test $\implies$ our equivalent of a two-sided $t$-stat of $3.16$ (and hence $F$-stat) be smaller 
+%   \end{itemize}
+% 
+%   \bigskip
+%   Relies on researcher only `pursuiting' a project if $\hat{\pi}$ is of the correct sign
+% \end{frame}
+
+
+\section{IV with Heterogeneous Effects}
+\begin{frame}{Heterogeneous Effects}
+  Up until this slide we have (implicitly) assumed that the marginal causal effect of increasing $X_i$ was given by $\beta$ 
+  \begin{itemize}
+    \item Assumed to be the same across individuals
+  \end{itemize}
+
+  \bigskip
+  When we allow for heterogeneous effects, what our 2SLS estimator finds is more complicated to understand
+  \begin{itemize}
+    \item Hopefully, it is some `reasonable' weighted average of heterogeneous effects, $\hat{\beta}_{\texttt{IV}} \to \sum_i w_i \beta_i$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Angrist-Imbens-Rubin Causal Model}
+  Let's see if we can make progress when $D_i$ is a binary variable, $Z_i$ is a binary variable, but allow the treatment effect $y_i(1) - y_i(0)$ to be heterogeneous.
+
+  \bigskip 
+  In Angrist, Imbens, and Rubin (1996, JASA), they study military service ($D_i$) on future earnings ($y_i$)
+  \begin{itemize}
+    \item The first problem we have is that military service is not randomly assigned
+  \end{itemize} 
+  
+  \pause
+  \bigskip
+  They use the Vietnam-Draft lottery as an instrument ($Z_i$)
+  \begin{itemize}
+    \item $Z_i$ is randomly assigned by birthday$^\dagger$
+  \end{itemize}
+
+  \bottomleft{
+    \footnotesize $^\dagger$This has been questioned because the bingo balls were not shuffled enough before drawing 
+  }
+\end{frame}
+
+\begin{frame}{Imperfect Compliance}
+  The Vietnam draft lottery is definitely a shifter: those drafted by lottery were more likely to serve
+  \begin{itemize}
+    \item But we don't have a real RCT. Some with $Z_i = 0$ serve $D_i = 1$ and some with $Z_i = 1$ do not serve $D_i = 0$
+  \end{itemize}
+
+  \bigskip
+  \pause
+  This is what we call ``imperfect compliance'', i.e. treatment is not a perfect function of the instrument
+\end{frame}
+
+\begin{frame}{Potential Outcome Model with Imperfect Compliance}
+  To accomodate this, Angrist-Imbens-Rubin framework defines $D_i(Z_i)$ to be the potential outcomes of treatment under both states of the instrument. In our example,
+  \begin{itemize}
+    \item $D_i(0)$ is whether the person would serve in the world where they \emph{are not} drafted
+    \item $D_i(1)$ is whether the person would serve in the world where they \emph{are} drafted
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Potential Outcome Model with Imperfect Compliance}
+  Outcomes are now a potential outcome of both $Z_i$ and $D_i$: $y_i(D_i, Z_i)$
+  \begin{itemize}
+    \item Outcomes depend on both whether you were assigned $Z_i = 0, 1$ and whether you are under treatment $D_i = 0, 1$
+  \end{itemize}
+
+  \pause
+  \bigskip
+  If we assume the \emph{exclusion restriction} that $Z_i$ \emph{only} impacts $y_i$ via it's effect on $D_i$, then we can return to $y_i(D_i)$
+  \pause
+  \begin{itemize}
+    \item In the case of the Vietnam Draft lottery, this is plausible assuming that the draft only is correlated with outcomes via causing people to serve
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Potential Outcome Model with Imperfect Compliance}
+  Our potential outcomes are therefore
+  $$
+    D_i(Z_i) \ \text{ and } y_i(D_i)
+  $$
+  Our causal model implicitly says:
+  \begin{enumerate}
+    \item $Z_i$ might impact $D_i$ which impacts $y_i$
+    \item $Z_i$ only impacts $y_i$ via $D_i$
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Characterizing People}
+  There are four kinds of people in this model:
+  \begin{enumerate}
+    \item \textbf{Compliers}: people who react to the instrument as expected
+    \begin{itemize}
+      \item $D_{i}(1) = 1$ and $D_{i}(0) = 0$
+    \end{itemize} 
+
+    \item \textbf{Always-takers}: people who always take the treatment regardless of $Z$
+    \begin{itemize}
+      \item $D_{i}(1) = 1$ and $D_{i}(0) = 1$
+    \end{itemize}
+
+    \item \textbf{Never-takers}: people who never take the treatment regardless of $Z$
+    \begin{itemize}
+      \item $D_{i}(1) = 0$ and $D_{i}(0) = 0$
+    \end{itemize}
+
+    \item \textbf{Defiers}: people who react to the instrument in the wrong direction
+    \begin{itemize}
+      \item $D_{i}(1) = 0$ and $D_{i}(0) = 1$
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Defiers}
+  Defiers are often ruled out as implausible:
+  \begin{itemize}
+    \item ``I would have served but not if I was drafted''
+  \end{itemize}
+
+  \bigskip
+  But, be careful, they may not be implausible in other settings!
+\end{frame}
+
+\begin{frame}{Characterizing People}
+  Ruling out defiers, three types remain:
+  \begin{enumerate}
+    \item \textbf{Compliers}: people who react to the instrument as expected
+    \begin{itemize}
+      \item $D_{i}(1) = 1$ and $D_{i}(0) = 0$
+    \end{itemize} 
+
+    \item \textbf{Always-takers}: people who always take the treatment regardless of $Z$
+    \begin{itemize}
+      \item $D_{i}(1) = 1$ and $D_{i}(0) = 1$
+    \end{itemize}
+
+    \item \textbf{Never-takers}: people who never take the treatment regardless of $Z$
+    \begin{itemize}
+      \item $D_{i}(1) = 0$ and $D_{i}(0) = 0$
+    \end{itemize}
+  \end{enumerate}
+
+  \bigskip
+  It is impossible to know who is which in the data
+\end{frame}
+
+\begin{frame}{First-stage}
+  Our first-stage consists of regressing $D_i$ on $Z_i$ and an intercept:
+  $$
+    D_i = \alpha + Z_i \pi + u_i
+  $$
+
+  \bigskip
+  From regression mechanics and since $Z_i$ and $D_i$ are indicators, we know
+  \begin{itemize}
+    \item $\hat{\alpha}$ is the share of people with $D_i = 1$ with $Z_i = 0$
+    
+    \item $\hat{\pi}$ is the difference in share of people with $D_i = 1$ with $Z_i = 1$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{First-stage}
+  \vspace*{-\bigskipamount}
+  $$
+    D_i = \alpha + Z_i \pi + u_i
+  $$
+
+  In the $Z_i = 0$ group, people with $D_i = 1$ must be always-takers
+  \begin{itemize}
+    \item $\hat{\alpha}$ is the share of always-takers in the population
+  \end{itemize}
+  
+  \pause
+  \bigskip
+  In the $Z_i = 1$ group, people with $D_i = 1$ are always-takers \emph{or} compliers
+  \begin{itemize}
+    \item $\hat{\alpha} + \hat{\pi}$ is the share of always-takers or compliers in the population
+  \end{itemize}
+
+  \bigskip
+  \pause
+  $\hat{\pi}$ is our estimated share of compliers
+  \begin{itemize}
+    \item Share of people who are `pushed' into treatment
+  \end{itemize}
+\end{frame}
+
+% TODO: Define the two stages explicitly
+\begin{frame}{Reduced-form}
+  The reduced-form is the regression of 
+  $$
+    y_i = \gamma + Z_i \delta + u_i
+  $$
+
+  Since $Z_i$ is an indicator variable
+  \begin{itemize}
+    \item $\hat{\gamma} = \expechat{y_i}{Z_i = 0}$
+    \item $\hat{\delta} = \expechat{y_i}{Z_i = 1} - \expechat{y_i}{Z_i = 0}$ 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Reduced-form}
+  \vspace*{-\bigskipamount}
+  \begin{align*}
+    \hat{\delta} = \expechat{y_i}{Z_i = 1} - \expechat{y_i}{Z_i = 0}
+  \end{align*}
+  \vspace*{-\bigskipamount}
+  \begin{itemize}
+    \item For always-takers, $y_i = y_i(1)$ when $Z_i = 1$ and $Z_i = 0$
+    \item For never-takers, $y_i = y_i(0)$ when $Z_i = 1$ and $Z_i = 0$
+  \end{itemize}
+
+  \bigskip
+  Therefore, 
+  \begin{align*}
+    \hat{\delta} = \prob{\text{Complier}_i} (\expec{y_i(1) - y_i(0)}{\text{Complier}_i})
+  \end{align*}
+\end{frame}
+
+\begin{frame}{IV Estimand}
+  Our IV Estimand therefore is the ratio 
+  \begin{align*}
+    \hat{\beta}_{\texttt{IV}} &= 
+    \frac{\hat{\delta}}{\hat{\pi}} \\
+    \pause
+    &= \frac{\prob{\text{Complier}_i} (\expec{y_i(1) - y_i(0)}{\text{Complier}_i})}{\prob{\text{Complier}_i}} \\
+    &= \expec{y_i(1) - y_i(0)}{\text{Complier}_i}
+  \end{align*}
+
+  \bigskip
+  We estimate the average treatment effect among the compliers
+  \begin{itemize}
+    \item E.g. the average treatment effect among those induced to serve in the military by the lottery
+  \end{itemize}
+
+\end{frame}
+
+
+
+% TODO: Same question, different instrument, different compliers, different LATE
+% makes it hard to compare across studies
+
+
+
+\end{document}
+    
