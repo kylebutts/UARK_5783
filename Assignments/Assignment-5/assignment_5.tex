@@ -1,0 +1,88 @@
+\documentclass[12pt]{article}
+\usepackage{../../lecture_notes}
+\usepackage{../../math}
+\usepackage{../../uark_colors}
+
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\begin{document}
+\begin{center}
+  {\Huge\bf Assignment \#5}
+  
+  \smallskip
+  {\large\it  ECON 5783 — University of Arkansas}
+
+  \medskip
+  {\large Prof. Kyle Butts}
+\end{center}
+
+These assignments should be completed in groups of 1 or 2 but submitted individually. My preference is for you to use Rmarkdown files to have your code, results, and your answers to the questions intermixed. Since I am not requiring you to code in R for these assignments, you can use latex or microsoft word to write up answers alternatively. Not that in these cases, I would like you to upload your code seperately. 
+
+
+\section*{Theoretical Questions}
+
+\begin{enumerate}
+  \item In the following examples, give an example why you think the following exclusion restrictions might fail
+  \begin{enumerate}
+    \item You regress future wages ($y_i$) on going to post-secondary school ($D_i$) with an insatrument of being within a 15-minute drive of a community college ($Z_i$)
+    
+    \item You regress house prices ($y_i$) on the town's school quality ($X_i$) with an instrument for whether a town levied an extra school-funding tax ($Z_i$)
+    
+    \item You regress a person's happiness ($y_i$) on their wealth ($X_i$) with an instrument for the parent's wealth ($Z_i$)
+  \end{enumerate}
+
+  \item In your own words, why is inference hard on the two-stage least squares coefficient when you have a `weak' instrument
+\end{enumerate}
+
+
+% Data from: https://economics.mit.edu/people/faculty/josh-angrist/angrist-data-archive
+% \section*{Coding Exercise: Angrist and Evans (2010)}
+
+
+% Data from: https://isps.yale.edu/research/data/d055
+\section*{Coding Exercise: Gerber, Huber, and Washington (2010, APSR)}
+
+This exercise will have you work with replication material from Gerber, Huber, and Washington.\footnote{Full data documentation is available at https://isps.yale.edu/research/data/d055.}
+The dataset can be loaded from \texttt{gerber\_et\_al\_2010.csv}.
+This paper wants to test they hypothesis that registering with a political party (instead of as an `Independent') changes a person's political beliefs. 
+To do so, they run a randomized experiment in Connecticut for the 2008 election. 
+In Connecticut, you have to be registered with a political party (Democrat or Republican) to vote in that party's primary election. 
+From a sample of unregistered voters, the authors randomly assigned some voters to receive information ($Z$ = \texttt{treat}) that let them know this (so that they register with a political party).
+
+Each voter they contacted was asked questions to gauge which political partyt they most closely aligned with. 
+They then recorded whether the vote registered with their ideological party ($D$ = \texttt{pt\_id\_with\_lean}). 
+The outcome of interest is the voter's political ideology a few months after registering with a party, which they measured via a follow-up survey with a similar set of policy questions. 
+They created a varaible ($y$ = \texttt{pt\_voteevalalignindex}) which has larger values if the person more strongly agrees with \emph{their} political party's stances.
+
+\textbf{Overview of experiment}
+\begin{itemize}
+  \item $Z_i$: Voters are randomly told before the primary (say January) that you must register with a party to vote in the primary
+  
+  \item $D_i$: Voters (possibly) register to vote with a party before the primary
+  
+  \item $y_i$: Voters are surveyed later in the year (say July) about their political beliefs. $y_i$ is larger if you are more `ideologically aligned' with your registered party
+\end{itemize}
+
+\bigskip
+\textbf{Questions}
+\begin{enumerate}
+  \item First, let's see if the experimental design actually caused some voters to register with their political party. To do so, run the first-stage regression of $Z$ on $D$. Interpret, using the $F$-statistic, whether the first-stage is ``strong''.
+  
+  \item Second, run the reduced-form regression of $y$ on $Z$. Then, form the $\beta_{\texttt{2SLS}}$ estimate by hand
+  
+  \item Estimate the two-stage least squares estimate using \texttt{feols}. From this result, interpret whether or not registering with a political party changes a voter's ideology. Is the estimate statistically significant? 
+  
+  \item Now, let's try and characterize compliers using the method highlighted in the lecture slides (2SLS regression of $D_i * X_i$ on $D_i$ instrument by $Z_i$). For the following variables, compare these complier's means to the overall population means: the voter's age in 2008 (\texttt{age}); whether the voter voted in the 2006 midterm elections (\texttt{voted2006}); and whether the voter attends church of not (\texttt{pt\_church}).
+  \begin{itemize}
+    \item Given this information, how does this change how you interpret the \texttt{LATE} estimate?
+  \end{itemize}
+\end{enumerate}
+
+
+
+\end{document}
