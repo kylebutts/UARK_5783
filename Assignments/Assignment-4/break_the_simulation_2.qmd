@@ -9,57 +9,15 @@ library(fixest)
 library(assertthat)
 library(ggplot2)
 library(purrr)
+library(tinytable)
 ```
 
 # Break the Simulation #2
 
 ## Original Simulation
 
-```{r}
-# This is the original code and should not be changed
-dgp_clean <- function(true_te = 10) {
-  n <- 100
-  x <- runif(n = n, -5, 5)
-
-  # generate propensity score (following logit equation)
-  pi <- 1 / (1 + exp(-1 * (0 + 0.25 * x)))
-
-  # generate treatment according to propensity score
-  d <- as.numeric(runif(n = n, 0, 1) < pi)
-
-  # generate observed Y
-  u <- rnorm(n = n, mean = 0, sd = 2)
-  y <- d * true_te + x * 2 + u
-
-  # return as data.framt
-  df <- data.frame(
-    x = x, treat = d, y = y
-  )
-  return(df)
-}
-
-check_df <- function(df) { 
-  # Assertions to make sure you modifications are not going to break this
-  df_has_correct_columns <- all(c("treat", "y") %in% colnames(df))
-  assert_that(df_has_correct_columns, msg = "`df` must contain the columns `treat` and `y`.")
-  
-  is_treatment_dummy <- all(c(0, 1) %in% unique(df$treat))
-  assert_that(is_treatment_dummy, msg = "`df$d` must be a 0/1 treatment indicator variable.")
-}
-
-estimate_diff_in_means <- function(df) { 
-  check_df(df)
-
-  # difference-in-means estimator
-  est <- feols(
-    y ~ 1 + i(treat, ref = 0), data = df
-  )
-  coef(est)["treat::1"]
-}
-```
-
 ```{r estimators}
-# estimate regression adjustment
+# regression adjustment estimator
 estimate_regadj <- function(df) { 
   est_y0 <- feols(
     y ~ 1 + x,
@@ -75,7 +33,7 @@ estimate_regadj <- function(df) {
   return(tau_hat)
 }
 
-# estimate iptw
+# iptw estimator
 estimate_iptw <- function(df, type = "hajek") {
   est_propensity <- feglm(
     treat ~ 1 + x,
@@ -129,110 +87,192 @@ estimate_aiptw <- function(df, type = "hajek") {
     (mean((w_1 * (y - y1_hat))[D == 1]) - mean((w_0 * (y - y0_hat))[D == 0]))
   return(tau_hat)
 }
+
+```
+
+```{r}
+run_monte_carlo <- function(dgp) {
+  purrr::list_rbind(purrr::map(1:500, function(i) {
+    df <- dgp()
+
+    true_te <- mean(df$y1 - df$y0)
+    
+    tau_hat_ra <- estimate_regadj(df)
+    tau_hat_iptw <- estimate_iptw(df)
+    tau_hat_aiptw <- estimate_aiptw(df)
+  
+    estimates <- data.frame(
+      iter = i,
+      true_te = true_te, 
+      tau_hat_ra = tau_hat_ra, 
+      tau_hat_iptw = tau_hat_iptw, 
+      tau_hat_aiptw = tau_hat_aiptw
+    )
+
+    return(estimates)
+  }))
+}
+
+summarize_mc_results <- function(mc) {
+  res <- data.frame(
+    x = c("True ATE", "Avg. Regression Adjustment", "Avg. IPTW", "Avg. AIPTW"), 
+    y = c(mean(mc$true_te), mean(mc$tau_hat_ra), mean(mc$tau_hat_iptw), mean(mc$tau_hat_aiptw))
+  )
+
+  tinytable::tt(res) |> 
+    print("markdown")
+} 
+
+plot_mc_results <- function(mc) {
+  ggplot(data = mc) + 
+    geom_density(
+      aes(x = tau_hat_ra, color = "Regression Adjustment"),
+      linewidth = 1.5, key_glyph = "path"
+    ) +
+    geom_density(
+      aes(x = tau_hat_iptw, color = "IPTW"),
+      linewidth = 1.5, key_glyph = "path"
+    ) +
+    geom_density(
+      aes(x = tau_hat_aiptw, color = "AIPTW"),
+      linewidth = 1.5, key_glyph = "path"
+    ) +
+    scale_color_manual(
+      values = c("#B3114B", "#2DB25F", "#ffc517", "#5C4CBF"),
+      guide = guide_legend()
+    ) + 
+    geom_vline(xintercept = mean(mc$true_te), linetype = "dashed") + 
+    labs(
+      x = "Difference-in-means Estimate", 
+      y = "Count", 
+      color = NULL
+    ) +
+    theme_bw(base_size = 12) + 
+    theme(
+      legend.position = "top",
+      legend.text = element_text(size = rel(1.25)),
+      legend.key.spacing.x = unit(24, "pt")
+    )
+}
 ```
 
 ## Simulation using clean dgp
 
-```{r mc_dgp_clean}
-true_te <- 10
-
-# This is what the monte carlo simulation looks when the dgp satisfies the assumptions of the difference-in-means estimator:
-set.seed(20240917)
-
-iter_i <- function(i) {
-  df <- dgp_clean(true_te = true_te)
-  tau_hat_dim <- estimate_diff_in_means(df)
-  tau_hat_ra <- estimate_regadj(df)
-  tau_hat_iptw <- estimate_iptw(df)
-  
-  estimates <- data.frame(iter = i, tau_hat_dim = tau_hat_dim, tau_hat_ra = tau_hat_ra, tau_hat_iptw = tau_hat_iptw)
-}
-mc_dgp_clean <- purrr::list_rbind(purrr::map(1:500, iter_i))
-
-ggplot(data = mc_dgp_clean) + 
-  geom_density(
-    aes(x = tau_hat_dim, color = "Difference-in-means"),
-    linewidth = 2
-  ) +
-  geom_density(
-    aes(x = tau_hat_ra, color = "Regression Adjustment"),
-    linewidth = 2
-  ) +
-  geom_density(
-    aes(x = tau_hat_iptw, color = "IPTW Estimator"),
-    linewidth = 2
-  ) +
-  scale_color_manual(values = c("#B3114B", "#2DB25F", "#ffc517")) + 
-  geom_vline(xintercept = true_te, linetype = "dashed") + 
-  labs(
-    title = "DGP: `dgp_clean`",
-    x = "Difference-in-means Estimate", y = "Count"
-  ) +
-  theme_bw(base_size = 12) 
-```
-
-
-## Question 1
-
-This is the *only* code block that you should modify!
-
 ```{r}
-dgp_broken <- function(true_te = 10) {
-  n <- 100
-  x <- runif(n = n, -5, 5)
+# This is the original code and should not be changed
+dgp_clean <- function() {  
+  n <- 500
+  x <- runif(n = n, -1, 1)
 
   # generate propensity score (following logit equation)
-  pi <- 1 / (1 + exp(-1 * (0 + 0.25 * x)))
+  pi <- 1 / (1 + exp(0 - 0.6 * x))
 
   # generate treatment according to propensity score
   d <- as.numeric(runif(n = n, 0, 1) < pi)
 
-  # generate observed Y
-  u <- rnorm(n = n, mean = 0, sd = 2)
-  y <- d * true_te + x * 2 + u
+  # generate observed Y (following linear model)
+  u <- rnorm(n = n, mean = 0, sd = 0.4)
+  y0 <- 2 * x + u
+  y1 <- 1 + 2 * x + u  
+  y <- d * y1 + (1 - d) * y0
 
-  # return as data.framt
+  # return as data.frame
   df <- data.frame(
-    x = x, treat = d, y = y
+    x = x, treat = d, y = y, y1 = y1, y0 = y0
   )
   return(df)
 }
 ```
 
-```{r mc_dgp_broken}
-true_te <- 10
-set.seed(20240917)
-
-iter_i <- function(i) {
-  df <- dgp_broken(true_te = true_te)
-  tau_hat_dim <- estimate_diff_in_means(df)
-  tau_hat_ra <- estimate_regadj(df)
-  tau_hat_iptw <- estimate_iptw(df)
-  
-  estimates <- data.frame(iter = i, tau_hat_dim = tau_hat_dim, tau_hat_ra = tau_hat_ra, tau_hat_iptw = tau_hat_iptw)
-}
-mc_dgp_broken <- purrr::list_rbind(purrr::map(1:500, iter_i))
-
-
-ggplot(data = mc_dgp_broken) + 
-  geom_density(
-    aes(x = tau_hat_dim, color = "Difference-in-means"),
-    linewidth = 2
-  ) +
-  geom_density(
-    aes(x = tau_hat_ra, color = "Regression Adjustment"),
-    linewidth = 2
-  ) +
-  geom_density(
-    aes(x = tau_hat_iptw, color = "IPTW Estimator"),
-    linewidth = 2
-  ) +
-  scale_color_manual(values = c("#B3114B", "#2DB25F", "#ffc517")) + 
-  geom_vline(xintercept = true_te, linetype = "dashed") + 
-  labs(
-    title = "DGP: `dgp_clean`",
-    x = "Difference-in-means Estimate", y = "Count"
-  ) +
-  theme_bw(base_size = 12) 
+```{r mc_dgp_clean}
+set.seed(20241002)
+mc_dgp_clean <- run_monte_carlo(dgp_clean)
+summarize_mc_results(mc_dgp_clean)
+plot_mc_results(mc_dgp_clean)
 ```
+
+
+## Question 1
+
+For this first question, I want you to break all the estimators (note the DIM estimator is already biased). Hint: think about the conditional independence assumption
+
+```{r}
+# This is the *only* code block that you should modify!
+dgp_broken_q1 <- function(true_te = 1) {
+  n <- 500
+  x <- runif(n = n, -1, 1)
+
+  # generate propensity score (following logit equation)
+  pi <- 1 / (1 + exp(0 - 0.6 * x))
+
+  # generate treatment according to propensity score
+  d <- as.numeric(runif(n = n, 0, 1) < pi)
+
+  # generate observed Y (following linear model)
+  u <- rnorm(n = n, mean = 0, sd = 0.4)
+  y0 <- 2 * x + u
+  y1 <- 1 + 2 * x + u  
+  y <- d * y1 + (1 - d) * y0
+
+  # return as data.frame
+  df <- data.frame(
+    x = x, treat = d, y = y, y1 = y1, y0 = y0
+  )
+  return(df)
+}
+```
+
+```{r}
+set.seed(20241002)
+mc_dgp_broken_q1 <- run_monte_carlo(dgp_broken_q1)
+summarize_mc_results(mc_dgp_broken_q1)
+plot_mc_results(mc_dgp_broken_q1)
+```
+
+### Describe your thinking
+
+I did ... because ...
+
+
+## Question 2
+
+This question is going to be a little more tricky. What I want you to do is break *only* the regression adjustment estimator without breaking the IPTW estimator
+
+```{r}
+# This is the *only* code block that you should modify!
+dgp_broken_q2 <- function() {
+  n <- 500
+  x <- runif(n = n, -1, 1)
+
+  # generate propensity score (following logit equation)
+  pi <- 1 / (1 + exp(0 - 0.6 * x))
+
+  # generate treatment according to propensity score
+  d <- as.numeric(runif(n = n, 0, 1) < pi)
+
+  # generate observed Y (following linear model)
+  u <- rnorm(n = n, mean = 0, sd = 0.4)
+  y0 <- 2 * x + u
+  y1 <- 1 + 2 * x + 3 * x^3 + u  
+  y <- d * y1 + (1 - d) * y0
+
+  # return as data.frame
+  df <- data.frame(
+    x = x, treat = d, y = y, y1 = y1, y0 = y0
+  )
+  return(df)
+}
+```
+
+```{r}
+set.seed(20241002)
+mc_dgp_broken_q2 <- run_monte_carlo(dgp_broken_q2)
+summarize_mc_results(mc_dgp_broken_q2)
+plot_mc_results(mc_dgp_broken_q2)
+```
+
+### Describe your thinking
+
+I did ... because ...
+
 
