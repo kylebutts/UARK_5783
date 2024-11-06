@@ -1,0 +1,500 @@
+\documentclass[aspectratio=169,t,11pt,table]{beamer}
+\usepackage{../../slides,../../math}
+\definecolor{accent}{HTML}{2B5269}
+\definecolor{accent2}{HTML}{9D2235}
+
+\title{Topic 6: Fixed Effects, Difference-in-differences, and Factor Models}
+\subtitle{\it  ECON 5783 — University of Arkansas}
+\date{Fall 2024}
+\author{Prof. Kyle Butts}
+
+\usepackage{hhline} % for DID tables
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[noframenumbering,plain]
+\maketitle
+
+% \bottomleft{\footnotesize $^*$A bit of extra info here. Add an asterich to title or author}
+\end{frame}
+% ------------------------------------------------------------------------------
+
+\section{Fixed Effects}
+
+\begin{frame}{Estimating the effect of AP classes}
+  Say you want to estimate the effect that taking AP classes in high-school $D_i$ has on the probability of completing a college degree $y_i$
+  
+  \bigskip
+  One concern we might have is that schools that offer AP classes might differ from those that do not. 
+  
+  \pause
+  \bigskip
+  For example, the average teacher quality $Z$ might be higher in schools that offer AP classes
+  \begin{itemize}
+    \item Taking AP classes is confounded with attending different quality schools
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Omitted Variable Bias}
+  Let $s(i)$ denote the school that student $i$ attended and assume we see multiple students from each school
+
+  \pause
+  \bigskip
+  Say true causal model determining the probability of completing a college degree is given by
+  $$
+    y_i = D_i \tau + Z_{s(i)} \gamma + u_i
+  $$
+  
+  \begin{itemize}
+    \item $Z_{s(i)}$ is the quality of the teachers at student $i$'s school
+    
+    \item Assume $\expec{u_i}{D_i, Z_{s(i)}} = 0$, i.e. there are no other variables correlated with $D_i$ that impact $y_i$ (for the sake of illustration)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Omitted Variable Bias}
+  From our omitted variables bias formula, regressing $y_i$ on $D_i$ (but not $Z_{s(i)}$) would yield
+  $$
+    \tau_{\texttt{OLS}} = \tau + \gamma \frac{ \tcbhighmath{\cov{D_i, Z_{s(i)}}} }{\var{D_i}}
+  $$
+
+  \bigskip
+  The estimated effect of taking AP classes is biased (up) by the fact that {\color{raspberry} students who take AP classes typically have higher-quality teachers}
+\end{frame}
+
+\begin{frame}{School indicator variables}
+  The simplest solution would be to measure $Z_{s(i)}$ for each student and control for it using the Selection on Observables tools
+  \begin{itemize}
+    \item But this variable might not be in our data or might be hard to measure accurately
+  \end{itemize}
+
+  \pause
+  \hugeskip
+  Instead, consider running the regression of $y_i$ on $D_i$ and a set of indicators for each school $\one{s(i) = k}$ for $k = 1, \dots, K$:
+  $$
+    y_i = D_i \tau + \sum_{k=1}^K \one{s(i) = k} \alpha_k + u_i
+  $$
+
+  \begin{itemize}
+    \item The schools being labeled $1, \dots, K$ only makes notation easier
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{School indicator variables}
+  \vspace*{-\bigskipamount}
+  $$
+    y_i = D_i \tau + \sum_{k=1}^K \one{s(i) = k} \alpha_k + u_i
+  $$
+
+  \bigskip
+  The set of school indicator variables are often referred to as \alert{school `fixed effects'}
+  \begin{itemize}
+    \item This sum is a bit of a pain to write, so people will often short-hand this model to $y_i = D_i \tau + \alpha_{s(i)} + u_i$ or even just $\alpha_s$ leaving the $s(i)$ implicit.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{School indicator variables}
+  To show you what this method does, consider the infeasible regression of $y_i$ on $D_i$, $Z_{s(i)}$, and indicators for each school
+  $$
+    y_i = D_i \tau + Z_{s(i)} \gamma + \sum_{k=1}^K \one{s(i) = k} \alpha_k + u_i
+  $$
+
+  \bigskip
+  We know from the Frisch-Waugh-Lovell theorem that we can `residualize' off the school indicator variables and that leaves:
+  $$
+    \tilde{y}_i = \tilde{D}_i \tau + \tilde{Z}_{s(i)} \gamma + v_i
+  $$
+\end{frame}
+
+\begin{frame}{Residualizing $Z_{s(i)}$ on school indicators}
+  What does the residuals of $Z_{s(i)}$ look like? Well it's the regression of 
+  $$
+    Z_{s(i)} = \sum_{k=1}^K \one{s(i) = k} \alpha_k + e_i
+  $$
+  
+  \pause
+  \bigskip
+  The values of $Z_{s(i)}$ only varies at the school level, so this model will fit the data \emph{perfectly} (set $\alpha_k = Z_k$)
+  \begin{itemize}
+    \item Consequently, $\tilde{Z}_{s(i)} = 0$ for all observations!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{School indicator variables}
+  Therefore, we have that 
+  \begin{align*}
+    \tilde{y}_i &= 
+    \tilde{D}_i \tau + \underbrace{\tcbhighmath[colback = bgNavy]{\tilde{Z}_{s(i)}}}_{\color{navy} =\ 0} \gamma + v_i \\
+    &= \tilde{D}_i \tau + v_i
+  \end{align*}
+
+  \medskip
+  So the infeasible regression is, in some sense, actually \emph{feasible}
+  \begin{itemize}
+    \item We only need to residualize $y_i$ and $D_i$ by the school fixed-effects and the impact of $Z_{s(i)}$ is removed all together
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{`Fixed Effects' and controlling for \emph{unobservables}}
+  This logic extends almost immediately to the case where you have \emph{many} factors that vary at the school-level. Say you have $Z_{1,s(i)}$, $Z_{2,s(i)}$, and $Z_{3,s(i)}$
+
+  \bigskip
+  The FWL theorem logic before is the same
+  \begin{itemize}
+    \item Residualizing each $Z_{\ell, s(i)}$ separately on school indicator variables will remove them all!
+  \end{itemize}
+
+  \pause
+  \bigskip
+  The school fixed-effects absorb \emph{all} the school-level confounders
+  \begin{itemize}
+    \item The identifying assumption is therefore that there is no \emph{student-level} confounders
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{`Fixed Effects' and controlling for \emph{unobservables}}
+  This is why `fixed effects' are viewed powerfuly in economics and are so commonly used
+  \begin{itemize}
+    \item They control for many different confounders (that vary at the level of the fixed-effect)
+    
+    \item E.g. any omitted-variables bias story that occurs at the school level is removed by school fixed-effects
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{What `variation' remains?}
+  So, clearly fixed effects are a powerful tool; but the question is what `variation' remains in $\tilde{D}_i$?
+  \begin{itemize}
+    \item I.e. what remains after regressing $D_i$ on the set of school indicators
+  \end{itemize}
+
+  \bigskip
+  Our regression is $D_i = \sum_{k=1}^K \one{s(i) = k} \alpha_k + e_i$
+  \begin{itemize}
+    \item Predict whether you took an AP class based on the school you go to
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{What variation remains?}
+  \vspace*{-\bigskipamount}
+  $$D_i = \sum_{k=1}^K \one{s(i) = k} \alpha_k + e_i$$
+  
+  Since the set of school indicators are mutually exclusive and exhaustive, we know that $\hat{\alpha}_k$ estimates the proportion of kids in school $k$ that take AP classes: 
+  \begin{itemize}
+    \item $\hat{\alpha}_k = \expec{D_i}{s(i) = k}$
+  \end{itemize}
+
+  \pause
+  \bigskip
+  Then the variable $\tilde{D}_i$ equals $D_i - \hat{\alpha}_{s(i)}$
+  \begin{itemize}
+    \item This takes one of two values within a school: $1 - \hat{\alpha}_{s(i)}$ or $- \hat{\alpha}_{s(i)}$
+  \end{itemize}
+
+  \bigskip
+  The intuition is that we are still comparing people with larger or smaller values of $D_i$, but we are removing bad variation from $y_i$
+\end{frame}
+
+
+\begin{frame}{Within-school variation}
+  Say you have a relatively small sample of students per school
+  \begin{itemize}
+    \item In some schools, you either have \emph{everyone} or \emph{no one} that took AP classes
+  \end{itemize}  
+
+  \pause
+  \bigskip
+  For these schools, $\hat{\alpha}_{s(i)}$ perfectly fits the data within the school, so $\tilde{D}_i = 0$ for all students in the school
+
+  \pause
+  \begin{itemize}
+    \item[] $\implies$ Schools' with no variation in $D_i$ do not contribute to the estimate
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Example of Fixed Effects usage}
+  This semester, Sarah Cordes from Temple University presented her work estimating the returns to high-quality schooling on student outcomes among low-income families in New York City
+
+  \bigskip
+  She uses the fact that families are placed randomly within public-housing complexes and are therefore sent to different NYC public schools (of varying quality)
+\end{frame}
+
+\begin{frame}{Example of Fixed Effects usage}
+  Cordes et. al. ran a regression of educational gains ($y_i$) on school quality ($q_i$) and a set of indicator variables for the public-housing complex a family is assigned to:
+  $$
+    y_i = q_i \tau + \alpha_c + u_i
+  $$
+
+  \begin{itemize}
+    \item $\alpha_c$ denotes complex fixed-effects
+  \end{itemize}  
+
+  \pause
+  \bigskip 
+  $\tilde{q}_i = q_i - \expec{q_i}{c = c_i}$ is the within-complex variation in school-quality
+  \begin{itemize}
+    \item Some families are located near better schools than others within the complex
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{``Within'' estimator}
+  The fixed-effect estimator is sometimes referred to as the `within'-estimator. 
+  
+  \bigskip 
+  For example, here is how an economist typically talks about the previous example
+  \begin{itemize}
+    \item `Our estimator compares two kids \alert{\emph{within the same public-housing complex}}, one assigned to a better than expected quality and the other to a lower than expected quality school'
+  \end{itemize}
+
+  \pause
+  \bigskip
+  Note this feels very similar to matching; look within people with the same $X_i$ and argue that treatment is randomly assigned within that group 
+\end{frame}
+
+\begin{frame}{``Within'' estimator}
+  \begin{center}
+    \emph{`Our estimator compares two kids \alert{\emph{within the same public-housing complex}}, one assigned to a better than expected quality and the other to a lower than expected quality school'}
+  \end{center}
+
+  \bigskip
+  I do not love this language since it implies (to me) that you are running separate regressions for each public-housing complex (you are not!)
+\end{frame}
+
+\begin{frame}{``Within'' estimator}
+  What fixed effects are actually doing: 
+  
+  \begin{itemize}
+    \item Within each complex, take deviations between observed $q_i$ and the complex's average $q_i$: $\tilde{q}_i$
+    
+    \item Across complexes, regress $\tilde{y}_i$ on $\tilde{q}_i$
+    \begin{itemize}
+      \item OLS pools across complexes, putting more weight on public-housing complexes with more variation in $\tilde{q}_i$
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Penguins Example}
+  I'll show you an example to try and help make this clearer. I have a dataset with penguin's flipper length and their bill length
+  \begin{itemize}
+    \item I will regress bill length on flipper length while controlling for species fixed effects (there are 3 different species in this dataset)
+  \end{itemize}
+\end{frame}
+
+\imageframe{figures/penguins_ex_raw.pdf}
+\imageframe{figures/penguins_ex_demeaned.pdf}
+
+% \begin{frame}{``Within'' estimator}
+%   The previous slide does not necessarily mean `comparing penguins of the same species with different flipper length'
+%   \begin{itemize}
+%     \item I prefer the language of `controlling for the fixed effects of each species, we estimate the relationship between '
+%   \end{itemize}
+% \end{frame}
+
+\begin{frame}{``Within'' estimator}
+  Am I being a bit pedantic? Kind of...\pause; but it can sometimes matter
+
+  \hugeskip
+  Remember in our selection on observables section we discussed the weird weighting of units' treatment effects that can occur with a linear regression:
+  \begin{itemize}
+    \item In our case, we put more weight on appartment complexes that have more variation in $\tilde{q}_i$ (by least-squares algebra)
+    
+    \pause
+    \begin{itemize}
+      \item In this case, treatment effects probably don't change much across apartment complex (minimal heterogeneity), so this weighting is probably fine
+    \end{itemize}
+  \end{itemize}
+
+  \bigskip
+  This will turn out to matter when we discuss difference-in-differences!
+\end{frame}
+
+\begin{frame}[fragile]{Estimating fixed effects in \texttt{R}}
+  One final note, to estimate fixed effects in \texttt{R}, we will continue to use the \texttt{fixest} package:
+
+  \begin{codeblock}
+feols(y ~ x | school, data = df, vcov = "hc1")
+  \end{codeblock}
+
+  \begin{itemize}
+    \item Put the fixed effects after \texttt{|}
+    
+    \item Could do \texttt{i(school)}, but will be much slower and clog up your output with extra coefficients
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{A note on estimation of fixed-effects}
+  Thinking about estimation of fixed-effects, our set of indicator variables can be written as:
+  $$
+    \begin{pmatrix}
+      \one{s(i) = 1} & \one{s(i) = 2} & \dots & \one{s(i) = S}
+    \end{pmatrix}
+  $$
+  \begin{itemize}
+    \item This is an $S \times N$ matrix; in larger datasets, your computer would run out of memory creating this matrix
+  \end{itemize}
+
+  \bigskip
+  But this matris is very sparse (mostly 0s) and we know what residualizing does:
+  \begin{itemize}
+    \item In the case of one fixed-effect, we know we can just demean the variables within $i$ 
+    
+    \item In the case of multiple fixed-effects, we do something like multiple demeaning
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{A note on estimation of fixed-effects}
+  Faster methods are implementedin Stata (the O.G.) by \texttt{reghdfe} and in R by \texttt{fixest}
+  \begin{itemize}
+    \item It manually demeans $y$ and $\bm{X}$ and then runs the much simpler $\tilde{y}$ on $\tilde{\bm{X}}$
+  \end{itemize}
+
+  \bigskip
+  In the case of large datasets with many fixed effects, this can take estimation from many hours to a few seconds. Short: use \texttt{fixest}/\texttt{reghdfe}
+  \begin{itemize}
+    \item I find this stuff really interesting, but ymmv
+  \end{itemize}
+\end{frame}
+
+
+
+
+\section{Fixed Effects in Panel Data}
+
+\begin{frame}{Panel Data}
+  Now, we are at the point in the course where we will consider panel data
+  \begin{itemize}
+    \item We observe a set of individuals $i \in \{ 1, \dots, N \}$ over a set of time periods $t \in \{ 1, \dots, T \}$
+  \end{itemize}
+  
+  \bigskip
+
+  \bigskip
+  A \alert{balanced panel} observers each individual in all $T$ time periods ($N \times T$ total)
+  \begin{itemize}
+    \item Otherwise, we call this an \alert{unbalanced panel}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Advantages of Panel Data}
+  In the absence of a clear `quasi-experimental' method in cross-section, people often turn to panel data
+
+  \bigskip
+  Panel data helps us estimate effects by allowing us to remove some key sources of confounding
+  \begin{itemize}
+    \item Observing a person before they enter into treatment might help us better understand their $Y_{it}(0)$ 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Caffeine and Productivity}
+  Say you observe a panel dataset of workers ($i$) on different workdays ($t$).
+  You want to know if your company should provide free coffee for the workers by evaluating the impact of caffeine ($d_{it}$) on productivity ($y_{it}$)
+  
+  
+  \Hugeskip
+  The first problem is that worker's that drink coffee probably look different than those that do not
+  \begin{itemize}
+    \item People with higher (average) $d_{it}$ might differ in other characteristics
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Caffeine and Productivity}
+  Say worker's producivity is determined by 
+  $$
+    y_{it} = p_i + \tau d_{it} + \varepsilon_{it}
+  $$
+  \begin{itemize}
+    \item Here, $p_i$ is a worker's underlying productivity that is time-invariant
+    \item $\tau$ is the true treatment effect
+    \item $\varepsilon_{it}$ are shocks to productivity on a given day
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Unit ``Fixed Effects''}
+  \vspace*{-\bigskipamount}
+  $$
+    y_{it} = p_i + \tau d_{it} + \varepsilon_{it}
+  $$
+  
+  \bigskip
+  The $p_i$ term is our `fixed effect'
+  \begin{itemize}
+    \item A person-specific effect that is \emph{fixed} over days $t$
+
+    \item When we estimate this model, this is just a set of $N$ indicator variables (e.g. a indicator for being person $1$, an indicator for being person $2$, ...)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Unit ``Fixed Effects''}
+  After residualizing out the estimated fixed effects
+
+  $$
+    \tilde{y}_{it} = \tau \tilde{d}_{it} + \tilde{\varepsilon}_{it}
+  $$
+  
+  \bigskip
+  From least-squares mechanics, we have $\tilde{d}_{it} = d_{it} - \bar{d}_i$, where $\bar{d}_i$ is the (sample) average caffeine intake for a person
+  \begin{itemize}
+    \item $\tilde{d}_{it}$ represents the average caffeine intake relative to the worker's average intake
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Identifying assumption}
+  \vspace*{-\bigskipamount}
+  $$
+    \left(y_{it} - \bar{y}_i\right) = \tau \left(d_{it} - \bar{d}_i\right) + \tilde{\varepsilon}_{it}
+  $$
+  
+  \bigskip
+  Our regression compares workers on days where they have above (their) average caffeine intake to days where they have below (their) average
+  \begin{itemize}
+    \item Our `ideal experiment' is that workers \emph{randomly} have more or less caffeine than their average
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Identifying assumption}
+  \vspace*{-\bigskipamount}
+  $$
+    \left(y_{it} - \bar{y}_i\right) = \tau \left(d_{it} - \bar{d}_i\right) + \tilde{\varepsilon}_{it}
+  $$
+  
+  \emph{Our `ideal experiment' is that workers \emph{randomly} have more or less caffeine than their average}
+
+  \bigskip
+  Do we think this is a plausible assumption? 
+  \pause
+  \begin{itemize}
+    \item Maybe on days when the worker is feeling very tired, they drink an extra cup of coffee
+    \item Them being tired might have a direct effect on their productivity (showing up in $\tilde{\varepsilon}_{it}$)
+  \end{itemize}
+\end{frame}
+
+
+
+% TODO: Put this in the right place
+\begin{frame}{`Fixed Effects' vs. `Fixed Characteristics'}
+  A lot of people confuse `fixed effects' with `fixed characteristics'
+  \begin{itemize}
+    \item E.g. your people skills might be a `fixed characteristic'
+    
+    \item But over time the labor market returns to people skill might change
+  \end{itemize}
+
+  \bigskip
+  So even though your people skills might be fixed, it does not have a `fixed \emph{effect}' on the outcome
+
+  \pause
+  \bigskip
+  This can cause a bias in our treatment effect
+  \begin{itemize}
+    \item E.g. If people with high people skills select into treatment when the returns to people skills is going up, that will contaminate treatment effect
+  \end{itemize}
+\end{frame}
+
+
+
+
+
+
+\end{document}
