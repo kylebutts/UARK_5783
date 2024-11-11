@@ -207,7 +207,7 @@
   
   \vspace*{-\medskipamount}
   \begin{align*}
-    \tau_{\texttt{ATT}} &= 
+    \tau_{\text{ATT}} &= 
     \int_{\bm{x} \in \mathbb{X}} \tau(\bm{X}_i = \bm{x}) d\prob{\bm{X} = \bm{x}}{D_i = 1}\\ 
     &= \int_{\bm{x} \in \mathbb{X}} \expec{Y_i}{D_i = 1, \bm{X}_i = \bm{x}} - \expec{Y_i}{D_i = 0, \bm{X}_i = \bm{x}} d\prob{\bm{X} = \bm{x}}{D_i = 1}
   \end{align*}
@@ -396,9 +396,9 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Regression Adjustment}{\texttt{ATT} Estimator}
+\begin{frame}{Regression Adjustment}{\text{ATT} Estimator}
   $$
-    \hat{\tau}_{\texttt{ATT}} = 
+    \hat{\tau}_{\text{ATT}} = 
     \underbrace{
       \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_1 + \bm{X}_i' \hat{\beta}_1 \right)
     }_{\expechat{Y_i(1)}{D_i = 1}} - 
@@ -409,19 +409,19 @@
 \end{frame}
 
 \begin{frame}{Regression Adjustment}
-  For the \texttt{ATT}, remember that the fitted value of a linear regression averaged over the estimation sample is the average of $Y$ for that sample.
+  For the \text{ATT}, remember that the fitted value of a linear regression averaged over the estimation sample is the average of $Y$ for that sample.
   
   \bigskip
   So, we can rewrite the 
   \begin{align*}
-    \hat{\tau}_{\texttt{ATT}} &= 
+    \hat{\tau}_{\text{ATT}} &= 
     \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_1 + \bm{X}_i' \hat{\beta}_1 \right) -
     \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right) \\ 
     &= \frac{1}{n_1} \sum_{i=1}^n D_i Y_i - 
     \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right) 
   \end{align*}
   \begin{itemize}
-    \item Only relying on the model for $\mu_{0}(\bm{x})$ to estimate the \texttt{ATT}
+    \item Only relying on the model for $\mu_{0}(\bm{x})$ to estimate the \text{ATT}
   \end{itemize}
 \end{frame}
 
@@ -432,7 +432,7 @@
   $$
   \begin{itemize}
     \item Then our $\hat{\tau}_{\texttt{ATE}}$ estimate is given by $\hat{\alpha}_1$
-    \item If you subtract of the average of $\bm{X}$ for the treated group, $\hat{\alpha}_1$ will be $\hat{\tau}_{\texttt{ATT}}$
+    \item If you subtract of the average of $\bm{X}$ for the treated group, $\hat{\alpha}_1$ will be $\hat{\tau}_{\text{ATT}}$
   \end{itemize}
 \end{frame}
 
@@ -788,7 +788,7 @@
     0 < \pi(\bm{x}) \equiv \prob{D_i = 1}{\bm{X}_i = \bm{x}} < 1
   $$
 
-  Our estimand of interest is the \texttt{ATE}/\texttt{ATT}
+  Our estimand of interest is the \texttt{ATE}/\text{ATT}
   $$
     \tau_{\texttt{ATE}} = \expec{\ \expec{Y_i(1)}{\bm{X}_i = \bm{x}} - \expec{Y_i(0)}{\bm{X}_i = \bm{x}} \ }
   $$
@@ -836,16 +836,16 @@
   \end{align*}
 \end{frame}
 
-\begin{frame}{Inverse Probability of Treatment}{\texttt{ATT} Estimator}
+\begin{frame}{Inverse Probability of Treatment}{\text{ATT} Estimator}
   For the ATT estimator, we can just average $Y_i$ for the treated group and modify our control group weights
   \begin{align*}
-    \hat{\tau}_{\texttt{IPTW},\texttt{ATT}}
+    \hat{\tau}_{\texttt{IPTW},\text{ATT}}
     &\equiv \expec{\frac{W_i}{n_1} Y_i} - \expec{\frac{\pi(\bm{X}_i)}{n_1} \frac{(1 - W_i)}{1 - \pi(\bm{X}_i)} Y_i} \\
     &= \expec{Y_i(1)}{D_i = 1} - \expec{Y_i(0)}{D_i = 1}
   \end{align*}
 \end{frame}
 
-\begin{frame}{\texttt{ATT} proof}
+\begin{frame}{\text{ATT} proof}
   \begin{align*}
     \expec{\frac{\pi(\bm{X}_i)}{n_1} \frac{(1 - W_i)}{1 - \pi(\bm{X}_i)} Y_i} 
     &= \expec{ \expec{ \frac{\pi(\bm{X}_i)}{n_1} \frac{(1 - W_i)}{1 - \pi(\bm{X}_i)} Y_i }{\bm{X}_i} } \\ \pause

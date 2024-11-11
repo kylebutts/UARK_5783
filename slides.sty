@@ -144,13 +144,25 @@
 \AtBeginSection[]{
   {
     % Comment \ifnum, \else, and \fi to include table of contents for the first section
-    \ifnum \value{section}>1
+    % \ifnum \value{section}>1
     \hypersetup{hidelinks}
     \begin{frame}[noframenumbering,plain]{\ }
       \tableofcontents[currentsection]
     \end{frame}
-    \else
-    \fi
+    % \else
+    % \fi
+  }
+}
+\AtBeginSubsection[]{
+  {
+    % Comment \ifnum, \else, and \fi to include table of contents for the first section
+    % \ifnum \value{section}>1
+    \hypersetup{hidelinks}
+    \begin{frame}[noframenumbering,plain]{\ }
+      \tableofcontents[currentsection]
+    \end{frame}
+    % \else
+    % \fi
   }
 }
 
