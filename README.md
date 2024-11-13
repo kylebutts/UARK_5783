@@ -97,10 +97,10 @@ This is a tentative schedule. This is the first time I've taught this course, so
 | 9 | 10/14 - 10/16 | No Class | Regression Discontinuity |  |
 | 10 | 10/21 - 10/23 | Midterm | Instrumental Variables |  |
 | 11 | 10/28 - 10/30 | Instrumental Variables | Instrumental Variables |  |
-| 12 | 11/04 - 11/06 | Panel Data | Panel Data |  |
+| 12 | 11/04 - 11/06 | Instrumental Variables | Panel Data |  |
 | 13 | 11/11 - 11/13 | Panel Data | Panel Data |  |
-| 14 | 11/18 - 11/20 | Panel Data | Project Presentations |  |
-| 15 | 11/25 - 11/27 | Project Presentations | No Class |  |
+| 14 | 11/18 - 11/20 | Panel Data | Panel Data |  |
+| 15 | 11/25 - 11/27 | Panel Data | No Class |  |
 | 16 | 12/02 - 12/04 | Project Presentations | Project Presentations |  |
 <!-- Schedule -->
 
