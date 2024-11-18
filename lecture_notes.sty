@@ -429,3 +429,31 @@
     \ifbool{INCLUDECOMMENTS}{{\color{cranberry}\textbf{#1:} #2}}{}
 }
 
+% Code listings ----------------------------------------------------------------
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\tcbuselibrary{listings,listingsutf8,skins}
+\tcbset{
+  codelanguage/.style={language = #1},
+  codelanguage/.default = R,
+}
+\DeclareTCBListing{codeblock}{ !O{R} }{
+  listing only,
+  interior hidden,
+  top = -6pt, 
+  bottom = -6pt,
+  left = 4pt, 
+  right = 0pt,
+  boxrule = 0pt, 
+  frame hidden, 
+  sharp corners, 
+  borderline west = {2pt}{0pt}{zinc400}, 
+  enhanced,
+  breakable,
+  listing options={
+    basicstyle = \small\ttfamily,
+    columns = fixed,
+    keepspaces = true,
+    language = #1
+  }
+}

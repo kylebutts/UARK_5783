@@ -1,0 +1,101 @@
+\documentclass[12pt]{article}
+\usepackage{../../lecture_notes}
+\usepackage{../../math}
+\usepackage{../../uark_colors}
+
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\begin{document}
+\begin{center}
+  {\Huge\bf Assignment \#6}
+  
+  \smallskip
+  {\large\it  ECON 5783 — University of Arkansas}
+
+  \medskip
+  {\large Prof. Kyle Butts}
+\end{center}
+
+These assignments should be completed in groups of 1 or 2 but submitted individually. My preference is for you to use Rmarkdown files to have your code, results, and your answers to the questions intermixed. Since I am not requiring you to code in R for these assignments, you can use latex or microsoft word to write up answers alternatively. Not that in these cases, I would like you to upload your code seperately. 
+
+% Data from: https://academic.oup.com/qje/article-abstract/129/1/275/1899702?login=false
+\section*{Coding Exercise: Kline and Moretti (2014, QJE)}
+
+This exercise will have you work with replication material from Kline and Moretti (2014, QJE).
+The dataset can be loaded from \texttt{tva.csv}.
+The paper analyzes the effects of a large-scale New Deal intervention called the Tennessee Valley Authority. 
+
+% TODO: Describe why parallel trends might be implausible
+
+The data set contains census data on US counties measured every decade (\texttt{year}). 
+The treatment variable, $D_i$, equals 1 if the county is in the Tennessee Valley Authority (\texttt{tva}).
+For an outcome variable, we focus on the $\log$ manufacturing employment in a county (\texttt{ln\_manufacturing}).
+
+\subsection*{Difference-in-differences estimation}
+\begin{enumerate}
+  \item First, create a data frame that contains the years 1940 (pre-period) and 1960 (post-period). Verify that these three ways to estimate a difference-in-differences estimate are identical:
+  \begin{enumerate}
+    \item Calculate the difference-in-differences estimate by hand, i.e. taking the four sample means of \texttt{ln\_manufacturing}.
+    
+    \item Then, calculate this using a regression with county and year fixed-effects with \texttt{feols}.
+    
+    \item Last, estimate this using first-differenced data (i.e. regressing $y_{i,1960} - y_{i,1940}$ on an intercept and $\text{TVA}_i$). 
+  \end{enumerate}
+  
+  \item Comment in words what you would need to believe for this estimate to be interpreted as causal
+  
+  \item Now, estimate $2 \times 2$ difference-in-differences estimates for 1950 and pre-trend estimates using 1920 and 1930. \emph{Note: for 1920 and 1930, still use 1940 as your `base period', i.e. $y_{i, 1920} - y_{i, 1940}$}
+  
+  \item Now, create a variable for event time $\times$ $D_i$. This variable should take the value $t - 1950$ for treated units (i.e. 1920 -> -30, 1930 -> -20, etc.) and the value $-10$ for untreated units. Then, run a regression of $y_{it}$ on these event-study indicators (dropping $-10$) and county and year fixed-effects. Verify these estimates are the same as the previous question
+\end{enumerate}
+
+
+\subsection*{Conditional Parallel Trends}
+
+In the context of the Tennessee Valley Authority, this program was targetted towards an area with lower access to electricity and far less manufacturing than the rest of the US. 
+``Regional convergence'', an economic theory of development, would suggest this region would have faster counterfactual manufacturing growth (in the absence of treatment) than the rest of the country. 
+
+Kline and Moretti, therefore, wanted to use a set of covariates to better model these non-parallel trends. 
+The assumption is that comparing units with the same values of $X_i$ would be on the same trends.
+We will use the following covariates: \texttt{agriculture\_share\_1920}, \texttt{agriculture\_share\_1930}, \texttt{manufacturing\_share\_1920}, \texttt{manufacturing\_share\_1930}, \newline \texttt{white\_share\_1920}, and \texttt{white\_share\_1930}.
+
+
+\begin{enumerate}
+  \item In words, make an argument why you would include baseline manufacturing share as a covariate. 
+
+  \item Let's return to the dataset subset to 1940 and 1960. 
+  Create a variable containing first-differenced outcome $\Delta y_i = y_{i,1960} - y_{i,1940}$ and call it \texttt{delta\_ln\_manufacturing}.
+  Then subset the data to just 1960 (see the next page for an example of how to do this).
+  
+  With this first-differenced data, perform the regression adjustment estimator (refer back to previous labs) of $\Delta y_i$ on $D_i$ conditional on $\bm{X}_i$
+
+  \item Now, let's try this with the \texttt{DRDID} package and the \texttt{DRDID::reg\_did\_panel()} function
+  
+  \item Last, try the \texttt{DRDID::drdid()} function to perform a doubly-rboust estimator (Augmented IPTW Estimator).
+\end{enumerate}
+
+
+\newpage
+Question 1 Hint: 
+\begin{codeblock}
+df |> 
+  mutate(
+    .by = county_code, 
+    delta_ln_manufacturing = 
+      ln_manufacturing - ln_manufacturing[year == 1940]
+  ) |> 
+  filter(year == 1960)
+\end{codeblock} 
+
+
+
+
+
+
+
+\end{document}
