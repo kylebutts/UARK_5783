@@ -129,7 +129,7 @@
 
   \pause
   \bigskip
-  Their strategy was to compare changes to New Jersey fast-food employment to those in Eastern Pennsylavnia
+  Their strategy was to compare changes to New Jersey fast-food employment to those in Eastern Pennsylvania
   \begin{itemize}
     \item 331 in New Jersey (treated)
     \item 79 in Eastern Pennsylvania (untreated)
@@ -323,7 +323,7 @@
   $$
 
   \medskip
-  $\implies$ The change in outcome for the controlunits is the effect of treatment plus the control groups' counterfactual trend 
+  $\implies$ The change in outcome for the control units is the effect of treatment plus the control groups' counterfactual trend 
 \end{frame}
 
 \begin{frame}{Difference-in-differences}
@@ -404,7 +404,7 @@
 \begin{frame}{A note on the name `Difference-in-Differences'}
   The correct name is Difference in Difference\emph{s}
   \begin{itemize}
-    \item You are taking the difference between \emph{two} avrages of first-differences
+    \item You are taking the difference between \emph{two} averages of first-differences
   \end{itemize}
 
   \bigskip
@@ -544,7 +544,7 @@
   $$
 \end{frame}
 
-\begin{frame}{Estimating dyanmic effects using OLS}
+\begin{frame}{Estimating dynamic effects using OLS}
   Similarly, we can estimate these using OLS:
   $$
     y_{it} = \mu_i + \lambda_t + \sum_{\ell = T_0 + 1}^T d_{it}^\ell \tau^\ell + v_{it},
@@ -644,8 +644,8 @@
   \bigskip
   Our \alert{Conditional Parallel Trends} Assumption says
   $$
-    \expec{y_{i1}(1) - y_{i0}(0)}{D_i = 1, \bm{X}_i = \bm{x}} = 
-    \expec{y_{i1}(1) - y_{i0}(0)}{D_i = 0, \bm{X}_i = \bm{x}}
+    \expec{y_{i1}(0) - y_{i0}(0)}{D_i = 1, \bm{X}_i = \bm{x}} = 
+    \expec{y_{i1}(0) - y_{i0}(0)}{D_i = 0, \bm{X}_i = \bm{x}}
   $$
   for all values of $\bm{x}$ 
 \end{frame}
@@ -653,9 +653,9 @@
 \begin{frame}{Conditional Parallel Trends does not imply Parallel Trends}
   Say we have $X_i$ be a unit's gender and conditional parallel trends holds. The unconditional trends for the treated and untreated groups are:
   \begin{align*}
-    &\expec{y_{i1}(1) - y_{i0}(0)}{D_i = d} =\\
-    &\quad\quad \prob{X_i = F}{D_i = d} \expec{y_{i1}(1) - y_{i0}(0)}{D_i = d, X_i = F} \\
-    &\quad\quad+ \prob{X_i = M}{D_i = d} \expec{y_{i1}(1) - y_{i0}(0)}{D_i = d, X_i = M} 
+    &\expec{y_{i1}(0) - y_{i0}(0)}{D_i = d} =\\
+    &\quad\quad \prob{X_i = F}{D_i = d} \expec{y_{i1}(0) - y_{i0}(0)}{D_i = d, X_i = F} \\
+    &\quad\quad+ \prob{X_i = M}{D_i = d} \expec{y_{i1}(0) - y_{i0}(0)}{D_i = d, X_i = M} 
   \end{align*}
 
   \pause
@@ -666,15 +666,16 @@
 \begin{frame}{Estimation Strategies with Conditional Parallel Trends}
   One way of rewriting the conditional parallel trends assumption is as follows:
   $$
-    \expec{\Delta y_i}{D_i = d, \bm{X}_i = \bm{x}} = \expec{\Delta y_i}{\bm{X}_i = \bm{x}}
+    \expec{\Delta y_i(0)}{D_i = d, \bm{X}_i = \bm{x}} = \expec{\Delta y_i(0)}{\bm{X}_i = \bm{x}}
   $$
 
-  That is, treatment is mean-independent of the \emph{change in $y_i$} conditional on $\bm{X}_i$
+  That is, treatment is mean-independent of the \emph{change in $y_i(0)$} conditional on $\bm{X}_i$
   
   \pause
   \bigskip
   $\implies$ We can treat this like a selection-on-observables problem where $\Delta y_i = y_{i1} - y_{i0}$ is our outcome variable
   \begin{itemize}
+    \item Two potential outcomes: $\Delta y_i(1) = y_{i1}(1) - y_{i0}(0)$ and $\Delta y_i(0) = y_{i1}(0) - y_{i0}(0)$
     \item This unlocks all of our selection-on-observables strategies
   \end{itemize}
 \end{frame}
@@ -682,7 +683,7 @@
 \begin{frame}{Example 1: Matching}
   \vspace*{-\bigskipamount}
   $$
-    \expec{\Delta y_i}{D_i = d, \bm{X}_i = \bm{x}} = \expec{\Delta y_i}{\bm{X}_i = \bm{x}}
+    \expec{\Delta y_i(0)}{D_i = d, \bm{X}_i = \bm{x}} = \expec{\Delta y_i(0)}{\bm{X}_i = \bm{x}}
   $$
 
   \bigskip
@@ -693,7 +694,7 @@
   For event-study type setups, we can do a version of this where
   we use $y_{it} - y_{iT_0}$ as the outcome variable
   \begin{itemize}
-    \item For each $t \in 1, \dots, T_0 - 1, T_0 + 1, \dots, T$, we can compute an estimate using the matched-control group
+    \item For each $t \in 1, \dots, T_0 - 1, T_0 + 1, \dots, T$, we can compute an estimate using the matched-control group 
   \end{itemize}
 
   \bigskip
@@ -712,7 +713,7 @@
   \bigskip
   $\hat{\beta}$ will estimate how the change in $y_i(0)$ varies by $\bm{X}_i$
   \begin{itemize}
-    \item For e.g. if $\bm{X}_i$ was an inidicator for being a female
+    \item For e.g. if $\bm{X}_i$ was an indicator for being a female
     \begin{itemize}
       \item $\hat{\alpha}$ would estimate the average male trend in $y(0)$
       
@@ -733,64 +734,502 @@
 \begin{frame}{Regression Adjustment}
   \vspace*{-\bigskipamount}
   $$
-    y_{i1}(0) - y_{i0}(0) = \alpha + \bm{X}_i \beta + u_i
+    \Delta y_i(0) = y_{i1}(0) - y_{i0}(0) = \alpha + \bm{X}_i \beta + u_i
   $$
   
   \bigskip
   Once we have $\hat{\alpha}$ and $\hat{\beta}$ estimated using our $D_i = 0$ units, we can form our DID estimate as 
   $$
-    \hat{\tau}_{\text{RA}} = \frac{1}{N_1} \sum_{i \ : \ D_i = 1} \left( \Delta y_i \right) - \underbrace{ (\hat{\alpha} + \bm{X}_i \hat{\beta}) }_{\widehat{\Delta y(0)}}
+    \hat{\tau}_{\text{RA}} 
+    = \frac{1}{N_1} \sum_{i \ : \ D_i = 1} \quad
+    \tcbhighmath[colback = bgOrange]{\left( \Delta y_i \right) }
+    - \tcbhighmath[colback = bgRaspberry]{\left( \hat{\alpha} + \bm{X}_i \hat{\beta} \right)}
   $$
+
+  \begin{tikzpicture}[remember picture, overlay]
+    \node [anchor = north, text width = 0.12\textwidth] at (page cs:0.52,0.53) {
+      \begin{center}
+        \setstretch{0.7}
+        {\footnotesize\color{orange} $\Delta y_{i}(0) + \tau_i$}
+      \end{center}
+    };
+    
+    \node [anchor = north, text width = 0.1\textwidth] at (page cs:0.65,0.53) {
+      \begin{center}
+        \setstretch{0.7}
+        {\footnotesize\color{raspberry} $\widehat{\Delta y_i(0)}$}
+      \end{center}
+    };
+  \end{tikzpicture}
+  % \devgrid
 \end{frame}
-
-
-
-
 
 % TODO: Unit fixed-effects ``cancel out''
 
 
-% \begin{frame}{Simple Difference-in-differences and Four Means}
-%   % \begin{table}[h!]
-%   %   \centering
-%   %   \begin{tabular}{|c|c|c|}
-%   %     \hhline{~--}
-%   %     \multicolumn{1}{c|}{} & 
-%   %     \multicolumn{1}{c|}{\cellcolor{bgOrange}$t = 0$} & 
-%   %     \multicolumn{1}{c|}{\cellcolor{bgOrange}$t = 1$} \\
-%   %     \hline
-%   %     
-%   %     \cellcolor{bgOrange}$D_i = 0$ & $\gamma_0 + \alpha_i$ & $\gamma_1 + \alpha_i$ \\
-%   %     \hline
-%   %     
-%   %     \cellcolor{bgOrange}$D_i = 1$ & $\gamma_0 + \alpha_i$ & $\gamma_1 + \alpha_i + \tau_i$ \\
-%   %     \hline
-%   %   \end{tabular}
-%   % \end{table}
-% 
-%   \bigskip
-%   Taking first differences and ignoring error term:
-%   \begin{itemize}
-%     \item For $D_i = 0$, $y_{i1} - y_{i0} = \gamma_1 - \gamma_0 + u_{i1} - u_{i0}$
-%     
-%     \item For $D_i = 1$, $y_{i1} - y_{i0} = \gamma_1 - \gamma_0 + \tau_i + u_{i1} - u_{i0}$
-%   \end{itemize}
-% 
-%   \bigskip
-%   The key assumption is that 
-% \end{frame}
+
+\section{Staggered Treatment Timing}
+
+\begin{frame}{Staggered Treatment Timing}
+  Now we turn to settings where treatment begins at different time for different units
+  \begin{itemize}
+    \item E.g. states roll out a policy over time
+  \end{itemize}
+
+  \bigskip
+  Let $G_i$ denote the time-period where a unit $i$ is first starts treatment. The literature refers to $G_i$ as `treatment-timing group', or `group' for short
+  \begin{itemize}
+    \item By convention, units that are never treated in the sample have $G_i = \infty$
+    
+    \item Can not estimate effects for units treated in period $1$  (``always-treated''), so we drop them
+  \end{itemize} 
+\end{frame}
+
+\begin{frame}{High-level Overview}
+  There are two prevalent strategies in the literature for estimating effects:
+  
+  \bigskip
+  \begin{enumerate}
+    \item The `building blocks' approach where you estimate small parameters using $2 \times 2$ DID and aggregate them up
+    \begin{itemize}
+      \item E.g. Callaway and Sant'Anna (2021); deChasiemartin and D'Haultfoeuille (many); Callaway Goodman-Bacon and Sant'Anna (2024)
+    \end{itemize}
+
+    \bigskip
+    \item The `imputation' approach where you try and estimate $y_{it}(0)$ explicitly
+    \begin{itemize}
+      \item Borusyak, Jaravel, and Spiess (2024); Gardner (WP)
+      \item Extends into more complex models (e.g. my own work)
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+\subsection{Estimating Group-Time ATTs (Callaway and Sant'Anna)}
+
+\begin{frame}{Heterogeneity}
+  There are going to be two sources of heterogeneity in this setting:
+
+  \bigskip
+  % \only<1>{
+  \alert{1.} Treatment effects might vary over time for a unit, sometimes called ``dynamics''
+  \begin{itemize}
+    \item E.g. treatment effects start big but fade out as units adapt
+    \item Or, effects start small but grow over time as the policy is fully implemented
+  \end{itemize}
+  % }
+
+  \bigskip
+  % \only<2>{
+  \alert{2.} Treatment effects might vary by when you receive treatment
+  \begin{itemize}
+    \item E.g. units with larger treatment effects start treatment earliest 
+    
+    \item E.g. entering treatment during a recession has larger impacts on the outcome
+  \end{itemize}
+  % }
+\end{frame}
+
+
+\begin{frame}{Defining potential outcomes}
+  Because of the sources of heterogeneity before, it matters when a unit starts treatment when keeping track of potential outcomes
+  
+  \bigskip
+  Unit $i$ at period $t$ has potential outcomes $y_{it}(g)$ 
+  \begin{itemize}
+    \item The outcome for unit $i$ in period $t$ in the counterfactual world where they started treatment in period $g$
+    
+    \item There are now more than $2$ potential outcomes!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Defining potential outcomes}
+  For units with $G_i = g$, we observe $y_{it} = y_{it}(g)$ when $t \geq g$ or $y_{it} = y_{it}(g) = y_{it}(\infty)$ when $t < g$
+  \begin{itemize}
+    \item This is our ``switching equation'' and a no-anticipation assumption
+  \end{itemize}
+
+  \pause
+  \bigskip
+  The treatment effect can be defined as $y_{it}(g) - y_{it}(\infty)$
+  \begin{itemize}
+    \item For unit $i$, the treatment effect at time $t$ depends on when you started treatment
+    \begin{itemize}
+      \item if I've been treated for 5 periods or 1 period matters (dynamic effects)
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Group-time Average Treatment Effect}
+  Since we can only observe $y_{it}(g)$ for units that start treatment in period $G_i = g$, we can only estimate a ``group-time ATT'':
+  $$
+    \text{ATT}(g, t) \equiv \expec{y_{it}(g) - y_{it}(\infty)}{G_i = g}
+  $$
+
+  \begin{itemize}
+    \item Just like in $2 \times 2$, we can only estimate the treatment effect on the treated units
+  \end{itemize}
+
+  \bigskip
+  This represents the effect in period $t$ of being treated since period $g$, averaged over the units that receive treatment in period $g$
+\end{frame}
+
+\begin{frame}{Group-time Average Treatment Effect}
+  \vspace*{-\bigskipamount}
+  $$
+    \text{ATT}(g, t) \equiv \expec{y_{it}(g) - y_{it}(\infty)}{G_i = g}
+  $$
+  
+  \bigskip
+  Our previous discussion of heterogeneity can be described as follows:
+
+  \bigskip
+  \begin{enumerate}
+    \item Treatment effects might vary over time for a unit:
+    \begin{itemize}
+      \item For a given $g$, $\text{ATT}(g, t)$ varies over $t$
+    \end{itemize}
+    
+    \bigskip
+    \item Treatment effects might vary by when you receive treatment
+    \begin{itemize}
+      \item For a given $t$, $\text{ATT}(g, t)$ varies over $g$
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Aggregating Effects}
+  The $\text{ATT}(g, t)$ parameters are sometimes referred to as the `building blocks' because you can take weighted averages of these parameters to get more aggregate parameters
+  \begin{itemize}
+    \item Pro: $\text{ATT}(g,t)$ can be quite noisily estimated and be too numerous to report, so summarizing effects can be helpful 
+    
+    \item Con: may be meaningless if effects are too heterogeneous
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Overall ATT}
+  To get an overall treatment effect, you could do:
+  $$
+    \text{ATT}_{\text{overall}} = \sum_{g} \sum_{t} \one{t \geq g} \frac{1}{N_{g,t}} \text{ATT}(g, t),
+  $$
+  where $N_{g,t}$ is the number of units in group $g$ in period $t$
+
+  \pause
+  \bigskip
+  \begin{itemize}
+    \item A single summary measure
+
+    \item If effects do not vary too much by $g$ and $t$, then this will typically have the smallest standard errors
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Dynamic ATT / Event-Study}
+  We can estimate `dynamic effects' / `event-study effects' by averaging over an \emph{event-time} $\ell$:
+  $$
+    \text{ATT}^\ell = \sum_{g} \sum_{t} \one{t - g = \ell} \frac{1}{N_{g,t}} \text{ATT}(g,t)
+  $$
+
+  \bigskip
+  \begin{itemize}
+    \item Summarize how effects change over time for a unit, i.e. \emph{dynamic effects}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Who to compare to?}
+  There are now multiple different comparison groups:
+  \begin{itemize}
+    \item The units that never start treatment ($G_i = \infty$)
+    
+    \item The units that start treatment later than a given unit
+    
+    \item Or both
+  \end{itemize}
+
+  \bigskip
+  Our parallel trends assumption will be modified to basically say `the comparison group we use has the same counterfactual trends as group $g$'
+\end{frame}
+
+
+\begin{frame}{Parallel Trends Assumption}
+  If we want to use treated units compared to never-treated units, we need to assume for all $t$ and all $g$
+  $$
+    \expec{y_{it}(\infty) - y_{i,t-1}(\infty)}{G_i = g} = 
+    \expec{y_{it}(\infty) - y_{i,t-1}(\infty)}{ \tcbhighmath[colback = bgRaspberry]{G_i = \infty} }
+  $$
+
+  \begin{tikzpicture}[remember picture, overlay]
+    \node [anchor = north, text width = 0.2\textwidth] at (page cs:0.8,0.4) {
+      \begin{center}
+        \setstretch{0.7}
+        {\footnotesize\color{raspberry} \emph{never-treated units}}
+      \end{center}
+    };
+  \end{tikzpicture}
+
+  \pause
+  \bigskip
+  If we want to use treated units compared to not-yet-treated units, we need to assume for all $t$ and all $g, g'$ with $g' > g$:
+  $$
+    \expec{y_{it}(\infty) - y_{i,t-1}(\infty)}{G_i = g} = 
+    \expec{y_{it}(\infty) - y_{i,t-1}(\infty)}{ \tcbhighmath[colback = bgRaspberry]{G_i = g', t < g'} }
+  $$
+
+  \begin{tikzpicture}[remember picture, overlay]
+    \node [anchor = north, text width = 0.2\textwidth] at (page cs:0.8,0.82) {
+      \begin{center}
+        \setstretch{0.7}
+        {\footnotesize\color{raspberry} \emph{not-yet-treated units}}
+      \end{center}
+    };
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Using only not-yet-treated units}
+  Note, you do not want to use units treated before period $t$. Why?
+
+  \pause
+  We do not observe $y_{it}(\infty)$ for these units when these units are already treated by time $t$
+  \begin{itemize}
+    \item We will come back to this
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Estimation of $\text{ATT}(g,t)$}
+  Estimation of $\text{ATT}(g,t)$ can be done in the same way as the $2 \times 2$, but requires a bit more care:
+
+  \bigskip
+  \begin{enumerate}
+    \item Subset to units that are never-treated and/or not treated by time $t$ 
+    \begin{itemize}
+      \item The choice of this depends on which parallel trends assumption you believe
+    \end{itemize}
+ 
+    \item Then, estimate a $2 \times 2$ estimate using periods $t$ and $g - 1$ and $D_i = \one{G_i = g}$
+    \begin{itemize}
+      \item Compare change in $y$ for group $G_i = g$ to the not-yet and/or never treated units
+    \end{itemize}
+  \end{enumerate}
+
+  \bigskip
+  Repeating this for all $g$ and $t$ pairs estimates $\hat{\text{ATT}}(g, t)$
+\end{frame}
+
+\begin{frame}{Pre-trends Estimates}
+  Similar to before, we can estimate pre-trend estimates by using $t < g - 1$ and doing the same way
+  \begin{itemize}
+    \item Treat $t$ as the ``post''-period and $g - 1$ as the pre-period and estimate $2 \times 2$ estimate
+    \begin{itemize}
+      \item I.e. regress $y_{i, t} - y_{i, g-1}$ on $D_i = \one{G_i = g}$
+    \end{itemize}
+  \end{itemize}
+
+  \bigskip
+  In this way, we can estimate an event-study plot for each group $g$ and plot them:
+  \begin{itemize}
+    \item E.g. make an event-study plot for units treated in 2012 and a separate plot for those treated in 2013
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{R code}
+  The package \texttt{did} implements this looping over $g$ and $t$ for you
+  \begin{itemize} 
+    \item Note of caution later on that's important regarding \texttt{base\_period} argument
+  \end{itemize}
+
+  \bigskip
+  When using covariates, will (internally) use the \texttt{DRDID} package to estimate each $\texttt{ATT}(g,t)$
+  \begin{itemize}
+    \item Gives you immediate access to regression adjustment, IPTW, and doubly-robust estimators for $\text{ATT}(g,t)$ estimation
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Empirical Example}
+  We will look at a very simple example looking at state roll-out of medicaid expansion on the rate of being insured. 
+  \begin{itemize}
+    \item Use public ACS survey data to have state-by-year panel of insured rate
+    \item Similar to Carey, Miller, and Wherry (2020, AEJ applied), although they use confidential data.
+  \end{itemize}
+
+  \bigskip
+  First, use \texttt{did::att\_gt} function to estimate $\text{ATT}(g,t)$ parameters. Then, plot with \texttt{did::ggdid}.
+\end{frame}
+
+
+\imageframe{figures/ex_medicare_expansion_attgt_2014.pdf}
+\imageframe{figures/ex_medicare_expansion_attgt_2015.pdf}
+\imageframe{figures/ex_medicare_expansion_attgt_2016.pdf}
+\imageframe{figures/ex_medicare_expansion_attgt_2017.pdf}
+\imageframe{figures/ex_medicare_expansion_attgt_2019.pdf}
+
+\begin{frame}[fragile]{Warnings with Small Groups}
+  In this example I get a warning 
+  \begin{codeblock}[{}]
+Be aware that there are some small groups in your dataset.
+Check groups: 2015, 2016, 2017, 2019.
+  \end{codeblock}
+
+  This is because there are only a few states in some of the groups
+  \begin{itemize}
+    \item With $N_g$ small, inference based on the normality assumption is problematic
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Aggregating to dynamic effects}
+  Last, I can use the \texttt{did::aggte(MP, type = "dynamic")} with the results from \texttt{att\_gt()} to aggregate to $\hat{\text{ATT}}^\ell$.
+\end{frame}
+
+\imageframe{figures/ex_medicare_expansion_dynamic.pdf}
+
+\begin{frame}{Pre-trend estimates}
+  By default the \texttt{did::att\_gt} function does something weird with pre-trends
+  \begin{itemize}
+    \item I will not go into the details, but the default argument makes the event-study plots not what people expect them to be
+    
+    \item My recommendation is to add the argument \texttt{base\_period = "universal"} to all of your \texttt{att\_gt} calls
+  \end{itemize}
+
+  \bigskip
+  See Jon Roth's working paper ``Interpreting Event-Studies from Recent Difference-in-Differences Methods'' for a few page super applied-friendly summary of this
+\end{frame}
+
+% TODO: Compositional Changes with Dynamic ATT aggregation
+
+
+\subsection{Imputation based estimators}
+
+\begin{frame}{Imputation-based Estimation Strategies}
+  Now, let's turn to the alternate estimation strategy of imputation. At a high-level, imputation estimators:
+  \begin{enumerate}
+    \item impose a model for the missing untreated counterfactual, $y_{it}(\infty)$
+    \item fit that model using untreated / not-yet-treated observations
+
+    \item then predict out-of-sample for the post-treatment observations, $\hat{y}_{it}(\infty)$
+  \end{enumerate} 
+
+  \bigskip
+  Treatment effects are then calculated as averages of the difference between observed $y_{it}$ and the imputed counterfactual $\hat{y}_{it}(\infty)$
+  \begin{itemize}
+    \item This is a lot like the regression adjustment estimate we have discussed
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Two-way fixed effect model}
+  The standard model to impose is the two-way fixed effect model:
+  $$
+    y_{it}(\infty) = \mu_i + \lambda_t  + u_{it},
+  $$
+  where we assume a version of parallel-trends that $\expec{u_{it}} = 0$ for all $(i, t)$
+
+  \bigskip
+  The $\lambda_t$ are the common trends between units
+\end{frame}
+
+\begin{frame}{Estimate the model}
+  \vspace*{-\bigskipamount}
+  $$
+    y_{it}(\infty) = \mu_i + \lambda_t  + u_{it},
+  $$
+  
+  We will estimate this model using all observations with $d_{it} = 0$
+  \begin{itemize}
+    \item Both never-treated units and treated units prior to treatment
+    
+    \item Do not include $d_{it} = 1$ because their $y_{it} = y_{it}(g)$, not $y_{it}(\infty)$
+  \end{itemize}
+
+  \pause
+  \bigskip
+  Collect $\hat{\mu}_i$ and $\hat{\lambda}_t$ and predict out of sample $\hat{y}_{it}(\infty)$ for the full sample.
+\end{frame}
+
+\begin{frame}{Imputation-based estimation of $\text{ATT}(g,t)$}
+  With an estimated $\hat{y}_{it}(\infty)$, we can plug directly into estimands and take sample averages, e.g.:
+  \begin{align*}
+    \text{ATT}(g,t) &\equiv 
+    \expec{y_{it}(g) - y_{it}(\infty)}{G_i = g} \\
+    &= \expec{y_{it} - y_{it}(\infty)}{G_i = g}
+  \end{align*}
+
+  Our estimate then becomes
+  $$
+    \expechat{y_{it} - \hat{y}_{it}(\infty)}{G_i = g}
+  $$
+\end{frame}
+
+\begin{frame}{Imputation-based estimation of $\text{ATT}^\ell$}
+  Or, we can do the same with event-study estimands, $\text{ATT}^\ell$:
+  $$
+    \text{ATT}^\ell = \expec{y_{it} - \hat{y}_{it}(\infty)}{t - G_i = \ell}
+  $$
+
+  \bigskip
+  Can more easily calculate these averages with regression of $y_{it} - \hat{y}_{it}(\infty)$ on event-study indicators 
+  \begin{itemize}
+    \item That is, $D_i \times$ event-time indicators
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Two-stage DID}
+  To summarize, our estimation procedure is 
+  \begin{enumerate}
+    \item Estimate model for $y_{it}(\infty)$ using observations with $d_{it} = 0$ and get fitted values for full sample, $\hat{y}_{it}(\infty)$
+    
+    \item Regress $y_{it} - \hat{y}_{it}(\infty)$ on event-study indicators
+  \end{enumerate}
+
+  \pause
+  \bigskip
+  Note that the second-stage regression estimates will have incorrect standard errors
+  \begin{itemize}
+    \item The outcome variable $y_{it} - \hat{y}_{it}(\infty)$ is generated from a first-stage regression
+    
+    \item Inference is corrected in my package \texttt{did2s}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Adding Covariates}
+  To relax the parallel trends assumption, we can add covariates to our model for $y_{it}(\infty)$:
+  $$
+    y_{it}(\infty) = \mu_i + \lambda_t  + f_t(\bm{X}_i) + u_{it},
+  $$
+  where $f_t$ is a time-varying function of $\bm{X}_i$ to allow differential trends based on a unit's characteristics
+
+  \bigskip
+  \pause
+  For example, you can assume $f_t(\bm{X}_i) = \bm{X}_i \beta_t$
+  \begin{itemize}
+    \item If $\bm{X}_i$ are indicators, then this allows completely general trends
+    
+    \item If $\bm{X}_i$ is continuous, then this allows trends to depend \emph{linearly} on $X_i$ with $\beta_t$ being time ``shocks''
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Adding Covariates}
+  \vspace*{-\bigskipamount}
+  $$
+    y_{it}(\infty) = \mu_i + \lambda_t  + \bm{X}_i \beta_t + u_{it},
+  $$
+
+  With our modified model, we can then proceed as usual:
+  \begin{itemize}
+    \item Estimate $y_{it}(\infty)$ using never-treated and not-yet-treated observations
+    
+    \item Predict $\hat{y}_{it}(\infty)$ out of sample and regress $y_{it} - \hat{y}_{it}(\infty)$ on event-study dummies
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Flexibility of imputation}
+  One advantage of imputation estimators is the flexibility they offer
+  \begin{itemize}
+    \item We write an explicit model for the never-treated potential outcome and use that model to estimate treatment effects
+  \end{itemize}
+  
+  \bigskip
+  For our last topic, we will discuss how to adapt this procedure for settings where parallel trends fails.
+\end{frame}
 
 
 
-
-
-
-
-% \section{Staggered Treatment Timing}
-
-
-
-
+% \section{Issues with OLS Estimation}
 
 
 

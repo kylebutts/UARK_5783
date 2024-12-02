@@ -1,0 +1,158 @@
+\documentclass[aspectratio=169,t,11pt,table]{beamer}
+\usepackage{../../slides,../../math}
+\definecolor{accent}{HTML}{2B5269}
+\definecolor{accent2}{HTML}{9D2235}
+
+\title{Topic 6: Fixed Effects, Difference-in-differences, and Factor Models}
+\subtitle{\it  ECON 5783 — University of Arkansas}
+\date{Fall 2024}
+\author{Prof. Kyle Butts}
+
+\usepackage{hhline} % for DID tables
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[noframenumbering,plain]
+\maketitle
+
+% \bottomleft{\footnotesize $^*$A bit of extra info here. Add an asterich to title or author}
+\end{frame}
+% ------------------------------------------------------------------------------
+
+\begin{frame}{Imputation Estimator review}
+  The last set of slides, we introduced an ``imputation estimator'' for panel data treatment effects:
+
+  \begin{enumerate}
+    \item Estimate model for $y_{it}(\infty)$ using observations with $d_{it} = 0$ and get fitted values for full sample, $\hat{y}_{it}(\infty)$
+    
+    \item Regress $y_{it} - \hat{y}_{it}(\infty)$ on $d_{it}$ or event-study indicatorsto estimate treatment effects
+    \begin{itemize}
+      \item Estimating the overall effect, $\text{ATT}$, or dynamic effects of being treated for $\ell$ periods, $\text{ATT}^\ell$ respectively
+    \end{itemize}
+  \end{enumerate}
+  
+  \pause
+  \bigskip
+  This topic will extend this procedure to ``factor models'' that will allow more general trending behavior
+\end{frame}
+
+\section{Factor Models}
+
+\begin{frame}{Factor Model}
+  Untreated potential outcomes are given by a factor model:
+  $$
+    y_{it}(0) = \sum_{r = 1}^{p} \purple{f_{t,r}} * \orange{\gamma_{i,r}} + u_{it}
+  $$
+
+  \begin{itemize}
+    \item $f_{t, r}$ is the $r$-th \textbf{\color{purple} factor} (macroeconomic shock) at time $t$.
+    \item $\gamma_{i,r}$ is unit i's \textbf{\color{orange} factor loading} (exposure) to the $r$-th factor.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Factor Model Example}
+  \vspace*{-\bigskipamount}
+  $$
+    y_{it}(0) = \sum_{r = 1}^{p} \purple{f_{t,r}} * \orange{\gamma_{i,r}} + u_{it}
+  $$
+
+  \bigskip
+  If we are thinking about housing prices, $y_{it}$:
+  \begin{itemize}
+    \item $\orange{\gamma_i}$ are characteristics of neighborhood / house
+    \item $\purple{f_{t}}$ are demand shocks in each period
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Factor Model Example}
+  \vspace*{-\bigskipamount}
+  $$
+    y_{it}(0) = \sum_{r = 1}^{p} \purple{f_{t,r}} * \orange{\gamma_{i,r}} + u_{it}
+  $$
+
+  \bigskip
+  If we are thinking about wages, $y_{it}$:
+  \begin{itemize}
+    \item $\orange{\gamma_i}$ are worker's latent skills (e.g. computer skills)
+    \item $\purple{f_{t}}$ reflect changing firm's sdemand for skills
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Factor Model Example}
+  \vspace*{-\bigskipamount}
+  $$
+    y_{it}(0) = \sum_{r = 1}^{p} \purple{f_{t,r}} * \orange{\gamma_{i,r}} + u_{it}
+  $$
+
+  \bigskip
+  If we are thinking about county employment, $y_{it}$:
+  \begin{itemize}
+    \item $\orange{\gamma_i}$ are characteristics of a county (e.g. their manufacturing share)
+    \item $\purple{f_{t}}$ reflect national shocks to the economy (e.g. the ``China shock'')
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Two-way Fixed Effect vs. Factor Model}
+  The factor model is a generalization of the TWFE model. If $\bm{f}_{t} = (\lambda_t, 1)'$ and $\bm{\gamma}_i = (1, \mu_i)'$, then our factor model becomes the TWFE model:
+  $$
+    y_{it}(0) = \bm{f}_t' \bm{\gamma}_i + u_{it} = \lambda_t + \mu_i + u_{it}
+  $$
+  
+  \bigskip
+  We can add unit and/or time fixed-effects as `known' factors if we want
+\end{frame}
+
+
+\begin{frame}{Factor Model and Parallel Trends}
+  Say you have a single treatment timing and two periods. Let $D_i$ be out treated group indicator. Then
+  \begin{align*}
+    \expec{\Delta y_{i}}{D_i = d} 
+    &= \expec{y_{i1} - y_{i0}}{D_i = d} \\ 
+    &= \Delta \bm{f} \expec{\bm{\gamma}_i}{D_i = d} 
+  \end{align*}
+  
+  \bigskip
+  Under a factor model, the average change in $y_{it}$ for group $D_i = d$ is the change in factor shocks $\bm{f}$ times the average exposure to those shocks 
+\end{frame}
+
+\begin{frame}{Factor Model and Parallel Trends}
+  \vspace*{-\bigskipamount}
+  $$ 
+    \expec{\Delta y_{i}}{D_i = d} = \Delta \bm{f} \expec{\bm{\gamma}_i}{D_i = d} 
+  $$
+  
+  Say the treated group has higher exposure to a shock than the control group
+  \begin{itemize}
+    \item $\implies$ the trends differ by treatment status
+  \end{itemize}
+
+  \pause
+  \bigskip
+  That is, a factor model allows for ``non-paralell trends'' based on difference in exposures to shocks
+\end{frame}
+
+\begin{frame}{Example}
+  \vspace*{-\bigskipamount}
+  $$
+    y_{it}(0) = \sum_{r = 1}^{p} \purple{f_{t,r}} * \orange{\gamma_{i,r}} + u_{it}
+  $$
+
+  \bigskip
+  Say we are thinking about neighborhood housing prices, $y_{nt}$. We are interested in some treatment $D_n$, e.g. access to subways. 
+  \begin{itemize}
+    \item Say $\orange{\gamma_n}$ is the walkability of the neighborhood
+    \item $\purple{f_{t}}$ are demand shocks for walkable neigbhorhoods
+  \end{itemize}
+
+  \bigskip
+  If new subways are built in more walkable neighborhoods, then we do not believe parallel trends hold in this setting
+\end{frame}
+
+
+
+
+
+
+
+\end{document}
