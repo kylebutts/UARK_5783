@@ -1,0 +1,71 @@
+\documentclass[12pt]{article}
+\usepackage{../../../lecture_notes}
+\usepackage{../../../math}
+\usepackage{../../../uark_colors}
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\begin{document}
+\begin{center}
+  {\Huge\bf Final - Fall 2024}
+  
+  \smallskip
+  {\large\it ECON 5783 — University of Arkansas}
+\end{center}
+
+\medskip
+\begin{enumerate}
+  \item \textbf{(Conditional Expectation Function)} Say a researcher wants to model the conditional expectation of wages given gender and college degree. Why is it not `fully flexible' to include an indicator for gender and an indicator for college degree?
+
+
+  \item \textbf{(Selection on Observables)} For the following examples, I will describe an observational study where we observed `treatment' $D_i$ and outcomes $y_i$. Let $D_i$ is an indicator variable that equals 1 if a worker went to college; and $y_i$ a variable measuring the worker's health at age 40 Answer the following: 
+  \begin{enumerate}[leftmargin = 2em]
+    \item Say you use a difference-in-means estimator. What way do you think your $\text{ATT}$ would be biased (positively or negatively)? Explain why. 
+    
+    \item Name a covariate or two that you would think would be really important to control for to make a selection-on-observables argument. Explain why.
+  \end{enumerate}
+
+  \item \textbf{(Instrumental Variables)} Say you are in the setting where you have a \emph{randomized} offer to customers for a discounted membership ($Z_i$). Let $D_i$ denote an indicator for being a member and $y_i$ denote the amount purchased by the customer.
+  \begin{enumerate}[leftmargin = 2em]
+    \item Say your discount was very small and it induced very few additional  people to sign-up (that wouldn't have signed up anyways). Why might this be a problem for estimating the causal effect of membership on purchase amount?
+
+    \item How might you estimate the proportion of compliers in this setting?
+    
+    \item Your boss wants to know \emph{who} the compliers are so that they could better target their discount (not wasting money on people who would sign-up anyways). Describe how you could learn characteristics of the complier group using a 2SLS regression.
+  \end{enumerate}
+  
+
+  \newpage
+  \item \textbf{(Regression Discontinuity Design)} Say you want to evaluate a policy that guarantees admission to a flagship state school for in-state students who score a certain SAT score or above (you can assume they would go to a lower-quality school if they don't get in). Your outcome is the student's salary at age 30.
+  \begin{enumerate}[leftmargin = 2em]
+    \item Describe in words what we must assume in this context for our RDD estimator to identify the causal effect of this policy. 
+    
+    \item Why might you be concerned that students can take the SAT multiple times? How might you check for this in the data?
+  \end{enumerate}
+
+
+  \item \textbf{(Difference-in-differences)} We consider the roll-out of a COVID-19 lockdown across some states, but not others. For $t \geq 0$, $D_{it} = 1$ for states in the treatment group, and $D_{it} = 0$ for the control states. For $t < 0$, $D_{it} = 0$ for everyone. We're interested in the effect
+  on economic activity $Y_{i}$, and will use difference-in-differences.
+  \begin{enumerate}[leftmargin = 2em]
+    \item Write out the regression for how you would estimate a single treatment effect in the post-period for the treatment. 
+    
+    \item Write out what you would need to assume for this estimate to be interpreted causally. 
+    
+    \item Say you estimate an event-study and plot the estimates. Comment about the pre-trends in relation to the parallel trends assumption.
+  \end{enumerate}
+\end{enumerate}
+
+\begin{figure}[b!]
+  \caption{Event-study estimates}
+  \vspace*{-\medskipamount}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{figures/did_bad_pretrends.pdf}
+  \end{center}
+\end{figure}
+
+
+\end{document}
