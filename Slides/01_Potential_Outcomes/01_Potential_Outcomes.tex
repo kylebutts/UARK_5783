@@ -21,7 +21,7 @@
 \end{frame}
 % ------------------------------------------------------------------------------
 
-\section{Difficulties of Establishing Causality}
+\section{Causal Inference}
 
 \begin{frame}{Causal Inference}
   The goal of the class is to think about establishing \emph{causal} relationships:
@@ -31,11 +31,253 @@
     
   \pause
   \bigskip
-  In the real world, we can only observe whether $X$ and $Y$ co-move but trying to know if $X$ caused $Y$ is much more difficult a problem
+  In the real world, we can only observe whether $X$ and $Y$ co-move (\alert{statistical inference}) but trying to know if $X$ caused $Y$ (\alert{causal inference}) is much more difficult a problem
   \begin{itemize}
     \item We will try to tackle this problem, but be humble of the difficulties of this task
   \end{itemize}
 \end{frame}
+
+\begin{frame}{The Enlightenment Era and The Scientific Method}
+  In some sense, the methods of establish causal links date back to the Enlightenment Era
+  \begin{itemize}
+    \item Empiricism, Experimentation, and `Reasoning' led to many scientific breakthroughs and, some scholars argue, was essential for the Industrial Revolution (e.g. Joel Mokyr)
+  \end{itemize}
+
+  \pause
+  \bigskip
+  They would have ``Scientific Societies'' that were basically large dinner parties where they would dicuss how to learn about the world (`experimentation') 
+\end{frame}
+
+\begin{frame}{Royal (Scientific) Society of London}
+  \begin{columns}[T]
+    \begin{column}{.55\textwidth}\vspace*{-\bigskipamount}
+      \begin{center}
+        \includegraphics[width = \textwidth]{figures/royal_society.jpg}
+        % Source: 
+        % https://en.wikipedia.org/wiki/File:Royal_Society,_Crane_Court,_off_Fleet_Street,_London;_a_meet_Wellcome_L0013032.jpg
+      \end{center}
+    \end{column}
+    \begin{column}{.45\textwidth}
+      Most famously, was the Scientific Society of London
+      \begin{itemize}
+        \item Ben Franklin's key and kite was written in a letter to the Society
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Scientific Society of London}{`Nullius in verba'}
+  \begin{quote}
+    The Royal Society's motto 'Nullius in verba' was adopted in its First Charter in 1662. is taken to mean 'take nobody's word for it'. It is an expression of the determination of Fellows to withstand the domination of authority and to verify all statements by an appeal to facts determined by experiment.
+
+    Source: https://royalsociety.org
+  \end{quote}
+\end{frame}
+
+\begin{frame}{Randomized Controlled Trial}
+  The first randomized controlled trial (RCT) was conducted by James Lind in 1753
+  \begin{itemize}
+    \item Randomly assigned 12 sailors into 6 groups to have different potential `treatments'
+  \end{itemize}
+
+  \bigskip
+  Citrus ended up winning out
+\end{frame}
+
+\begin{frame}{What makes an RCT work well?}
+  In groups, let's think about what makes an RCT effective at identifying what the true effects of a treatment is
+
+  \pause
+  By \emph{randomly} giving people different treatments, we can be sure the groups are similar
+  \begin{itemize}
+    \item `Controlled' trial == making sure the units are comparable
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{``Observational'' version}
+  Say, instead, that James Lind went out and surveyed a bunch of people
+  \begin{itemize}
+    \item Asked whether or not they had scurvy and whether or not they consumed citrus
+  \end{itemize}
+  
+  \bigskip
+  He documents that people that have a lot of citrus rarely have scurvy
+  \begin{itemize}
+    \item Why is this evidence much weaker? 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Random Allocation ensures comparability}
+  \bigskip
+  \begin{quote}
+    Having used a random allocation, the sternest critic is unable to say when we eventually dash into print that quite probably the groups were differentially biased through our predilections or through our stupidity.
+
+    \emph{—Austin Bradford Hill, 1952}
+  \end{quote}
+  % Quote taken from https://pmc.ncbi.nlm.nih.gov/articles/PMC8718586/#:~:text=The%20Opportunity%20and%20Challenges%20for%20Conducting%20RCTs,our%20stupidity.%20%E2%80%94Austin%20Bradford%20Hill%2C%201952%2010.
+\end{frame}
+
+\begin{frame}{The `Social Scientific Method'}
+  What then are we to do when we try to establish causality in the messy messy world?
+
+  \bigskip
+  {\color{magenta} Option 1}: Run experiments. Get out in the world and run RCTs! 
+  \begin{itemize}
+    \item E.g. guaranteed income experiments, assigning a free lawyer for eviction court, micro-credit loans in developing countries
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The `Social Scientific Method'}
+  But, in many cases, we can not run experiments
+  \begin{itemize}
+    \item e.g. we care about the impacts of kids on parents, but can not randomly assign people to have kids
+  \end{itemize}
+
+  \bigskip
+  {\color{magenta} Option 2}: Look for `natural experiments' in the world
+  \begin{itemize}
+    \item e.g. draft lottery; discrete cut-offs in policies; random cost shocks to firms
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The `Social Scientific Method'}
+  As our ability to approximate a random experiment worsens, the credibility of our estimates worsens as well
+  \begin{itemize}
+    \item The RCT is often called the `gold standard' for this reason
+  \end{itemize}
+
+  \bigskip
+  {\color{magenta} Option 3}: Control for important variables and do as good as we can
+\end{frame}
+
+\begin{frame}{The `Social Scientific Method'}
+  Sometimes we need to answer questions even if a natural experiment does not fall in our laps
+  \begin{itemize}    
+    \item But, this requries the \emph{most caution}; we will discuss strategies to approximate an experiment as best as we can
+  \end{itemize}
+
+  \bigskip
+  \emph{Point of Caution:} Just because a question is important, does not mean we should throw away careful scientific rigor
+\end{frame}
+
+\begin{frame}{The Social Scientist' obligation}{A bit soap-boxy, but it's important}
+  \begin{quote}
+    The first principle is that you must not fool yourself — and you are the easiest person to fool.
+
+    \emph{— Richard Feynman, 1974}
+  \end{quote}
+
+  \bigskip
+  The key insight of the scientific method is to \emph{rule out potential alternative explanations}
+  \begin{itemize}
+    \item As much as possible, you want to \emph{prove your theory wrong}. 
+  \end{itemize}
+
+  \bigskip
+  A good social scientist is an expert on the topic they are researching
+  \begin{itemize}
+    \item Just because you do not \emph{know} an alternative explanation, does not mean it does not exist
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Social Scientific Method in Action}{The Enlightenment and the Industrial Revolution}
+  In that spirit, let us go back to the original claim in this introduction: 
+  ``scientific breakthroughs and, some scholars argue, was essential for the Industrial Revolution''
+
+  \bigskip
+  Is this true?
+\end{frame}
+
+\begin{frame}{Social Scientific Method in Action}{The Enlightenment and the Industrial Revolution}
+    \begin{columns}[T]
+    \begin{column}{.35\textwidth}\vspace*{-\bigskipamount}
+      \begin{center}
+        \includegraphics[width = 0.75\textwidth]{figures/encyclopedie.jpg}
+      \end{center}
+    \end{column}
+    \begin{column}{.65\textwidth}
+      Squicciarini and Voigtländer (2015, QJE) try to answer this using \emph{the Encylopedié}
+      \begin{itemize}
+        \item Published in France in 1751 and contained a bunch of evidence from Enlightenment scientists
+      \end{itemize}
+
+      \bigskip
+      A single person in the town might buy this expensive book and share it with other people
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Social Scientific Method in Action}{The Enlightenment and the Industrial Revolution}
+  Squicciarini and Voigtländer (2015, QJE) digitized records of who purchased the Encyclopedié (7081 in total)
+  \begin{itemize}
+    \item In their sample of French cities, 85 had purchased one and 108 did not
+  \end{itemize}
+  
+  \bigskip
+  Comparing cities of similar size and geographic location, they find that cities with this scientific knowledge grew at faster rates than other cities
+  \begin{itemize}
+    \item With your groups, think about whether or not this is a good `experiment'  
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Social Scientific Method in Action}{The Enlightenment and the Industrial Revolution}
+  To bolster their evidence, they do:
+  \begin{enumerate}
+    \item Subscriber rate is uncorrelated with growth from 1400 to 1750 (potentially alleviating some concerns about which kinds of places subscribed)
+    
+    \item They include controls for port access, universities, and city density
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Social Scientific Method in Action}{Jon Snow and Cholera}
+  Three major waves of cholera in the early to mid 1800s in London, largely thought to be spread by miasma (``dirty air'')
+  \begin{itemize}
+    \item No theory of the germ yet
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Social Scientific Method in Action}{Jon Snow and Cholera}
+  John Snow believed cholera was spread through the Thames water supply through an `invisible creature' that entered the body through food and drink
+  
+  \bigskip
+  London passes ordinance requiring water utility companies to move inlet pipe further up the Thames, above the city center, but not everyone complies
+  \begin{itemize}
+    \item Natural experiment: Lambeth water company moves its pipe between 1849 and 1854; Southwark and Vauxhall water company delayed
+  \end{itemize}
+
+  \bigskip
+  ``Staggered rollout'' of policies is a common empirical method
+\end{frame}
+
+\begin{frame}{Social Scientific Method in Action}{Computers and Wage Structure}
+  Alan Krueger (1993, QJE) use a regression strategy and US survey data and documents that workers who use a computer earn 10-15\% more than those that do not
+  \begin{itemize}
+    \item Use a bunch of different regression methods and find `robust' results
+  \end{itemize}
+
+  \bigskip
+  \pause
+  DiNardo and Pischke (1997, QJE) revisit this analysis using German data
+  \begin{itemize}
+    \item Find similar estimates for computers
+    
+    \item But, find remarkably similar results for the use of pencils at work!!
+  \end{itemize}
+
+  \bigskip
+  Don't forget to rule out potential explanations!
+\end{frame}
+
+
+% \begin{frame}{Research Strategy}
+%   
+% \end{frame}
+% 
+% https://economicspsychologypolicy.blogspot.com/2015/06/list-of-19-natural-experiments.html
+
+
+\section{Difficulties of Establishing Causality}
 
 \begin{frame}{Correlation does not imply Causality}
   \begin{columns}[T]
@@ -162,9 +404,22 @@
     
     \item People who try new medicines have higher mortality rates
   \end{itemize}
-
+ f
   \bigskip
   We want to think carefully if $X$ causes $Y$ or $Y$ causes $X$
+\end{frame}
+
+\begin{frame}{The Encyclopedié}
+  One main concern with Squicciarini and Voigtlände's approach is reverse causality
+  \begin{itemize}
+    \item Places with more innovations might seek out more scientific knowledge (growth causing subscriptions)
+  \end{itemize}
+
+  \bigskip
+  To address this, they use the presence of historic scientific society to `predict' which places would buy an Encyclopedié
+  \begin{itemize}
+    \item This is called an `instrument' which we will discuss later in this class
+  \end{itemize}
 \end{frame}
 
 \section{Counterfactual Thinking and Potential Outcomes}
@@ -237,6 +492,7 @@
     
     \pause
     \item What would have happened to employment if the minimum wage was not increased? 
+
     \begin{itemize}
       \item Dube et. al. (2010) use counties on the other side of a state border
     \end{itemize}
@@ -347,11 +603,11 @@
           $i$ & $D_i$ & $Y_i$ & $Y_i(1)$ & $Y_i(0)$ \\
           \midrule
 
-          1 & 1 & \$1200 & \$1200 & \only<1>{\$1225}\only<2>{\color{alice} ?} \\
-          2 & 0 & \$1000 & \only<1>{\$950}\only<2>{\color{alice} ?} & \$1000 \\
-          3 & 1 & \$1150 & \$1150 & \only<1>{\$1150}\only<2>{\color{alice} ?}\\
+          1 & 1 & \$1200 & \$1200 & \only<1>{\$1225}\only<2>{\color{purple} ?} \\
+          2 & 0 & \$1000 & \only<1>{\$950}\only<2>{\color{purple} ?} & \$1000 \\
+          3 & 1 & \$1150 & \$1150 & \only<1>{\$1150}\only<2>{\color{purple} ?}\\
           & & \vdots & & \\
-          n & 0 & \$1100 & \only<1>{\$1090}\only<2>{\color{alice} ?} & \$1100 \\
+          n & 0 & \$1100 & \only<1>{\$1090}\only<2>{\color{purple} ?} & \$1100 \\
       
           \bottomrule
         \end{tabular}
@@ -523,7 +779,7 @@
 %   \vspace*{-2\bigskipamount}
 %   $$
 %     \hat{\tau}_{\text{DIM}} = 
-%       \tau_{\text{ATE}} + {\color{ruby} \left( \expec{Y_{i}(1)}{D_i = 1} - \expec{Y_{i}(1)} \right) - \left( \expec{Y_{i}(0)}{D_i = 0} - \expec{Y_{i}(0)} \right) }
+%       \tau_{\text{ATE}} + {\color{orange} \left( \expec{Y_{i}(1)}{D_i = 1} - \expec{Y_{i}(1)} \right) - \left( \expec{Y_{i}(0)}{D_i = 0} - \expec{Y_{i}(0)} \right) }
 %   $$
 % 
 %   The difference-in-means estimator will (generally) be not equal to the ATE if either of these terms are non-zero. 
@@ -546,9 +802,9 @@
 \end{frame}
 
 \begin{frame}{`Selection Bias'}
-  We refer to the last term as {\color{ruby} selection bias}
+  We refer to the last term as {\color{orange} selection bias}
   $$
-    \hat{\tau}_{\text{DIM}} = \tau_{\text{ATT}} + {\color{ruby} \left( \expec{Y_{i}(0)}{D_i = 1} - \expec{Y_{i}(0)}{D_i = 0} \right) }
+    \hat{\tau}_{\text{DIM}} = \tau_{\text{ATT}} + {\color{orange} \left( \expec{Y_{i}(0)}{D_i = 1} - \expec{Y_{i}(0)}{D_i = 0} \right) }
   $$
 
   \begin{itemize}
@@ -578,7 +834,7 @@
 \begin{frame}{When is selection bias not present?}
   \vspace*{-\bigskipamount}
   $$
-    \hat{\tau}_{\text{DIM}} = \tau_{\text{ATT}} + {\color{ruby} \left( \expec{Y_{i}(0)}{D_i = 1} - \expec{Y_{i}(0)}{D_i = 0} \right) }
+    \hat{\tau}_{\text{DIM}} = \tau_{\text{ATT}} + {\color{orange} \left( \expec{Y_{i}(0)}{D_i = 1} - \expec{Y_{i}(0)}{D_i = 0} \right) }
   $$
 
   \bigskip

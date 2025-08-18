@@ -55,6 +55,7 @@ You also will need to present a preliminary draft in the last 3 weeks of class.
 
 
 
+<!-- 
 ## Course Outline
 
 ### Topic 1: An Introduction to Causal Inference and Potential Outcomes Framework
@@ -72,7 +73,11 @@ You also will need to present a preliminary draft in the last 3 weeks of class.
 ### Topic 5: Regression Discontinuity
 
 
-### Topic 6: Panel Methods (Difference-in-Differences and Factor Models)
+### Topic 6: Fixed Effects and Difference-in-Differences 
+
+
+### Topic 7: Factor Models 
+-->
 
 
 
@@ -86,22 +91,22 @@ This is a tentative schedule. This is the first time I've taught this course, so
 <!-- Schedule -->
 | Week | Dates | Monday | Wednesday | Assignments |
 |----|----|----|----|----|
-| 1 | 08/19 - 08/21 | Syllabus + Potential Outcomes | Randomized Control Trials |  |
-| 2 | 08/26 - 08/28 | Randomized Control Trials | Randomized Control Trials |  |
-| 3 | 09/02 - 09/04 | No Class | Regression Mechanics |  |
-| 4 | 09/09 - 09/11 | Regression Mechanics | Selection on Observables |  |
-| 5 | 09/16 - 09/18 | Selection on Observables | Selection on Observables |  |
-| 6 | 09/23 - 09/25 | Selection on Observables | Selection on Observables |  |
-| 7 | 09/30 - 10/02 | Selection on Observables | Regression Discontinuity |  |
-| 8 | 10/07 - 10/09 | Regression Discontinuity | Regression Discontinuity |  |
-| 9 | 10/14 - 10/16 | No Class | Regression Discontinuity |  |
-| 10 | 10/21 - 10/23 | Midterm | Instrumental Variables |  |
-| 11 | 10/28 - 10/30 | Instrumental Variables | Instrumental Variables |  |
-| 12 | 11/04 - 11/06 | Instrumental Variables | Panel Data |  |
-| 13 | 11/11 - 11/13 | Panel Data | Panel Data |  |
-| 14 | 11/18 - 11/20 | Panel Data | Panel Data |  |
-| 15 | 11/25 - 11/27 | Panel Data | No Class |  |
-| 16 | 12/02 - 12/04 | Project Presentations | Project Presentations |  |
+| 01 | 08/18 - 08/20 | Syllabus + Potential Outcomes | Randomized Control Trials |  |
+| 02 | 08/25 - 08/27 | Randomized Control Trials | Randomized Control Trials |  |
+| 03 | 09/01 - 09/03 | No Class | Regression Mechanics |  |
+| 04 | 09/08 - 09/10 | Regression Mechanics | Selection on Observables |  |
+| 05 | 09/15 - 09/17 | Selection on Observables | Selection on Observables |  |
+| 06 | 09/22 - 09/24 | Selection on Observables | Selection on Observables |  |
+| 07 | 09/29 - 10/01 | Selection on Observables | Regression Discontinuity |  |
+| 08 | 10/06 - 10/08 | Regression Discontinuity | Regression Discontinuity |  |
+| 09 | 10/13 - 10/15 | No Class | Regression Discontinuity |  |
+| 10 | 10/20 - 10/22 | Midterm | Instrumental Variables |  |
+| 11 | 10/27 - 10/29 | Instrumental Variables | Instrumental Variables |  |
+| 12 | 11/03 - 11/05 | Instrumental Variables | Panel Data |  |
+| 13 | 11/10 - 11/12 | Panel Data | Panel Data |  |
+| 14 | 11/17 - 11/19 | Panel Data | Panel Data |  |
+| 15 | 11/24 - 11/26 | Panel Data | No Class |  |
+| 16 | 12/01 - 12/03 | Project Presentations | Project Presentations |  |
 <!-- Schedule -->
 
 
@@ -119,6 +124,7 @@ This course was inspired by a lot of material that I have blended together into 
 - [Cattaneo, Idrobo, and Titiunik's review article on RDD](https://rdpackages.github.io/references/Cattaneo-Idrobo-Titiunik_2024_CUP.pdf)
 - [Stefan Wager's course](https://web.stanford.edu/~swager/stats361.pdf)
 - [Benjamin Elsner's slides](https://benjaminelsner.com)
+- [Leonard Goff's lecture notes](https://www.leonardgoff.com/)
 
 
 
