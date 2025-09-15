@@ -5,7 +5,7 @@
 
 \title{Topic 3: Selection on Observables}
 \subtitle{\it  ECON 5783 — University of Arkansas}
-\date{Fall 2024}
+\date{Fall 2025}
 \author{Prof. Kyle Butts}
 
 \begin{document}
@@ -18,10 +18,25 @@
 \end{frame}
 % ------------------------------------------------------------------------------
 
+\begin{frame}{Selection on Observables}
+  We learn:
+  \begin{itemize}
+    \item How can control variables help us identify causal effects?
+    \item What do we need to assume when using `Selection on Observables'?
+    \item Many different estimators that use the same causal assumption
+  \end{itemize}
+
+  \bigskip
+  Readings to complement this lecture are:
+  \begin{itemize}
+    \item Angrist & Pischke (2009), Ch. 4.1, 4.2, 4.4
+  \end{itemize}
+\end{frame}
+
 \section{Conditional Independence Assumption}
 
 \begin{frame}{Selection into Treatment}
-  In our last lectures, we have covered the problem with difference-in-means comparisons:
+  In our last 2 lectures, we have covered the problem with difference-in-means comparisons:
   \begin{itemize}
     \item If units with $D_i = 1$ have different characteristics on average than units with $D_i = 0$, then we are making faulty comparisons
   \end{itemize}
@@ -31,17 +46,37 @@
   In the absence of treatment, the control units and the treated units would have different average $Y_i(0)$ due to differences in characteristics
 \end{frame}
 
-\begin{frame}{Selection into Treatment and Omitted Variable Bias}
+\begin{frame}[fragile]{Selection into Treatment and Omitted Variable Bias}
   We have shown that if there is a single problematic covariate, $X_2$, that differs between the treated group and control group, our difference-in-means estimator is biased:
   \begin{align*}
     \hat{\tau}_{\text{DIM}} &= 
     \expec{Y_{i}}{D_i = 1} - \expec{Y_{i}}{D_i = 0} \\
-    &= \tau_{\text{ATT}} + \frac{\beta_2}{1 - \prob{D = 1}} \left( \expec{X_2}{D = 1} - \expec{X_2} \right)
+    &= \tau_{\text{ATT}} + \frac{\beta_2}{1 - \prob{D = 1}} \left( \tcbhighmath[colback = bgPurple]{\expec{X_2}{D = 1} - \expec{X_2}} \right)
   \end{align*}
+  % \devgrid 
+  \begin{tikzpicture}[remember picture, overlay]
+    \node [anchor = south, text width = 0.4\textwidth] at (page cs:0.6,0.63) {
+      \begin{center}
+        \setstretch{0.8}
+        {\footnotesize\color{purple} How treated group differs from the population}
+      \end{center}
+    };
+  \end{tikzpicture}
 
   \pause
+  \bigskip
+  The ATT estimate reflects the impact that differences in $X_2$ have on the outcome $\beta_2$
+\end{frame}
+
+\begin{frame}{Removing Omitted Variable Bias}
+  \vspace*{-\bigskipamount}
+  $$
+    \tcbhighmath[colback = bgPurple]{\expec{X_2}{D = 1} - \expec{X_2}}
+  $$
+
+  How can we ensure this term is 0? 
   \begin{itemize}
-    \item The ATT estimate reflects the impact that differences in $X_2$ have on the outcome $\beta_2$
+    \item Option 1: randomize $D$ to ensure that $X_2$ is (on average) the same between treated group and the population as a whole
   \end{itemize}
 \end{frame}
 
@@ -54,12 +89,17 @@
   \pause
   \bigskip
   This is a reasonable strategy in some settings and understanding it is the goal of this topic
+  \begin{itemize}
+    \item `Selection on Observables' means that selection on treatment is driven by \emph{\alert{observable characteristics}} (e.g. $X_2$)
+    
+    \item So removing differences in observable characteristics removes the selection bias
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Conditional Independence Assumption}
   The \alert{Conditional Independence Assumption} is given by
   $$
-    (Y_{i}(0), Y_{i}(1)) \Perp D_i \ \vert \ \bm{X}_i
+    (Y_{i}(0), Y_{i}(1)) \Perp D_i \ \vert \ \bm{X}_i = \bm{x}
   $$
   \begin{itemize}
     \item This says that for units with the same value of $\bm{X}_i = \bm{x}$, treatment is independent of the potential outcomes (i.e. ``randomly assigned'')
@@ -84,16 +124,14 @@
 \begin{frame}{Example 2}{Winning the Lottery}
   Imbens, Rubin, and Sacerdote (2001, AER) estimate the impact of unearned income on labor supply using the lottery
   \begin{itemize}
-    \item While winning the lottery is random \emph{among those that play}, playing the lottery is not randomly assigned. 
-    
-    \item Even among players, some play more frequently
+    \item Playing the lottery is not randomly assigned. Even among players, some play more frequently (and have a higher probabilty of winning)
     
     \item Comparing lottery winners labor supply to the population would be biased since lottery \emph{players look different}
   \end{itemize}
   
   \pause
   \bigskip
-  They argue that conditional on playing and winning in the lottery ($X_i$), winning a small amount (control) or a large amount (treatment) is randomly assigned
+  They argue that conditional on \emph{playing and winning} in the lottery ($X_i$), winning a small amount (control) or a large amount (treatment) is randomly assigned
 \end{frame}
 
 \begin{frame}{Example 3}{Charter Schools}
@@ -124,7 +162,12 @@
     \item Whether or not a school is good at athletics is not randomly assigned
   \end{itemize}
   
-  Uses gambling bookmakers' ``spreads'' as a measure of predicted odds of a school winning (in football) games. They compare schools with the same odds of winning; those that won more than expected to those that won fewer
+  \pause
+  \bigskip
+  Uses gambling bookmakers' ``spreads'' as a measure of predicted number of wins in football games. 
+  \begin{itemize}
+    \item For schools with the same expected number of wins, compare those that won more than expected to those that won fewer
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Example 5}{Macroeconomic Policy Shocks}
@@ -134,6 +177,8 @@
     \item The Fed makes decisions on interest rates based on economic conditions (reverse causality)
   \end{itemize}
 
+  \pause
+  \bigskip
   The prices of conracts in the futures markets reflect the \emph{expected} change in interest rates, so they compare interest rate changes with the same expected change but different unexpected changes
 \end{frame}
 
@@ -144,18 +189,33 @@
     \item By randomization, we have $ (Y_{i}(0), Y_{i}(1)) \Perp D_i \ \vert \ F_i$ where $F_i$ is an indicator for being a female
   \end{itemize}
 
+  Do we have (unconditional) independence $(Y_{i}(0), Y_{i}(1)) \Perp D_i$?
+\end{frame}
+
+\begin{frame}{Block-randomized Experiments}
+  Say $\expec{Y_i(0)}{F_i = 1} \neq \expec{Y_i(0)}{F_i = 0}$. 
+  Then, 
+
+  $$
+    \expec{Y_i(0)}{D_i = 1} = \expec{Y_i(0)}{F_i = 1} * \tcbhighmath[colback = bgPurple]{0.75} + \expec{Y_i(0)}{F_i = 0} * \tcbhighmath[colback = bgPurple]{0.25}
+  $$
+
+  $$
+    \expec{Y_i(0)}{D_i = 0} = \expec{Y_i(0)}{F_i = 1} * \tcbhighmath[colback = bgPurple]{0.25} + \expec{Y_i(0)}{F_i = 0} * \tcbhighmath[colback = bgPurple]{0.75}
+  $$
+  
   \pause
   \bigskip
-  Say $\expec{Y_i(0)}{F_i = 1} \neq \expec{Y_i(0)}{F_i = 0}$. 
+  Since treatment is correlated with gender, $Y_{i}(0) \centernot{\Perp} D_i$.
   \begin{itemize}
-    \item Then since treatment is correlated with gender, $Y_{i}(0) \not\Perp D_i$. Even though we randomize for each gender, we do not have (unconditional) independence
+    \item Even though we randomize for each gender, we do not have (unconditional) independence
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Clustered Experiments}
-  Our differnece-in-means estimator using the whole population will be biased.
+\begin{frame}{Block-randomized Experiments}
+  Our difference-in-means estimator using the whole population will be biased.
   \begin{itemize}
-    \item However, doing difference-in-means separately for male and femals is valid (conditional independence holds!)
+    \item However, doing difference-in-means separately for male and females is valid (random assignment within each group)
   \end{itemize}
 
   \bigskip
@@ -167,18 +227,20 @@
   \begin{align*}
     \tau_{\text{DIM},\text{Female}} 
     &= \expec{Y_{i}}{D_i = 1, F_i = 1} - \expec{Y_{i}}{D_i = 0, F_i = 1}  \\ \pause
-    &= \expec{Y_{i}(1) - Y_{i}(0)}{F_i = 1} = \tau(F_i = 1)
+    &= \expec{Y_{i}(1) - Y_{i}(0)}{F_i = 1} \equiv \tau_{F_i = 1}
   \end{align*}
 
   \bigskip 
-  We estimate the conditional average treatment effect by gender!
+  We estimate the conditional average treatment (\alert{CATE}) effect by gender!
 \end{frame}
 
 \begin{frame}{Clustered Experiments}
-  How do we estimate the overall average treatment effect? 
+  How, then, do we estimate the overall average treatment effect? 
   \begin{align*}
-    \tau_{\text{ATE}} &= \expec{\tau_i} = \expec{\tau(F_i)} \\
-    &= \tau(F_i = 1) * \prob{F_i = 1} + \tau(F_i = 0) \prob{F_i = 0}
+    \tau_{\text{ATE}} 
+    &= \expec{\tau_i} \\
+    &= \expec{\tau(F_i)} \\
+    &= \tau_{F_i = 1} * \prob{F_i = 1} + \tau_{F_i = 0} \prob{F_i = 0}
   \end{align*}
   \begin{itemize}
     \item Weighted average of the CATE with weights proportional to group size
@@ -195,22 +257,23 @@
 
   \pause
   \vspace*{-\medskipamount}
-  \begin{align*}
-    \tau_{\texttt{ATE}} &= 
-    \int_{\bm{x} \in \mathbb{X}} \tau(\bm{X}_i = \bm{x}) d\prob{\bm{X} = \bm{x}} \\ 
-    &= \int_{\bm{x} \in \mathbb{X}} \expec{Y_i}{D_i = 1, \bm{X}_i = \bm{x}} - \expec{Y_i}{D_i = 0, \bm{X}_i = \bm{x}} d\prob{\bm{X} = \bm{x}}
-  \end{align*}
+  $$
+    \tau_{\texttt{ATE}} = 
+    \int_{\bm{x} \in \mathbb{X}} \tau(\bm{X}_i = \bm{x}) d\prob{\bm{X} = \bm{x}}
+  $$
+  
+  % Estimation
+  % &= \int_{\bm{x} \in \mathbb{X}} \expec{Y_i}{D_i = 1, \bm{X}_i = \bm{x}} - \expec{Y_i}{D_i = 0, \bm{X}_i = \bm{x}} d\prob{\bm{X} = \bm{x}}
 \end{frame}
 
 \begin{frame}{Generalization}
   If we want the average treatment effect on the treated, we average over the distribution of $\bm{X}$ for the treated group
   
   \vspace*{-\medskipamount}
-  \begin{align*}
-    \tau_{\text{ATT}} &= 
-    \int_{\bm{x} \in \mathbb{X}} \tau(\bm{X}_i = \bm{x}) d\prob{\bm{X} = \bm{x}}{D_i = 1}\\ 
-    &= \int_{\bm{x} \in \mathbb{X}} \expec{Y_i}{D_i = 1, \bm{X}_i = \bm{x}} - \expec{Y_i}{D_i = 0, \bm{X}_i = \bm{x}} d\prob{\bm{X} = \bm{x}}{D_i = 1}
-  \end{align*}
+  $$
+    \tau_{\text{ATT}} = 
+    \int_{\bm{x} \in \mathbb{X}} \tau(\bm{X}_i = \bm{x}) d\prob{\bm{X} = \bm{x}}{D_i = 1}
+  $$
 \end{frame}
 
 \begin{frame}{Example 2}{Attending College}
@@ -219,7 +282,7 @@
   \bigskip
   We might not believe that attending college $D_i$ is randomly assigned to workers
   \begin{itemize}
-    \item But we might think that for workers with the same high-school GPA, same family income, and same parental education status ($\bm{X}_i$), whether or not a worker attends college is independent of outcomes
+    \item But we might think that for workers with (i) the same high-school GPA, (ii) same family income, and (iii) same parental education status, whether or not a worker attends college is independent of outcomes
   \end{itemize}
 \end{frame}
 
@@ -325,7 +388,7 @@
   \bigskip
   Our average-treatment effect estimate can be written as the average of CATE (averaged over distribution of $X$)
   $$
-    \tau_{\texttt{ATE}} = \expec{\ \expec{Y_i(1)}{\bm{X}_i} - \expec{Y_i(0)}{\bm{X}_i} \ }
+    \tau_{\texttt{ATE}} = \expec{\ \expec{Y_i(1) - Y_i(0)}{\bm{X}_i}\ }
   $$
 \end{frame}
 
@@ -334,6 +397,7 @@
   \tau_{\texttt{ATE}} = \expec{\ \expec{Y_i(1)}{\bm{X}_i} - \expec{Y_i(0)}{\bm{X}_i} \ }
   $$
 
+  \bigskip
   There are two conditional expectation functions in the above terms. Define
   $$
     \mu_0(\bm{x}) = \expec{Y_i(0)}{\bm{X}_i = \bm{x}} 
@@ -390,9 +454,19 @@
       \frac{1}{n} \sum_{i=1}^n \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right)
     }_{\expechat{Y_i(0)}} 
   $$
+  
+  \bigskip
+  Predicting everyone's $Y_i(1)$ and $Y_i(0)$ given their $\bm{X}_i$ and taking the difference
   \begin{itemize}
-    \item Predicting everyone's $Y_i(1)$ and $Y_i(0)$ given their $\bm{X}_i$ and taking the difference
     \item Quality of estimator therefore depends on quality of conditional expectation model
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Correctly specified CEF}
+  When the linear regression models we use are \emph{correctly specified}, then $\hat{\tau}_{\texttt{ATE}}$ is consistent for $\tau_{\texttt{ATE}}$
+
+  \begin{itemize}
+    \item Might want to include polynomials of $X$ variables, interactions, etc.
   \end{itemize}
 \end{frame}
 
@@ -400,7 +474,7 @@
   $$
     \hat{\tau}_{\text{ATT}} = 
     \underbrace{
-      \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_1 + \bm{X}_i' \hat{\beta}_1 \right)
+      \frac{1}{n_1} \sum_{i=1}^n Y_i
     }_{\expechat{Y_i(1)}{D_i = 1}} - 
     \underbrace{
       \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right)
@@ -408,27 +482,27 @@
   $$
 \end{frame}
 
-\begin{frame}{Regression Adjustment}
-  For the \text{ATT}, remember that the fitted value of a linear regression averaged over the estimation sample is the average of $Y$ for that sample.
-  
-  \bigskip
-  So, we can rewrite the 
-  \begin{align*}
-    \hat{\tau}_{\text{ATT}} &= 
-    \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_1 + \bm{X}_i' \hat{\beta}_1 \right) -
-    \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right) \\ 
-    &= \frac{1}{n_1} \sum_{i=1}^n D_i Y_i - 
-    \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right) 
-  \end{align*}
-  \begin{itemize}
-    \item Only relying on the model for $\mu_{0}(\bm{x})$ to estimate the \text{ATT}
-  \end{itemize}
-\end{frame}
+% \begin{frame}{Regression Adjustment}
+%   For the \text{ATT}, remember that the fitted value of a linear regression averaged over the estimation sample is the average of $Y$ for that sample.
+%   
+%   \bigskip
+%   So, we can rewrite the 
+%   \begin{align*}
+%     \hat{\tau}_{\text{ATT}} &= 
+%     \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_1 + \bm{X}_i' \hat{\beta}_1 \right) -
+%     \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right) \\ 
+%     &= \frac{1}{n_1} \sum_{i=1}^n D_i Y_i - 
+%     \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right) 
+%   \end{align*}
+%   \begin{itemize}
+%     \item Only relying on the model for $\mu_{0}(\bm{x})$ to estimate the \text{ATT}
+%   \end{itemize}
+% \end{frame}
 
 \begin{frame}{Regression Adjustment via Regression}
   You can force regression to estimate this for you in a single regression; this makes producing valid standard errors easier
   $$
-    Y_i = \alpha_0 + \alpha_1 D_i + \beta_0 \bm{X}_i + \beta_1 D_i * (\bm{X}_i - \bar{\bm{X}}) + u_i
+    Y_i = \alpha_0 + \alpha_1 D_i + \beta_0 \bm{X}_i + \beta_1 D_i \cdot (\bm{X}_i - \bar{\bm{X}}) + u_i
   $$
   \begin{itemize}
     \item Then our $\hat{\tau}_{\texttt{ATE}}$ estimate is given by $\hat{\alpha}_1$
@@ -884,7 +958,7 @@
 \begin{frame}{Hájek weights}
   Our IPTW weights in the Horvitz-Thompson estimator were given by 
   $$
-    w_{1,i} = \frac{D_i}{\pi(\bm{X}_i)} \text{ and } w_{0,i} = \frac{1 - D_i}{1 - \pi(\bm{X}_i)}
+    w_{1,i} = \frac{D_i}{\pi(\bm{X}_i)} \quad \text{ and } \quad w_{0,i} = \frac{1 - D_i}{1 - \pi(\bm{X}_i)}
   $$
   \begin{itemize}
     \item These weights do not sum to 1 which makes these estimates extra noisy
@@ -894,7 +968,7 @@
   \pause
   It is more efficient (Hirano, Imbens, Ridder 2003) to normalize these weights to sum to 1. This is called the Hájek estimator:
   $$
-    \tilde{w}_{1,i} = \frac{w_{1,i}}{1/n \sum_i w_{1,i}} \text{ and } \tilde{w}_{0,i} = \frac{w_{0,i}}{1/n \sum_i w_{0,i}} 
+    \tilde{w}_{1,i} = \frac{w_{1,i}}{1/n \sum_i w_{1,i}} \quad \text{ and } \quad \tilde{w}_{0,i} = \frac{w_{0,i}}{1/n \sum_i w_{0,i}} 
   $$
 \end{frame}
 

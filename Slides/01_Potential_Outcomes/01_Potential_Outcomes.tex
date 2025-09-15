@@ -8,7 +8,7 @@
 
 \title{Topic 1: Introduction to Causal Inference and Potential Outcomes Framework}
 \subtitle{\it  ECON 5783 — University of Arkansas}
-\date{Fall 2024}
+\date{Fall 2025}
 \author{Prof. Kyle Butts}
 
 \begin{document}
@@ -20,6 +20,23 @@
   % \bottomleft{\footnotesize $^*$A bit of extra info here. Add an asterich to title or author}
 \end{frame}
 % ------------------------------------------------------------------------------
+
+\begin{frame}{Potential Outcomes Framework}
+  We learn:
+  \begin{itemize}
+    \item How to think of Causal Effects in terms of "All Else Equal"
+    \item What are ``Potential Outcomes''?
+    \item Identifying causal effects via randomized experiments
+  \end{itemize}
+
+  \bigskip
+  Readings to complement this lecture are:
+  \begin{itemize}
+    \item Cunningham (2021) \emph{Causal Inference: The Mixtape}, Chapters 4
+    
+    \item Good summary videos: \url{https://www.youtube.com/watch?v=lFKYfCeXiI4} and \url{https://www.youtube.com/watch?v=jVkQPnARPQ0}
+  \end{itemize}
+\end{frame}
 
 \section{Causal Inference}
 
@@ -861,8 +878,17 @@
   \begin{itemize}
     \item Since we randomly assign treatment, the treated group looks like the control group looks like the population as a whole.
   \end{itemize}
-
 \end{frame}
+
+\begin{frame}{`Balance Tables'}
+  When running an experiment, it is common to collect information about the participants, call this information a vector $X_i$.
+
+  \bigskip
+  It is common to show that the randomization ``worked'' by showing that the distribution of $X_i$ is similar between treatment and control groups. 
+  This is often done with a \alert{balance table} that shows means of $X_i$ by treatment status
+\end{frame}
+
+
 
 \begin{frame}{Quasi- and Natural Experiments}{Writing about Empirical Work}
   Often you will hear the terms `natural experiment' and `quasi-experimental design' in applied work

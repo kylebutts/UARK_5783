@@ -27,5 +27,8 @@ Textbooks/*
 *.*-SAVE-ERROR
 *.listing
 *.vrb
+*.xdv
 
-Slides/03_Selection_on_Observables/extra_slides.*
+Slides/03_Selection_on_Observables/extra_slides.tex
+Slides/03_Selection_on_Observables/extra_slides.pdf
+

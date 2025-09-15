@@ -5,7 +5,7 @@
 
 \title{Topic 2: Regression Toolkit}
 \subtitle{\it  ECON 5783 — University of Arkansas}
-\date{Fall 2024}
+\date{Fall 2025}
 \author{Prof. Kyle Butts}
 
 \begin{document}
@@ -18,6 +18,23 @@
 \end{frame}
 % ------------------------------------------------------------------------------
 
+\begin{frame}{Regression Toolkit}
+  We learn:
+  \begin{itemize}
+    \item What is the ``Conditional Expectation Function (CEF)''
+    \item Curse of dimensionality and why we need models
+    \item Modelling choices
+    \item What is Omitted Variable Bias and why is it useful for thinking of causal effects
+    \item Deeper understanding of regression: FWL Theorem
+  \end{itemize}
+
+  \bigskip
+  Readings to complement this lecture are:
+  \begin{itemize}
+    \item Angrist and Pischke (2009) \emph{Mostly Harmless Econometrics}, Chatper 3: Intro, section 3.1, and section 3.2 
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Linear Regression Bootcamp}
   This set of slides will serve as a `bootcamp' into one of the most popular tools in the applied researcher's toolkit: linear regression
   \begin{itemize}
@@ -27,8 +44,405 @@
   \end{itemize}
 \end{frame}
 
-\section{Conditional Expectation Function and Linear Model}
+\section{Conditional Expectation Function}
 
+\subsection{Conditional Expectation Function}
+
+\begin{frame}{The Conditional Expectation Function}
+  In particular, we will think a lot about the \alert{Conditional Expectation Function} (CEF) of $y_i$ given $\bm{X}_i = (X_{i1}, \dots, X_{ip})'$:
+  $$
+    g(\bm{x}) \equiv \expec{y_i}{\bm{X}_i = \bm{x}}
+  $$
+  \begin{itemize}
+    \item This reads ``$g(\bm{x})$ is the expected value of $y_i$ conditional on the unit having $\bm{X}_i = \bm{x}$''
+  \end{itemize}
+
+  \pause
+  \bigskip
+  The easiest way to estimate this for a given $\bm{x}$ is to average $y_i$ for units with $\bm{X}_i = \bm{x}$. 
+  \pause
+  \begin{itemize}
+    \item Only uses observations with $\bm{X}_i = \bm{x}$ (or $\bm{X}_i \approx \bm{x}$ when $\bm{X}_i$ is continuous), so that is the relavent `$n$' when considering sample size
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Estimation Procedure for CEF}
+  For each value of $\bm{x}$, 
+  \begin{itemize}
+    \item Subset population to only the units with $\bm{X}_i = \bm{x}$
+    
+    \item Average value of $y_i$ for those units
+  \end{itemize}
+  
+  This is the value $g(\bm{x})$ for that given $\bm{x}$
+\end{frame}
+
+\begin{frame}{Example with Discrete Variable}
+  Say, we have $w_i$ as wages and $D_i$ is an indicator for college attendance. Then, we can estimate the CEF of wages conditional on college attendance as
+
+  $$
+    g(1) = \expec{y_i}{D_i = 1} \quad\text{ and }\quad g(0) = \expec{y_i}{D_i = 0}
+  $$
+
+  \bigskip
+  This is just just the average wage for college attendees and non-attendees
+\end{frame}
+
+\begin{frame}{Regression Framework}
+  To estimate these given a sample of workers, we could regress
+  $$w_i = \alpha + D_i \tau + u_i$$
+  
+  \begin{itemize}
+    \item $\hat{\alpha}$ is our estimate of $g(0)$ and $\hat{\alpha} + \hat{\tau}$ is our estimate of $g(1)$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Example with two discrete variables}
+  Now, we have $w_i$ as wages and $\bm{X}_i$ consists of an indicator for college attendence, $D_i$, and $F_i$ is an indicator for being a female. 
+  
+  \bigskip
+  Now we have four distinct values of $\bm{X}_i$, $(D_i, F_i) \in \{(0, 0), (1, 0), (0, 1), (0, 0)\}$. 
+  \begin{itemize}
+    \item Estimating the CEF would consist of just four sub-sample averages (e.g. female college attendees)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Regression Framework}
+  Note, it is \emph{not} enough to regress wages on an indicator for college and an indicator for female. 
+  We need to include an interaction term as well! 
+
+  $$w_i = \alpha + D_i \beta_1 + F_i \beta_2 + (D_i \cdot F_i) \beta_3 + u_i$$
+  
+  \bigskip
+  \begin{itemize}
+    \item Without the interaction term, we are assuming the effect of college is the same for female and male workers
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Example with single continuous variable}
+  If we move from a discrete to a single continuous $X_i$, we can still estimate the CEF by averaging $y_i$ for individuals with $X_i \approx x$
+  \begin{itemize}
+    \item Only now, we have a problem where there are infinitely many values of $x$ and we have to decide how close is `close enough' to $x$
+  \end{itemize}
+
+  \bigskip
+  We will estimate by making many small bins of $x$ along the full range of $X$. 
+  \begin{itemize}
+    \item This is called `non-parametric' estimation in the statistics literature
+  \end{itemize}
+\end{frame}
+
+\imageframe{figures/f_examples_plot_dgp.pdf}
+\imageframe{figures/f_examples_cef.pdf}
+
+\begin{frame}{Single continuous and single discrete variable}
+  If we have a continuous $X_{1i}$ and a discrete $D_i$ variable, we can do:
+  \begin{itemize}
+    \item Average value of $y$ for bins of $X_i$ \emph{separately} for $D_i = 0$ and $D_i = 1$. 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Estimation of the CEF}
+  As we discussed before, we could estimate $g(x) \equiv \expec{y_i}{\bm{X}_i = x}$ by averaging over individuals with $\bm{X}_i = x$
+  \begin{itemize}
+    \item In the case where $\bm{X}_i$ is a discrete variable taking values $x_1, \dots, x_L$, this is just sub-sample averages for $\bm{X}_i = x_\ell$
+    
+    \item With $\bm{X}_i$ as a continuous variable, we do a bunch of `binned' averages.
+  \end{itemize}
+
+  \bigskip
+  As we start adding variables, we have to start `interacting' the variables, creating many many different sub-samples
+\end{frame}
+
+\begin{frame}{The ``curse of dimensionality''}
+  When $\bm{X}_i$ is a multi-dimensional vector with many continuous variables, we end up with \emph{a lot} of subsamples we want to take averages of. 
+
+  \bigskip
+  The density around any particular value $\bm{x}$ is typically going to be small or near-zero 
+  \begin{itemize}
+    \item In samples, our estimates will be very noisy or even impossible to calculate for given values of $\bm{x}$ 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The Conditional Expectation Function}
+  Uses of the conditional expectation function:
+  \begin{enumerate}
+    \item \alert{Descriptive}: how $y$ on average changes as $X$ changes 
+    \begin{itemize}
+      \item By definition, compare $g(x_1)$ to $g(x_2)$
+    \end{itemize} 
+
+    \bigskip
+    \item \alert{Prediction}: if we know $\bm{X}_i$, our best guess for $y_i$ is $g(\bm{X}_i)$ 
+    
+    \bigskip
+    \item \alert{Causal inference}: what happens to $y_i$ if we \emph{manipulate} $\bm{X}_i$ 
+    \begin{itemize}
+      \item Sometimes, the point of this class is to describe when! 
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Preview of Conditional Expectation Function usages}
+  One main reason why we care about modeling $Y$ is because causal inference is a missing data problem
+  \begin{itemize}
+    \item For the treated units, we do not observe what their outcomes would be in the absence of treatment, $Y(0)$
+    \item For the control units, we do not observe their $Y(1)$
+  \end{itemize}
+
+  \pause
+  \bigskip
+  If we fit a model for $\expec{Y_i(0)}{\bm{X}_i = x}$, we can use this to make predictions for the treated units 
+  
+  \pause
+  \begin{itemize}
+    \item The model predicting out of sample for our treated group requires certain conditions discussed in topic 3
+  \end{itemize}
+\end{frame}
+
+\section{Modeling the CEF}
+
+
+% \begin{frame}{Prediction Error and the CEF}
+%   The prediction error of the conditional expectation function is given by $\varepsilon_i = y_i - g(\bm{X}_i)$. For any $x$, we have 
+%   \begin{align*}
+%     \expec{\varepsilon_i}{\bm{X}_i = x} 
+%     &= \expec{y_i - \expec{y_i}{\bm{X}_i = x}}{\bm{X}_i = x} \\
+%     &= \expec{y_i}{\bm{X}_i = x} - \expec{y_i}{\bm{X}_i = x} \\
+%     &= 0
+%   \end{align*}
+%   
+%   \pause
+%   The prediction error is unpredictable given $\bm{X}_i = x$
+%   \begin{itemize}
+%     \item We have \emph{used up} all the information that $\bm{X}_i$ can give us. 
+%     \item This is not true for general $f(X)$
+%   \end{itemize}
+% \end{frame}
+% 
+% \begin{frame}{Mean-square prediction error}
+%   To provide a summary measure of fit, we want a `average' prediction error over the population
+%   \begin{itemize}
+%     \item If we took the average of prediction error, positive and negative prediction errors would cancel out
+%   \end{itemize}
+% 
+%   \pause
+%   \bigskip
+%   The \alert{mean-square (prediction) error} (MSE) for some model $f$ is calculated as:
+%   \begin{equation}\label{eq:mspe}
+%     \text{MSE}(f) \equiv \expec{\left( y_i - f(\bm{X}_i) \right)^2}
+%   \end{equation}
+%   \vspace*{-\bigskipamount}
+%   \begin{itemize}
+%     \item Averaged over the population
+%   \end{itemize}
+% \end{frame}
+% 
+% \begin{frame}{Best predictor of $y$}
+%   If you have data on \emph{the full population}, the best possible model for predicting $y$ in terms of minimizing the mean-square prediction error is the conditional expectation function
+%   \begin{itemize}
+%     \item Proof on the next three slides for those interested
+%   \end{itemize}
+% \end{frame}
+% 
+% \begin{frame}{Proof: Optimal model for $y$}
+%   The model $f$ that minimizes the mean-square prediction error is the conditional expectation function.
+%   \begin{align*}
+%     &\expec{\left( y_i - f(\bm{X}_i) \right)^2} = \expec{\left( y_i - g(\bm{X}_i) + g(\bm{X}_i) - f(\bm{X}_i) \right)^2} \\ \pause
+%     &\quad= \expec{\left( y_i - g(\bm{X}_i) \right)^2} + \expec{\left( g(\bm{X}_i) - f(\bm{X}_i) \right)^2} + 2 \expec{\left( y_i - g(\bm{X}_i) \right) \left( f(\bm{X}_i) - g(\bm{X}_i) \right)}
+%   \end{align*}
+% 
+%   \begin{itemize}
+%     \item The first term does not depend on $f$
+%   \end{itemize}
+% \end{frame}
+% 
+% \begin{frame}{Proof: Optimal model for $y$}
+%   The last term equals $0$: 
+%   \begin{align*}
+%     & \expec{\left( y_i - g(\bm{X}_i) \right) \left( f(\bm{X}_i) - g(\bm{X}_i) \right)} \\
+%     &\quad= \expec{\expec{\left( y_i - g(\bm{X}_i) \right) \left( f(\bm{X}_i) - g(\bm{X}_i) \right)}{\bm{X}_i}} \\
+%     &\quad= \expec{\left( \expec{y_i}{\bm{X}_i} - g(\bm{X}_i) \right) \left( f(\bm{X}_i) - g(\bm{X}_i) \right)} \\
+%     &\quad= \expec{\left( g(\bm{X}_i) - g(\bm{X}_i) \right) \left( f(\bm{X}_i) - g(\bm{X}_i) \right)} \\
+%     &\quad= 0
+%   \end{align*}
+% \end{frame}
+% 
+% \begin{frame}{Proof: Optimal model for $y$}
+%   The model $f$ that minimizes the mean-square prediction error is the conditional expectation function.
+%   \begin{align*}
+%     &\argmin_{f} \expec{\left( y_i - f(\bm{X}_i) \right)^2} = \expec{\left( y_i - g(\bm{X}_i) + g(\bm{X}_i) - f(\bm{X}_i) \right)^2} \\
+%     &\quad= \argmin_{f} \expec{\left( y_i - g(\bm{X}_i) \right)^2} + \expec{\left( g(\bm{X}_i) - f(\bm{X}_i) \right)^2} + 0
+%   \end{align*}
+% 
+%   \begin{itemize}
+%     \item Minimizing this with respect to $f$ only involves the second term so we set $f(\bm{X}_i) = g(\bm{X}_i)$
+%   \end{itemize}
+% \end{frame}
+% 
+% \begin{frame}{Optimal model for $y$}
+%   Therefore, in terms of mean-square prediction error, the conditional expectation function is the best predictor of $y$
+% \end{frame}
+
+\begin{frame}{Modelling the CEF}
+  We have an outcome variable $y$ and a set of $p$ different predictor variables $X = (X_1, X_2, \dots, X_p)$. 
+  \begin{itemize}
+    \item For some observations we observe both $X$ and $y$; this is essential to \alert{fit} a model
+  \end{itemize}
+
+  \bigskip
+  We can write our model in a general form as
+  $$
+    y = f(X) + \varepsilon,
+  $$
+  where $f$ is some unknown (but fixed) function of $X$. 
+\end{frame}
+
+\begin{frame}{Estimation of the CEF}
+  As we discussed before, we could estimate $g(\bm{x}) \equiv \expec{y_i}{\bm{X}_i = \bm{x}}$ by averaging over individuals with $\bm{X}_i = \bm{x}$
+
+  \bigskip
+  But as $\bm{X}_i$ has more variables, ``curse of dimensionality'' makes this procedure infeasible
+  \begin{itemize}
+    \item We need to make assumptions on the shape of $g(x)$ to make estimation feasible
+  \end{itemize}
+\end{frame}
+
+
+\subsection{Linear Model of Conditional Expectation Function}
+
+\begin{frame}{Linear Model}
+  It is common to propose a \emph{parametric} model of the conditional expectation function:
+  $$
+    y_i = 
+    \bm{X}_i' \beta + \text{error} = 
+    \sum_{k=1}^p X_{i,k} \beta_k + \text{error}
+  $$
+  \begin{itemize}
+    \item We model $y$ as a linear function of the covariates
+
+    \item Assume that one of the variables in $\bm{X}_i$ is an intercept term
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Fitting via Ordinary Least Squares}
+  ``Fitting'' the linear model involves selecting $\beta$ to make out model the ``best'' linear predictor of $y$:
+  $$
+    \hat{\beta}_{\texttt{OLS}} \equiv \argmin_{\beta} \expec{\left( y_i - \bm{X}_i' \beta \right)^2}
+  $$
+
+  \bigskip\bigskip
+  We can optimize this by taking first-order conditions and set equal to zero:
+  \begin{align*}
+    &\expec{ \bm{X}_i \left( y_i - \bm{X}_i' \beta_{\texttt{OLS}} \right) } = 0 \\
+    &\implies \expec{ \bm{X}_i y_i } - \expec{\bm{X}_i \bm{X}_i'} \beta_{\texttt{OLS}} = 0 \\
+    &\implies \beta_{\texttt{OLS}} = (\expec{\bm{X}_i \bm{X}_i'})^{-1} \expec{ \bm{X}_i y_i }
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Ordinary Least Squares Estimator}
+  We can estimate using a sample of observations:
+  $$
+    \hat{\beta}_{\texttt{OLS}} = \left( \sum_{i=1}^n \bm{X}_i \bm{X}_i' \right)^{-1} \sum_{i=1}^n \bm{X}_i y_i
+  $$
+
+  \bigskip
+  Or in matrix notation
+  $$
+    \hat{\beta}_{\texttt{OLS}} = (\bm{X}' \bm{X})^{-1} \bm{X}' \bm{y}
+  $$
+  \begin{itemize}
+    \item $\bm{X}$ is the $n \times k$ matrix with row given by $\bm{X}_i'$ and $\bm{y}$ is the column vector of outcome variables
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Linearity}
+  When is a linear model of $g(x) \equiv \expec{y_i}{\bm{X}_i = \bm{x}}$ a good assumption?
+  \begin{itemize}
+    \item In some cases, the data might look to grow linearly in each $X_{i,k}$, in which case, it is a reasonable assumption
+  \end{itemize}
+
+  \bigskip
+  But many times, the linear model will fall short. For example:
+  \begin{itemize}
+    \item wages seem to grow quadratically in age
+    
+    \medskip
+    \item Square footage of homes seems to have diminishing returns to price
+
+    \medskip
+    \item Returns to work experience depend on whether you have a college degree (interaction)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{``Extending'' linear models}
+  We can, of course, increase the performance of our model by doing things like polynomials of variables and interaction between terms.
+
+  \bigskip
+  It becomes necessary to distinguish between the variables you are using, $\bm{X}_i$ and the terms you include in your model:
+  $$
+    \bm{W}_i = \left( g_1(\bm{X}_i), \dots, g_K(\bm{X}_i) \right)'
+  $$
+
+  \medskip
+  \begin{itemize}
+    \item When $g_1(\bm{X}_i) = x_{1, i}, \dots, g_p(\bm{X}_i) = X_{i, p}$ we end up with the original model
+    
+    \item But, of course, we can include polynomials and/or interactions as well
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{A `correctly specified' model}
+  We say a \emph{linear model} is \alert{correctly specified} if the CEF is exactly equal to the model we are estimating:
+  $$
+    g(\bm{x}) \equiv \expec{Y_i}{\bm{X}_i = \bm{x}}= \bm{w} \gamma_0
+  $$
+
+  \bigskip
+  That is, the true conditional expectation is linear our set of terms $\bm{W}_i$
+  \begin{itemize}
+    \item We have `fully used' the information in $\bm{X}_i$ with our terms $\bm{W}_i$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Example: Discrete variables}
+  When $\bm{X}_i$ is a discrete variable taking values $x_1, \dots, x_L$, consider a linear model consisting of a set of \alert{indicator variables} for each value of $x_\ell$:
+  \begin{equation}\label{eq:dummy_variable_regression}
+    y_i = \sum_{\ell = 1}^L \one{\bm{X}_i = x_\ell} \beta_\ell + u_i
+  \end{equation}
+  \pause
+  \begin{itemize}
+    \item The ordinary least-squares estimator estimates $\hat{\beta}_{\ell} = \expechat{y_i}{\bm{X}_i = x_\ell}$
+
+    \pause
+    \item In this case, the CEF is \emph{correctly specified} as the linear model (\ref{eq:dummy_variable_regression}).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Example: Discrete variables}
+  As mentioned before, if we have multiple discrete variables, we need to include interaction terms as well to ensure we have a correctly specified model
+  \begin{itemize}
+    \item If we do not include interaction terms, we need the true coefficients on the interactions to be 0!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Ommitted Categories}
+  When we include a constant in the regression (or have multiple sets of indicator variables) we have issues of \alert{multi-collinearity}:
+  $$
+    y_i = \alpha + \sum_{\ell = 2}^L \one{\bm{X}_i = x_\ell} \beta_\ell + u_i
+  $$
+
+  \bigskip
+  We need to drop (at least) one of the indicator variables (say $\one{\bm{X}_i = x_1}$). This serves as the ``reference category''
+  $$
+    \hat{\beta}_{\ell} = \expechat{y_i}{\bm{X}_i = x_\ell} - \expechat{y_i}{\bm{X}_i = x_1}
+  $$
+  
+  $\hat{\beta}_{\ell}$ is the mean of group $\ell$ relative to the omitted group
+\end{frame}
+
+\subsection{Making models more flexible}
 
 \begin{frame}{Prediction model}
   We have an outcome variable $y$ and a set of $p$ different predictor variables $X = (X_1, X_2, \dots, X_p)$. 
@@ -44,7 +458,7 @@
   where $f$ is some unknown (but fixed) function of $X$. By definition $\varepsilon \equiv y - f(X)$ is the \alert{error term} that is needed to fit the data perfectly
 \end{frame}
 
-\begin{frame}{Prediction model}
+\begin{frame}{Prediction \emph{model}}
   There are many different possible models of $f$ ranging from a linear model; a `smooth' model (polynomial or other); or a fully non-parametric function
 \end{frame}
 
@@ -97,251 +511,54 @@
   \end{itemize}
 \end{frame}
 
+\subsection{More Flexible Approximations (\texttt{binscatter})}
 
-\subsection{Conditional Expectation Function}
-
-\begin{frame}{The Conditional Expectation Function}
-  In particular, we will think a lot about the \alert{Conditional Expectation Function} (CEF) of $y_i$ given $X_i = (X_{i1}, \dots, X_{ip})'$:
+\begin{frame}{Partially linear model}
+  The \alert{Partially linear model} mixes high model flexibility in a key variable we care about and linear model for the rest of the covariates:
   $$
-    g(x) \equiv \expec{y_i}{X_i = x}
+    y_i = \mu(X_i) + \bm{Z}_i' \beta + u_i
   $$
   \begin{itemize}
-    \item This reads ``$g(x)$ is the expected value of $y_i$ conditional on the unit having $X_i = x$''
+    \item $\mu(X_i)$ is a highly flexible function
+
+    \item $\bm{Z}_i'$ is a set of \emph{linear} control variables
   \end{itemize}
 
-  \pause
   \bigskip
-  The easiest way to estimate this for a given $x$ is to average $y_i$ for units with $X_i = x$. 
-  \pause
+  This allows you to prevent the curse of dimensionality by linearly controlling for most of the variables. 
+  Allows a flexible model for the key variable of interest, $\bm{X}_i$, that is good for graphing
+\end{frame}
+
+\begin{frame}{Partially linear model}
+  $$
+    y_i = \mu(X_i) + \bm{Z}_i' \beta + u_i
+  $$
+  
+  \bigskip
+  One recent way of estimating this is using a `binscatter' regression 
   \begin{itemize}
-    \item Only uses observations with $X_i = x$ (or $X_i \approx x$ when $X_i$ is continuous), so that is the relavent `$n$' when considering sample size
+    \item Popularized by Raj Chetty and coauthors since they had millions of observations (too many for normal scatterplots)
   \end{itemize}
 \end{frame}
 
-\imageframe{figures/f_examples_plot_dgp.pdf}
-\imageframe{figures/f_examples_cef.pdf}
-
-\begin{frame}{The Conditional Expectation Function}
-  Uses of the conditional expectation function:
+\begin{frame}{Binscatter Regression}
+  $$
+    y_i = \mu(X_i) + \bm{Z}_i' \beta + u_i
+  $$
+  One recent way of estimating this is using a `binscatter' regression:
   \begin{enumerate}
-    \item \alert{Descriptive}: how $y$ on average covaries with $X$ 
-    \begin{itemize}
-      \item By definition compare $g(x_1)$ to $g(x_2)$
-    \end{itemize} 
-
-    \item \alert{Prediction}: if we know $X_i$, our best guess for $y_i$ is $g(X_i)$ 
-    \begin{itemize}
-      \item Will prove `best guess' next
-    \end{itemize} 
+    \item Chop $X_i$ variable into $J$ bins with an equal number of observations into each bin
     
-    \item \alert{Causal inference}: what happens to $y_i$ if we manipulate $X_i$ 
-    \begin{itemize}
-      \item Sometimes
-    \end{itemize}
+    \item Fit some polynomial of $X_i$ just within each bin (interact $X_i$ polynomial with bin indicators)
   \end{enumerate}
-
 \end{frame}
 
+\imageframe{figures/ex_binsreg_raw.pdf}
+\imageframe{figures/ex_binsreg_split_into_bins.pdf}
+\imageframe{figures/ex_binsreg_bins.pdf}
+\imageframe{figures/ex_binsreg_bins_add_linear.pdf}
+\imageframe{figures/ex_binsreg_bins_add_smooth.pdf}
 
-\begin{frame}{Prediction Error and the CEF}
-  The prediction error of the conditional expectation function is given by $\varepsilon_i = y_i - g(X_i)$. For any $x$, we have 
-  \begin{align*}
-    \expec{\varepsilon_i}{X_i = x} 
-    &= \expec{y_i - \expec{y_i}{X_i = x}}{X_i = x} \\
-    &= \expec{y_i}{X_i = x} - \expec{y_i}{X_i = x} \\
-    &= 0
-  \end{align*}
-  
-  \pause
-  The prediction error is unpredictable given $X_i = x$
-  \begin{itemize}
-    \item We have \emph{used up} all the information that $X_i$ can give us. 
-    \item This is not true for general $f(X)$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Mean-square prediction error}
-  To provide a summary measure of fit, we want a `average' prediction error over the population
-  \begin{itemize}
-    \item If we took the average of prediction error, positive and negative prediction errors would cancel out
-  \end{itemize}
-
-  \pause
-  \bigskip
-  The \alert{mean-square (prediction) error} (MSE) for some model $f$ is calculated as:
-  \begin{equation}\label{eq:mspe}
-    \text{MSE}(f) \equiv \expec{\left( y_i - f(X_i) \right)^2}
-  \end{equation}
-  \vspace*{-\bigskipamount}
-  \begin{itemize}
-    \item Average over the population
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Optimal model for $y$}
-  The model $f$ that minimizes the mean-square prediction error is the conditional expectation function.
-  \begin{align*}
-    &\expec{\left( y_i - f(X_i) \right)^2} = \expec{\left( y_i - g(X_i) + g(X_i) - f(X_i) \right)^2} \\ \pause
-    &\quad= \expec{\left( y_i - g(X_i) \right)^2} + \expec{\left( g(X_i) - f(X_i) \right)^2} + 2 \expec{\left( y_i - g(X_i) \right) \left( f(X_i) - g(X_i) \right)}
-  \end{align*}
-
-  \begin{itemize}
-    \item The first term does not depend on $f$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Optimal model for $y$}
-  The last term equals $0$: 
-  \begin{align*}
-    & \expec{\left( y_i - g(X_i) \right) \left( f(X_i) - g(X_i) \right)} \\
-    &\quad= \expec{\expec{\left( y_i - g(X_i) \right) \left( f(X_i) - g(X_i) \right)}{X_i}} \\
-    &\quad= \expec{\left( \expec{y_i}{X_i} - g(X_i) \right) \left( f(X_i) - g(X_i) \right)} \\
-    &\quad= \expec{\left( g(X_i) - g(X_i) \right) \left( f(X_i) - g(X_i) \right)} \\
-    &\quad= 0
-  \end{align*}
-\end{frame}
-
-\begin{frame}{Optimal model for $y$}
-  The model $f$ that minimizes the mean-square prediction error is the conditional expectation function.
-  \begin{align*}
-    &\argmin_{f} \expec{\left( y_i - f(X_i) \right)^2} = \expec{\left( y_i - g(X_i) + g(X_i) - f(X_i) \right)^2} \\
-    &\quad= \argmin_{f} \expec{\left( y_i - g(X_i) \right)^2} + \expec{\left( g(X_i) - f(X_i) \right)^2} + 0
-  \end{align*}
-
-  \begin{itemize}
-    \item Minimizing this with respect to $f$ only involves the second term so we set $f(X_i) = g(X_i)$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Optimal model for $y$}
-  Therefore, in terms of mean-square prediction error, the conditional expectation function is the best predictor of $y$
-\end{frame}
-
-\subsection{Linear Model of Conditional Expectation Function}
-
-\begin{frame}{Estimation of the CEF}
-  As we discussed before, we could estimate $g(x) \equiv \expec{y_i}{X_i = x}$ by averaging over individuals with $X_i = x$
-  \begin{itemize}
-    \item In the case where $X_i$ is a discrete variable taking values $x_1, \dots, x_L$, this is just sub-sample averages for $X_i = x_\ell$
-  \end{itemize}
-
-  \pause
-  \bigskip
-  When $X_i$ is a multi-dimensional vector with many continuous variables, the density around any particular value $x$ is typically going to be small or near-zero 
-  \begin{itemize}
-    \item The so-called ``curse of dimensionality''
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Linear Model}
-  Instead, it is common to propose a \emph{parametric} model of the conditional expectation function:
-  $$
-    y_i = X_i' \beta + \text{error}
-  $$
-  \begin{itemize}
-    \item We model $y$ as a linear function of the covariates
-    \item Most of the time, we assume $X_i$ contains a constant for an intercept
-  \end{itemize}
-
-  \pause
-  \bigskip
-  Similar to the conditional expectation function, we can find the ``best'' linear predictor of $y$:
-  $$
-    \hat{\beta}_{\texttt{OLS}} \equiv \argmin_{\beta} \expec{\left( y_i - X_i' \beta \right)^2}
-  $$
-  \begin{itemize}
-    \item Same as before but searching over only linear functions of $X$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Ordinary Least Squares}
-  We can optimize this by taking first-order conditions and set equal to zero:
-  \begin{align*}
-    &\expec{ X_i \left( y_i - X_i' \beta_{\texttt{OLS}} \right) } = 0 \\
-    &\implies \expec{ X_i y_i } - \expec{X_i X_i'} \beta_{\texttt{OLS}} = 0 \\
-    &\implies \beta_{\texttt{OLS}} = (\expec{X_i X_i'})^{-1} \expec{ X_i y_i }
-  \end{align*}
-
-  \begin{itemize}
-    \item The best linear predictor of $y$ is the ordinary-least squares estimate 
-    
-    \item Similar math shows $\beta_{\texttt{OLS}}$ is the best linear predictor of the CEF function $\expec{y_i}{X_i = x}$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Ordinary Least Squares Estimator}
-  We can estimate using a sample of observations:
-  $$
-    \hat{\beta}_{\texttt{OLS}} = \left( \sum_{i=1}^n X_i X_i' \right)^{-1} \sum_{i=1}^n X_i y_i
-  $$
-
-  \bigskip
-  Or in matrix notation
-  $$
-    \hat{\beta}_{\texttt{OLS}} = (X' X)^{-1} X' y
-  $$
-  \begin{itemize}
-    \item $X$ is the $n \times k$ matrix with row given by $X_i'$ and $y$ is the column vector of outcome variables
-  \end{itemize}
-\end{frame}
-
-
-\begin{frame}{Indicator Variables}
-  When is a linear model of $g(x) \equiv \expec{y_i}{X_i = x}$ a good assumption?
-  \begin{itemize}
-    \item In some cases, the data might look to grow linearly in $X_i$, in which case, it is a reasonable assumption
-  \end{itemize}
-
-  \pause
-  \bigskip
-  A linear model means \emph{linear in parameters}; we can include polynomial terms to allow for non-linear (but smooth) model of $y_i$ given $X_i$
-\end{frame}
-
-\begin{frame}{Discrete variables}
-  When $X_i$ is a discrete variable taking values $x_1, \dots, x_L$, consider a linear model consisting of a set of \alert{indicator variables} for each value of $x_\ell$:
-  \begin{equation}\label{eq:dummy_variable_regression}
-    y_i = \sum_{\ell = 1}^L \one{X_i = x_\ell} \beta_\ell + u_i
-  \end{equation}
-  \pause
-  \begin{itemize}
-    \item The ordinary least-squares estimator estimates $\hat{\beta}_{\ell} = \expechat{y_i}{X_i = x_\ell}$
-
-    \pause
-    \item In this case, the CEF is \emph{correctly specified} as the linear model (\ref{eq:dummy_variable_regression}).
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Ommitted Categories}
-  When we include a constant in the regression (or multiple sets of indicator variables) we have issues of \alert{multi-collinearity}:
-  $$
-    y_i = \alpha + \sum_{\ell = 2}^L \one{X_i = x_\ell} \beta_\ell + u_i
-  $$
-
-  We need to drop (at least) one of the indicator variables (say $\one{X_i = x_1}$). This serves as the ``reference category''
-  $$
-    \hat{\beta}_{\ell} = \expechat{y_i}{X_i = x_\ell} - \expechat{y_i}{X_i = x_1}
-  $$
-  \begin{itemize}
-    \item $\hat{\beta}_{\ell}$ is the mean of group $\ell$ relative to the omitted group
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Preview of Conditional Expectation Function usages}
-  One main reason why we care about modeling $Y$ is because causal inference is a missing data problem
-  \begin{itemize}
-    \item For the treated units, we do not observe what their outcomes would be in the absence of treatment, $Y(0)$
-    \item For the control units, we do not observe their $Y(1)$
-  \end{itemize}
-
-  \pause
-  \bigskip
-  If we fit a model for $\expec{Y_i(0)}{X_i = x}$, we can use this to make predictions for the treated units 
-  
-  \pause
-  \begin{itemize}
-    \item The model predicting out of sample for our treated group requires certain conditions we'll discuss in topic 3
-  \end{itemize}
-\end{frame}
 
 
 \section{Omitted Variable Bias (OVB)}
@@ -352,7 +569,7 @@
     y_i = \beta_0 + X_{i1} \beta_1 + X_{i2} \beta_2 + \varepsilon_i
   $$
   \begin{itemize}
-    \item Assume $\expec{\varepsilon_i}{X_i} = 0$ so that $\beta_1$ is the true causal effect
+    \item Assume $\expec{\varepsilon_i}{\bm{X}_i} = 0$ so that $\beta_1$ is the true causal effect
   \end{itemize}
   
   \pause
@@ -470,13 +687,13 @@
 \begin{frame}{OVB In Practice}
   A lot of research will run regressions that look like 
   $$
-    y_i = D_i \tau + X_i' \beta + \varepsilon_i
+    y_i = D_i \tau + \bm{X}_i' \beta + \varepsilon_i
   $$
 
   \bigskip
   The \emph{key things} you will want to do is think through what might show up in the error term
   \begin{enumerate}
-    \item If those omitted variables are correlated with $D_i$ (after controlling for $X_i$) and have an effect on $y_i$, then you have problems interpreting the effect as causal
+    \item If those omitted variables are correlated with $D_i$ (after controlling for $\bm{X}_i$) and have an effect on $y_i$, then you have problems interpreting the effect as causal
   \end{enumerate}
 \end{frame}
 
@@ -512,19 +729,19 @@
 \end{frame}
 
 \begin{frame}{Residuals}
-  From regression algebra we have the residuals are (linearly) uncorrelated with $X_i$ 
+  From regression algebra we have the residuals are (linearly) uncorrelated with $\bm{X}_i$ 
   $$
-    \expec{X_i \hat{\varepsilon}_i} = 0
+    \expec{\bm{X}_i \hat{\varepsilon}_i} = 0
   $$
   
   \bigskip
   \pause 
-  If we assume that the CEF $\expec{y_i}{X_i} = X_i' \beta$, then we can go further and say 
+  If we assume that the CEF $\expec{y_i}{\bm{X}_i} = \bm{X}_i' \beta$, then we can go further and say 
   $$
-    \expec{\hat{\varepsilon}_i}{X_i = x} = 0
+    \expec{\hat{\varepsilon}_i}{\bm{X}_i = x} = 0
   $$
   \begin{itemize}
-    \item the remaining variation in $y_i$, given by $\hat{\varepsilon}_i$, is unpredictable given $X_i$
+    \item the remaining variation in $y_i$, given by $\hat{\varepsilon}_i$, is unpredictable given $\bm{X}_i$
   \end{itemize}
 \end{frame}
 
@@ -612,51 +829,6 @@
   What are examples of other variables that can drive attendance?
 \end{frame}
 
-
-
-\section{More Flexible Approximations (\texttt{binscatter})}
-
-\begin{frame}{Partially linear model}
-  The \alert{Partially linear model} mixes high model flexibility in a key variable we care about and linear model for the rest of the covariates:
-  $$
-    y_i = \mu(X_i) + W_i' \beta + u_i
-  $$
-  \begin{itemize}
-    \item $\mu(X_i)$ is a highly flexible function
-    \item $W_i'$ is a set of \emph{linear} control variables
-  \end{itemize}
-
-  \bigskip
-  This allows you to prevent the curse of dimensionality by linearly controlling for most of the variables. Allows a flexible model for the key variable of interest, $X_i$, that is good for graphing
-\end{frame}
-
-\begin{frame}{Partially linear model}
-  $$
-    y_i = \mu(X_i) + W_i' \beta + u_i
-  $$
-  One recent way of estimating this is using a `binscatter' regression 
-  \begin{itemize}
-    \item Raj Chetty and coauthors use this method a lot since they have too many observations for normal scatterplots
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Binscatter Regression}
-  $$
-    y_i = \mu(X_i) + W_i' \beta + u_i
-  $$
-  One recent way of estimating this is using a `binscatter' regression:
-  \begin{enumerate}
-    \item Chop $X$ variable into $J$ bins with an equal number of observations into each bin
-    
-    \item Fit some polynomial of $X$ just within each bin (interact $X$ polynomial with bin indicators)
-  \end{enumerate}
-\end{frame}
-
-\imageframe{figures/ex_binsreg_raw.pdf}
-\imageframe{figures/ex_binsreg_split_into_bins.pdf}
-\imageframe{figures/ex_binsreg_bins.pdf}
-\imageframe{figures/ex_binsreg_bins_add_linear.pdf}
-\imageframe{figures/ex_binsreg_bins_add_smooth.pdf}
 
 
 % \section{Binary Outcome Variable}

@@ -3,6 +3,7 @@
 \usepackage{../../math}
 \usepackage{../../uark_colors}
 
+
 \hypersetup{
   colorlinks = true,
   allcolors = ozark_mountains,
@@ -21,7 +22,8 @@
   {\large Prof. Kyle Butts}
 \end{center}
 
-These assignments should be completed in groups of 1 or 2 but submitted individually. My preference is for you to use Rmarkdown files to have your code, results, and your answers to the questions intermixed. Since I am not requiring you to code in R for these assignments, you can use latex or microsoft word to write up answers alternatively. Not that in these cases, I would like you to upload your code seperately. 
+These assignments should be completed in groups of 1 or 2 but submitted individually. 
+My preference is for you to use a quarto file to have your code, results, and your answers to the questions intermixed. 
 
 \section*{Theoretical Questions}
 
@@ -39,14 +41,10 @@ These assignments should be completed in groups of 1 or 2 but submitted individu
     \item $D_i$ is a variable that equals 1 if a driver has tinted windows; $y_i$ is a measure of "response time" that measures visual performance.
   \end{enumerate}
 
-  \item In your own words, describe why A/B testing with a large amount of arms and few trials per arm can lead to problems with inference.
-  \begin{itemize}
-    \item If you were to recommend to a tech firm how to fix this, what might you suggest?
-  \end{itemize}
+  \item In your own words, describe why A/B testing with a large amount of arms and few trials per arm can lead to problems with inference. If you were to recommend to a tech firm how to fix this, what might you suggest?
 \end{enumerate}
 
 
-\newpage 
 \section*{Coding Exercise}
 
 This exercise involves a randomized control trial done by the US Government.\footnote{See \url{https://www.upjohn.org/data-tools/employment-research-data-center/national-jtpa-study} for details.} 
@@ -58,11 +56,12 @@ A codebook for the dataset is at the end of the document.
 
 \begin{enumerate}
   \item First, let's see if we think randomization was done correctly. 
-  Do so by assessing if \texttt{age}, \texttt{priorearn}, \texttt{educ}, \texttt{female}, and \texttt{nonwhite} are balanced between the treated and control groups (Hint: use a regression estimator). Discuss whether you think the treated and the control group `look the same'.
+  Do so by assessing if \texttt{age}, \texttt{priorearn}, \texttt{educ}, \texttt{female}, and \texttt{nonwhite} are balanced between the treated and control groups (Hint: use a regression estimator). 
+  Discuss whether you think the treated and the control group `look the same'.
 
   \item Second, calculate the difference-in-means estimator for the effect of JTPA training and services on the probability a worker finds a job ``by hand''.
   
-  \item Finally, calculate the difference-in-means estimator via regression and report robust (\texttt{HC1}) standard errors. Is the estimate statistically significant?
+  \item Now, calculate the difference-in-means estimator via regression and report robust (\texttt{HC1}) standard errors. Is the estimate statistically significant?
 \end{enumerate}
 
 
