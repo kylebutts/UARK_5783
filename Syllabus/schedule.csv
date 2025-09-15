@@ -1,28 +1,28 @@
 Week,Dates,name,value
 01,08/18 - 08/20,Monday,Syllabus + Potential Outcomes
-01,08/18 - 08/20,Wednesday,Randomized Control Trials
-01,08/18 - 08/20,Assignments,""
-02,08/25 - 08/27,Monday,Randomized Control Trials
+01,08/18 - 08/20,Wednesday,Potential Outcomes
+01,08/18 - 08/20,Assignments,
+02,08/25 - 08/27,Monday,Randomized Control Trials (Class cancelled)
 02,08/25 - 08/27,Wednesday,Randomized Control Trials
 02,08/25 - 08/27,Assignments,
 03,09/01 - 09/03,Monday,"No Class"
-03,09/01 - 09/03,Wednesday,Regression Mechanics
+03,09/01 - 09/03,Wednesday,Regression
 03,09/01 - 09/03,Assignments,
-04,09/08 - 09/10,Monday,Regression Mechanics
-04,09/08 - 09/10,Wednesday,Selection on Observables
+04,09/08 - 09/10,Monday,Regression
+04,09/08 - 09/10,Wednesday,Regression
 04,09/08 - 09/10,Assignments,
-05,09/15 - 09/17,Monday,Selection on Observables
+05,09/15 - 09/17,Monday,Regression
 05,09/15 - 09/17,Wednesday,Selection on Observables
-05,09/15 - 09/17,Assignments,
+05,09/15 - 09/17,Assignments,Learning R Assignment
 06,09/22 - 09/24,Monday,Selection on Observables
 06,09/22 - 09/24,Wednesday,Selection on Observables
-06,09/22 - 09/24,Assignments,
+06,09/22 - 09/24,Assignments,Regression Assignment
 07,09/29 - 10/01,Monday,Selection on Observables
 07,09/29 - 10/01,Wednesday,Regression Discontinuity
-07,09/29 - 10/01,Assignments,
+07,09/29 - 10/01,Assignments,Selection on Observables Assignment
 08,10/06 - 10/08,Monday,Regression Discontinuity
 08,10/06 - 10/08,Wednesday,Regression Discontinuity
-08,10/06 - 10/08,Assignments,
+08,10/06 - 10/08,Assignments,Selection on Observables Assignment
 09,10/13 - 10/15,Monday,"No Class"
 09,10/13 - 10/15,Wednesday,Regression Discontinuity
 09,10/13 - 10/15,Assignments,
@@ -34,13 +34,13 @@ Week,Dates,name,value
 11,10/27 - 10/29,Assignments,
 12,11/03 - 11/05,Monday,Instrumental Variables
 12,11/03 - 11/05,Wednesday,Panel Data
-12,11/03 - 11/05,Assignments,
+12,11/03 - 11/05,Assignments,IV Assignment
 13,11/10 - 11/12,Monday,Panel Data
 13,11/10 - 11/12,Wednesday,Panel Data
 13,11/10 - 11/12,Assignments,
 14,11/17 - 11/19,Monday,Panel Data
 14,11/17 - 11/19,Wednesday,Panel Data
-14,11/17 - 11/19,Assignments,
+14,11/17 - 11/19,Assignments,Panel Data Assignment
 15,11/24 - 11/26,Monday,Panel Data
 15,11/24 - 11/26,Wednesday,"No Class"
 15,11/24 - 11/26,Assignments,

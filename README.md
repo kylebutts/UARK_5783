@@ -1,6 +1,6 @@
 # Applied Microeconometrics `[ECON 5783]`
 
-Fall 2024 • Instructor: Kyle Butts
+Fall 2025 • Instructor: Kyle Butts
 
 Monday, Wednesday 1 -- 2:15PM at RCED 103
 
@@ -91,20 +91,20 @@ This is a tentative schedule. This is the first time I've taught this course, so
 <!-- Schedule -->
 | Week | Dates | Monday | Wednesday | Assignments |
 |----|----|----|----|----|
-| 01 | 08/18 - 08/20 | Syllabus + Potential Outcomes | Randomized Control Trials |  |
-| 02 | 08/25 - 08/27 | Randomized Control Trials | Randomized Control Trials |  |
-| 03 | 09/01 - 09/03 | No Class | Regression Mechanics |  |
-| 04 | 09/08 - 09/10 | Regression Mechanics | Selection on Observables |  |
-| 05 | 09/15 - 09/17 | Selection on Observables | Selection on Observables |  |
-| 06 | 09/22 - 09/24 | Selection on Observables | Selection on Observables |  |
-| 07 | 09/29 - 10/01 | Selection on Observables | Regression Discontinuity |  |
-| 08 | 10/06 - 10/08 | Regression Discontinuity | Regression Discontinuity |  |
+| 01 | 08/18 - 08/20 | Syllabus + Potential Outcomes | Potential Outcomes |  |
+| 02 | 08/25 - 08/27 | Randomized Control Trials (Class cancelled) | Randomized Control Trials |  |
+| 03 | 09/01 - 09/03 | No Class | Regression |  |
+| 04 | 09/08 - 09/10 | Regression | Regression |  |
+| 05 | 09/15 - 09/17 | Regression | Selection on Observables | Learning R Assignment |
+| 06 | 09/22 - 09/24 | Selection on Observables | Selection on Observables | Regression Assignment |
+| 07 | 09/29 - 10/01 | Selection on Observables | Regression Discontinuity | Selection on Observables Assignment |
+| 08 | 10/06 - 10/08 | Regression Discontinuity | Regression Discontinuity | Selection on Observables Assignment |
 | 09 | 10/13 - 10/15 | No Class | Regression Discontinuity |  |
 | 10 | 10/20 - 10/22 | Midterm | Instrumental Variables |  |
 | 11 | 10/27 - 10/29 | Instrumental Variables | Instrumental Variables |  |
-| 12 | 11/03 - 11/05 | Instrumental Variables | Panel Data |  |
+| 12 | 11/03 - 11/05 | Instrumental Variables | Panel Data | IV Assignment |
 | 13 | 11/10 - 11/12 | Panel Data | Panel Data |  |
-| 14 | 11/17 - 11/19 | Panel Data | Panel Data |  |
+| 14 | 11/17 - 11/19 | Panel Data | Panel Data | Panel Data Assignment |
 | 15 | 11/24 - 11/26 | Panel Data | No Class |  |
 | 16 | 12/01 - 12/03 | Project Presentations | Project Presentations |  |
 <!-- Schedule -->

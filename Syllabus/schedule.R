@@ -74,13 +74,15 @@ tab_md_string <- tab |>
 
 # Hacky way to change table text
 if (insert_idx[2] > insert_idx[1] + 1) {
-  rows_to_keep <- setdiff(seq_len(length(readme)), (insert_idx[1] + 1):(insert_idx[2] - 1))
+  rows_to_keep <- setdiff(
+    seq_len(length(readme)),
+    (insert_idx[1] + 1):(insert_idx[2] - 1)
+  )
   readme <- readme[rows_to_keep]
 }
 readme <- append(readme, tab_md_string, after = insert_idx[1])
 
 xfun::write_utf8(readme, here("README.md"))
-
 
 # %%
 # tribble(

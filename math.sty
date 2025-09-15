@@ -189,4 +189,20 @@
 % Independent symbol
 \newcommand{\Perp}{\perp\,\!\,\!\,\!\,\!\,\!\,\!\,\!\!\!\!\perp}
 
-
+% Center \not
+\newcommand*{\centernot}{%
+  \mathpalette\@centernot
+}
+\def\@centernot#1#2{%
+  \mathrel{%
+    \rlap{%
+      \settowidth\dimen@{$\m@th#1{#2}$}%
+      \kern.5\dimen@
+      \settowidth\dimen@{$\m@th#1=$}%
+      \kern-.5\dimen@
+      $\m@th#1\not$%
+    }%
+    {#2}%
+  }%
+}
+\makeatother
