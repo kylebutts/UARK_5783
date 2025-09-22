@@ -1,0 +1,455 @@
+% Page setup -------------------------------------------------------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\renewcommand{\baselinestretch}{1.5}
+
+% Remove annoying over-full box warnings
+\vfuzz=2pt 
+\hfuzz=2pt
+
+% Latex Programming tools ------------------------------------------------------
+\usepackage{etoolbox,xparse}
+
+% Font -------------------------------------------------------------------------
+% T1 removes errors for things like \textbackslash
+\usepackage[T1]{fontenc}
+\usepackage{inputenc}
+
+% Serif option:
+% Libertine for serif text font
+\usepackage{libertine}
+
+% Sans-serif option:
+% % Lato for sans-serif text font
+% \usepackage[default]{lato}
+% % Source Code Pro for monospace font
+\usepackage[scale=0.95]{plex-mono} 
+
+% Small adjustments to text kerning
+\usepackage{microtype}
+
+% Math stuff -------------------------------------------------------------------
+\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{bm}
+
+% Define Theorems --------------------------------------------------------------
+% Put proper spacing after Theorem #. 
+\newtheoremstyle{spacing}
+{}%           Space above, empty = `usual value'
+{}%           Space below
+{}%           Body font
+{}%           Indent amount (empty = no indent, \parindent = para indent)
+{\bfseries}%  Thm head font
+{.}%          Punctuation after thm head
+{2.5mm}%      Space after thm head: \newline = linebreak
+{}%           Thm head spec
+
+% Create different theorem environments and setup \autoref for them
+% \label{X:label_name} should match \Xautorefname 
+\theoremstyle{spacing}
+\newtheorem{theorem}{Theorem}[section]
+\newcommand{\theoremautorefname}{Theorem}
+\newtheorem{proposition}{Proposition}[section]
+\newcommand{\propositionautorefname}{Proposition}
+\newtheorem{assumption}{Assumption}[section]
+\newcommand{\assumptionautorefname}{Assumption}
+\newtheorem{example}{Example}[section]
+\newcommand{\exampleautorefname}{Example}
+\newtheorem{lemma}{Lemma}[section]
+\newcommand{\lemmaautorefname}{Lemma}
+\newtheorem{corollary}{Corollary}[section]
+\newcommand{\corollaryautorefname}{Corollary}
+\newtheorem{definition}{Definition}[section]
+\newcommand{\definitionautorefname}{Definition}
+\newtheorem{remark}{Remark}[section]
+\newcommand{\remarkautorefname}{Remark}
+
+% Theorems
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\renewcommand{\thetheorem}{\thesection.\arabic{theorem}}
+\renewcommand{\theproposition}{\thesection.\arabic{proposition}}
+\renewcommand{\thelemma}{\thesection.\arabic{lemma}}
+\renewcommand{\thecorollary}{\thesection.\arabic{corollary}}
+\renewcommand{\thedefinition}{\thesection.\arabic{definition}}
+\renewcommand{\theassumption}{\thesection.\arabic{assumption}}
+\renewcommand{\theremark}{\thesection.\arabic{remark}}
+
+
+% TODO:
+% Example left-border box
+
+
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+
+
+% Colors -----------------------------------------------------------------------
+
+\usepackage{xcolor}
+
+% High contrast colors
+\definecolor{purple}{HTML}{5601A4}
+\definecolor{cranberry}{HTML}{E64173}
+\definecolor{orange}{HTML}{D65616}
+\definecolor{navy}{HTML}{006896}
+\definecolor{teal}{HTML}{1A505A}
+\newcommand\purple[1]{{\color{purple}#1}}
+\newcommand\cranberry[1]{{\color{cranberry}#1}}
+\newcommand\orange[1]{{\color{orange}#1}}
+\newcommand\navy[1]{{\color{navy}#1}}
+\newcommand\teal[1]{{\color{teal}#1}}
+
+% Kyle's colors
+\definecolor{ruby}{HTML}{9a2515}
+\definecolor{alice}{HTML}{107895}
+\definecolor{daisy}{HTML}{EBC944}
+\definecolor{coral}{HTML}{F26D21}
+\definecolor{kelly}{HTML}{829356}
+\definecolor{jet}{HTML}{131516}
+\definecolor{asher}{HTML}{555F61}
+\definecolor{slate}{HTML}{314F4F}
+\newcommand\kelly[1]{{\color{kelly}#1}}
+\newcommand\ruby[1]{{\color{ruby}#1}}
+\newcommand\alice[1]{{\color{alice}#1}}
+\newcommand\daisy[1]{{\color{daisy}#1}}
+\newcommand\coral[1]{{\color{coral}#1}}
+\newcommand\slate[1]{{\color{slate}#1}}
+\newcommand\jet[1]{{\color{jet}#1}}
+\newcommand\asher[1]{{\color{asher}#1}}
+
+% Zinc from Tailwind Colors
+\definecolor{zinc50}{HTML}{fafafa}
+\definecolor{zinc100}{HTML}{f4f4f5}
+\definecolor{zinc200}{HTML}{e4e4e7}
+\definecolor{zinc300}{HTML}{d4d4d8}
+\definecolor{zinc400}{HTML}{a1a1aa}
+\definecolor{zinc500}{HTML}{71717a}
+\definecolor{zinc600}{HTML}{52525b}
+\definecolor{zinc700}{HTML}{3f3f46}
+\definecolor{zinc800}{HTML}{27272a}
+\definecolor{zinc900}{HTML}{18181b}
+\definecolor{zinc950}{HTML}{09090b}
+
+% Hyperlinks -------------------------------------------------------------------
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  allcolors = purple,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+% Section and Subsection Styling -----------------------------------------------
+\usepackage[explicit]{titlesec}
+
+\titleformat{\section}
+  {\large \bf}
+  {\thesection \,---}
+  {0.25em}
+  {#1}
+  
+\titleformat{\subsection}
+  {\fontsize{12}{10}\it}
+  {\thesubsection.}
+  {0.5em}
+  {#1}
+
+
+% Titlepage --------------------------------------------------------------------
+\usepackage{titling}
+
+% \today => Month Year
+\renewcommand{\today}{\ifcase \month \or January\or February\or March\or April\or May \or June\or July\or August\or September\or October\or November\or December\fi\ \number \year}
+
+% Title
+\pretitle{\begin{center}\huge}
+\posttitle{\par\end{center}}
+
+% Author
+\preauthor{
+  \begin{center}\large\renewcommand{\arraystretch}{0.75}
+  \begin{tabular}[t]{c}
+}
+\postauthor{
+  \end{tabular}
+  \end{center}
+}
+
+% Date
+\predate{\begin{center}\normalsize\scshape\color{zinc700}}
+\postdate{\end{center}}
+
+% Abstract
+\renewenvironment{abstract}
+  {\noindent\rule{\linewidth}{.5pt}\noindent}
+  {\noindent\rule{\linewidth}{.5pt}}
+
+
+
+% % Update \maketitle command
+% \def\@maketitle{%
+%   % \vspace*{\bigskipamount}
+% 
+%   \begin{flushleft}%
+%   \let \footnote \thanks
+%     {\huge \@title \par}%
+%     
+%     \medskip
+%     {\large \@author \par}%
+% 
+%     \smallskip
+%     {\color{asher} \@date}%
+%   \end{flushleft}%
+% }
+% 
+% % Abstract
+% \renewenvironment{abstract}
+%  {\noindent\rule{\linewidth}{.5pt}\noindent}
+%  {\noindent\rule{\linewidth}{.5pt}}
+
+
+% Footnote ---------------------------------------------------------------------
+% Spacing between footnotes on same page
+\addtolength{\footnotesep}{1mm}
+
+% Space after footnote number
+\let\oldfootnote\footnote
+\renewcommand\footnote[1]{\oldfootnote{\ #1}}
+
+% No footnote line
+\renewcommand\footnoterule{}
+
+% No supsercript in footer
+\makeatletter
+\renewcommand\@makefntext[1]{%
+    \parindent 1em \noindent
+    \hb@xt@1.8em{\hss\normalfont\@thefnmark.\hfill}#1
+  }
+\makeatother
+
+% Table and Figure labelling ---------------------------------------------------
+\usepackage{caption}
+\usepackage{graphicx}
+
+\DeclareCaptionLabelSeparator{threedash}{\,---\,}
+\DeclareCaptionFont{zinc800}{\color{zinc800}}
+\captionsetup*[table]{format=plain, labelsep=threedash, font={bf}}
+\captionsetup*[figure]{format=plain, labelsep=threedash, font={bf}}
+
+% Alternative: Left align captions
+% \captionsetup[table]{labelfont=it, textfont={bf}, labelsep=newline, justification=raggedright, singlelinecheck=off}
+% \captionsetup[figure]{labelfont=it, textfont={bf}, labelsep=newline, justification=raggedright, singlelinecheck=off}
+
+% multifigure with \caption
+% \begin{subfigure}\caption{} \end{subfigure}
+\usepackage{subcaption}
+\captionsetup*[subfigure]{format=plain, font={zinc800, footnotesize, bf}}
+
+
+% Tables -----------------------------------------------------------------------
+% Fix \input with tables
+% \input fails when \\ is at end of external .tex file
+\makeatletter
+\let\input\@@input
+\makeatother
+
+% Slighty more spacing between rows
+\usepackage{array}
+\renewcommand\arraystretch{1.2}
+
+% Scale table proportionally to a width
+% \begin{adjustbox}{width=\textwidth, center}
+%   ...
+% \end{adjustbox}
+\usepackage{adjustbox}
+
+% Table notes with \notes{...} or \notes[Source:]{...} command
+\NewDocumentCommand{\note}{O{Notes.} m g}{%
+  \IfNoValueTF{#3}{%
+    \parbox{\textwidth}{\footnotesize\vspace*{\medskipamount}%
+      \noindent\emph{#1} #2
+    }%
+  }{%
+    \parbox{#2}{\footnotesize\vspace*{\medskipamount}%
+      \noindent\emph{#1} #3
+    }%
+  }
+}
+
+% \toprule, \cmidrule, \bottomrule
+\usepackage{booktabs}
+
+% If tables are too narrow, fill columns using:
+% \begin{tabularx}{\linewidth}{cols}
+% col-types: X - center, L - left, R -right
+% If you want relative scale for columns: 
+% >{\hsize=.8\hsize}X/L/R
+\usepackage{tabularx}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+
+% Landscape table 
+% \begin{landscape} \pagestyle{lscaped} table... \end{landscsape}
+% \usepackage{pdflscape} - rotates page left-side up in pdf
+% \usepackage{lscape} - does not rotate page, only figure/table
+\usepackage{pdflscape}
+
+% For landscape, fix page number location
+\usepackage{fancyhdr}
+\fancypagestyle{lscaped}{%
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+    \textnormal
+    \fancyfoot{%
+        \tikz[remember picture,overlay]
+        \node[outer sep=2.5cm,above,rotate=90] at (current page.east) {\thepage};
+    }
+}
+
+% Bibliography -----------------------------------------------------------------
+% You can use either biblatex or natbib, see https://tex.stackexchange.com/questions/25701/bibtex-vs-biber-and-biblatex-vs-natbib for discussion
+
+% % Natbib
+% % To use, do the following:
+% % 1. Delete \addbibresource{references.bib} before \begin{document}
+% % 2. Put \bibliography{references.bib} before \printbibliography
+% \usepackage{natbib}
+% \bibliographystyle{econ-aea}
+
+% Biblatex
+% 
+% Source: https://social-science-data-editors.github.io/guidance/citations/guidance_data_citations_biblatex.pdf
+% Source: https://github.com/dmsul/biblatex-aer/blob/master/biblatex-aer.tex
+\usepackage[
+  style = chicago-authordate,
+  doi = true, 
+  backend = biber,
+  backref = true, % Prints back references e.g (cit. pp. 1)
+  backrefstyle = none, % How to sequence page numbers in back references
+  hyperref = true, % Enables hyperref
+  indexing = true,
+  natbib = true
+]{biblatex}
+\usepackage[
+  authordate, 
+  backend = biber,
+  uniquename = false, 
+  noibid
+]{biblatex-chicago}
+
+% Reduced spacing in bibliography
+\AtBeginEnvironment{thebibliography}{\setstretch{1.1}}
+
+% Breaks long citations to new lines
+\usepackage{breakcites}
+
+% change display of DOI fields
+\DeclareFieldFormat{doi}{%
+  \href{https://doi.org/#1}{\nolinkurl{https://doi.org/#1}}%
+}
+
+% Make author names bold in References but not in body of paper
+% 1. Check if name belongs to 'labelname' (Whoever the bib entry is sorted on, i.e., the author(s) or, if no author, editor(s), but not an editor if an author is present). This check keeps entries with both authors and editors from having both sets of names bolded.
+\def\ifmknamebold{\ifboolexpr{%  
+  test {\ifcurrentname{labelname}}
+  or test {\ifcurrentname{author}}
+  or ( test {\ifnameundef{author}} and test {\ifcurrentname{editor}} )
+}}
+
+% Re-define naming commands to bold if necessary (but only in bibliography)
+\AtBeginBibliography{
+  \renewcommand*{\mkbibnamefamily}[1]{\ifmknamebold{\mkbibbold{#1}}{#1}}
+  \renewcommand*{\mkbibnamegiven}[1]{\ifmknamebold{\mkbibbold{#1}}{#1}}
+  \renewcommand*{\mkbibnameprefix}[1]{\ifmknamebold{\mkbibbold{#1}}{#1}}
+  \renewcommand*{\mkbibnamesuffix}[1]{\ifmknamebold{\mkbibbold{#1}}{#1}}
+  \renewcommand*{\finalnamedelim}{\ifmknamebold{%
+    \mkbibbold{\finalandcomma\addspace\bibstring{and}\addspace}%
+  }{%     
+    % Check for 'if editors with no author, only add a comma before 'and' if there are more than three authors. ('labelname' guys don't need these check because first name is reversed and so always has a comma, even with only two people, e.g., Nash, Steve, and Amare Stoudamire.
+    \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}\addspace\bibstring{and}\addspace%
+  }}
+}
+
+% % Include author names in hyperlink (default is date only)
+% \DeclareFieldFormat{citehyperref}{%
+%   \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
+%   \bibhyperref{#1}%
+% }
+% 
+% \DeclareFieldFormat{textcitehyperref}{%
+%   \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
+%   \bibhyperref{%
+%     #1%
+%     \ifbool{cbx:parens}{\bibcloseparen\global\boolfalse{cbx:parens}}{}%
+%   }%
+% }
+% 
+% \savebibmacro{cite}
+% \savebibmacro{textcite}
+% \renewbibmacro*{cite}{%
+%   \printtext[citehyperref]{\restorebibmacro{cite}\usebibmacro{cite}}
+% }
+% 
+% \renewbibmacro*{textcite}{%
+%   \ifboolexpr{
+%     ( not test {\iffieldundef{prenote}} and test {\ifnumequal{\value{citecount}}{1}} )
+%     or ( not test {\iffieldundef{postnote}} and test {\ifnumequal{\value{citecount}}{\value{citetotal}}} )
+%   }{
+%     \DeclareFieldAlias{textcitehyperref}{noformat}%
+%   }{}%
+%   \printtext[textcitehyperref]{\restorebibmacro{textcite}\usebibmacro{textcite}}
+% }
+
+% Enumerate/Itemize ------------------------------------------------------------
+\usepackage[shortlabels]{enumitem}
+\setlist{nosep}
+\setlist[itemize,1]{leftmargin=\parindent,label=\color{zinc700}{\upshape\textbullet}}
+\setlist[itemize,2]{leftmargin=2\parindent,label=\color{zinc700}{\upshape\textendash}}
+\setlist[enumerate,1]{leftmargin=\parindent,label=\color{zinc700}{\upshape\arabic*.}}
+\setlist[enumerate,2]{leftmargin=2\parindent,label=\color{zinc700}{\upshape\roman*.}}
+
+
+% tikz support -----------------------------------------------------------------
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+
+% Coauthors comments that you can hide -----------------------------------------
+% Define in the main document:
+% \booltrue{INCLUDECOMMENTS}
+% \newcommand{\kyle}[1]{\comment[Kyle]{#1}}
+\newbool{INCLUDECOMMENTS}
+\NewDocumentCommand{\coauthorComment}{O{NAME} +m}{%
+    \ifbool{INCLUDECOMMENTS}{{\color{cranberry}\textbf{#1:} #2}}{}
+}
+
+% Code listings ----------------------------------------------------------------
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\tcbuselibrary{listings,listingsutf8,skins}
+\tcbset{
+  codelanguage/.style={language = #1},
+  codelanguage/.default = R,
+}
+\DeclareTCBListing{codeblock}{ !O{R} }{
+  listing only,
+  interior hidden,
+  top = -6pt, 
+  bottom = -6pt,
+  left = 4pt, 
+  right = 0pt,
+  boxrule = 0pt, 
+  frame hidden, 
+  sharp corners, 
+  borderline west = {2pt}{0pt}{zinc400}, 
+  enhanced,
+  breakable,
+  listing options={
+    basicstyle = \small\ttfamily,
+    columns = fixed,
+    keepspaces = true,
+    language = #1
+  }
+}

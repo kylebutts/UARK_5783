@@ -38,8 +38,6 @@
   \end{itemize}
 \end{frame}
 
-\section{Causal Inference}
-
 \begin{frame}{Causal Inference}
   The goal of the class is to think about establishing \emph{causal} relationships:
   \begin{itemize}
@@ -497,7 +495,21 @@
   \end{enumerate}
 \end{frame}
 
-\begin{frame}{Notions of Counterfactual}{Trying to determine the counterfactual}
+\begin{frame}{The Fundamental Problem of Causal Inference}
+  We want to understand: what is the causal effect of some treatment $D$ on outcome $Y$?
+  
+  \bigskip
+  The \alert{fundamental problem} is that we can only observe one potential outcome for each unit:
+  \begin{itemize}
+    \item If a unit receives treatment ($D_i = 1$), we observe $Y_i(1)$ but not $Y_i(0)$
+    \item If a unit doesn't receive treatment ($D_i = 0$), we observe $Y_i(0)$ but not $Y_i(1)$
+  \end{itemize}
+  
+  \bigskip
+  To estimate causal effects, we need to predict the \emph{missing counterfactual outcome}
+\end{frame}
+
+\begin{frame}{Trying to determine the counterfactual}
   At the end of the day, our job will be to find a way to `impute' the missing counterfactual. Finding a reasonable way to \emph{predict the missing counterfactual} is the hard part
 
   \bigskip
@@ -567,6 +579,45 @@
       \item $Y_i(0)$ is the average rent \emph{in the counterfactual world} where the new apartment is not built
     \end{itemize}
   \end{itemize}
+\end{frame}
+
+\begin{frame}{The Problem: We Only Observe One Potential Outcome}
+\adjustbox{width=0.9\textwidth,center}{
+  \begin{tikzpicture}[
+    box/.style={draw, rectangle, minimum width=4cm, minimum height=2.5cm, align=center, inner sep=8pt},
+    observed/.style={box, thick},
+    unobserved/.style={box, dashed, thick, text=gray!90}
+  ]
+
+  % Potential outcomes boxes only
+  \node[observed] (treated) at (-4,2) {
+    \textbf{\large Observed Treated Outcome} \\[0.3cm]
+    $Y_i(1)$ \\[0.2cm]
+    {\small\itshape Bob's outcome had they} \\
+    {\small\itshape been treated in this period}
+  };
+
+  \node[unobserved] (untreated) at (4,2) {
+    \textbf{\large Unobserved Untreated Outcome} \\[0.3cm]
+    $Y_i(0)$ \\[0.2cm]
+    {\small\itshape Bob's outcome had they} \\
+    {\small\itshape not been treated in this period}
+  };
+
+  % Arrow between potential outcomes
+  \draw[<->, very thick, teal, bend left=20] 
+    ([yshift=5pt]treated.north) to 
+    node[midway, above, align=center] {
+      \textbf{True causal effect}: \\ 
+      $Y_i(1) - Y_i(0)$
+    } 
+    ([yshift=5pt]untreated.north);
+
+  \end{tikzpicture}
+}
+
+\bigskip
+For any individual, we can only observe \emph{one} of these potential outcomes, never both simultaneously
 \end{frame}
 
 \begin{frame}{Unit-level treatment effect}
@@ -835,16 +886,6 @@
     \item We would mistakingly claim this is due to new apartments being built!
   \end{itemize}
 \end{frame}
-
-% \begin{frame}{Selection bias}
-%   We can rewrite this term in another way (see chapter 4 of the Mixtape). For the average treatment effect, we can show there are actually three possible selection biases: 
-%   \begin{enumerate}
-%     \item Selection on $Y_i(1)$: You chose the treatment because of what will
-%     happen if you didn't
-%     \item Selection on $Y_i(0)$: You chose the treatment because of what will happen if you do
-%     \item Selection on $\tau_i$: You chose the treatment because the net benefits were positive
-%   \end{enumerate}
-% \end{frame}
 
 \section{Randomized Experiments}
 

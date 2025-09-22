@@ -1,7 +1,14 @@
 % Page setup -------------------------------------------------------------------
-\usepackage[margin=1in]{geometry}
+\usepackage[
+  left = 0.6in, right = 0.6in,
+  top = 1in, bottom = 1in
+]{geometry}
 \usepackage{setspace}
-\renewcommand{\baselinestretch}{1.5}
+\renewcommand{\baselinestretch}{1.15} % Slightly tighter spacing for academic look
+
+% \begin{multicols}{2} \end{multicols}
+\usepackage{multicol} 
+\setlength{\columnsep}{2em}
 
 % Remove annoying over-full box warnings
 \vfuzz=2pt 
@@ -18,12 +25,15 @@
 % Serif option:
 % Libertine for serif text font
 \usepackage{libertine}
+% Source Code Pro for monospace font
+\usepackage[scale=0.88]{plex-mono}
 
 % Sans-serif option:
 % % Lato for sans-serif text font
 % \usepackage[default]{lato}
 % % Source Code Pro for monospace font
-\usepackage[scale=0.95]{plex-mono} 
+% \usepackage[scale=0.95]{plex-mono}
+% \renewcommand{\ttdefault}{\plexmonofamily} 
 
 % Small adjustments to text kerning
 \usepackage{microtype}
@@ -47,40 +57,58 @@
 % Create different theorem environments and setup \autoref for them
 % \label{X:label_name} should match \Xautorefname 
 \theoremstyle{spacing}
-\newtheorem{theorem}{Theorem}[section]
+\newtheorem{theorem}{Theorem}
 \newcommand{\theoremautorefname}{Theorem}
-\newtheorem{proposition}{Proposition}[section]
+\newtheorem{proposition}{Proposition}
 \newcommand{\propositionautorefname}{Proposition}
-\newtheorem{assumption}{Assumption}[section]
+\newtheorem{assumption}{Assumption}
 \newcommand{\assumptionautorefname}{Assumption}
-\newtheorem{example}{Example}[section]
+\newtheorem{example}{Example}
 \newcommand{\exampleautorefname}{Example}
-\newtheorem{lemma}{Lemma}[section]
+\newtheorem{lemma}{Lemma}
 \newcommand{\lemmaautorefname}{Lemma}
-\newtheorem{corollary}{Corollary}[section]
+\newtheorem{corollary}{Corollary}
 \newcommand{\corollaryautorefname}{Corollary}
-\newtheorem{definition}{Definition}[section]
+\newtheorem{definition}{Definition}
 \newcommand{\definitionautorefname}{Definition}
-\newtheorem{remark}{Remark}[section]
+\newtheorem{remark}{Remark}
 \newcommand{\remarkautorefname}{Remark}
 
-% Theorems
-\renewcommand{\theequation}{\thesection.\arabic{equation}}
-\renewcommand{\thetheorem}{\thesection.\arabic{theorem}}
-\renewcommand{\theproposition}{\thesection.\arabic{proposition}}
-\renewcommand{\thelemma}{\thesection.\arabic{lemma}}
-\renewcommand{\thecorollary}{\thesection.\arabic{corollary}}
-\renewcommand{\thedefinition}{\thesection.\arabic{definition}}
-\renewcommand{\theassumption}{\thesection.\arabic{assumption}}
-\renewcommand{\theremark}{\thesection.\arabic{remark}}
+% Appendix ---------------------------------------------------------------------
+\apptocmd{\appendix}{
+  % Section numbering (A.1)
+  \renewcommand{\thesection}{\Alph{section}}
+  \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+  
+  % Figures and tables
+  \numberwithin{figure}{section}
+  \numberwithin{table}{section}
+  \setcounter{table}{0}
+  \setcounter{figure}{0}
+  \renewcommand{\thetable}{\thesection\arabic{table}}
+  \renewcommand{\thefigure}{\thesection\arabic{figure}}
+  
+  % Equations
+  \numberwithin{equation}{section}
+  \setcounter{equation}{0}
 
-
-% TODO:
-% Example left-border box
-
-
-\renewcommand{\qedsymbol}{$\blacksquare$}
-
+  % Theorems
+  \setcounter{theorem}{0}
+  \setcounter{proposition}{0} 
+  \setcounter{lemma}{0}
+  \setcounter{corollary}{0}
+  \setcounter{definition}{0}
+  \setcounter{assumption}{0}
+  \setcounter{remark}{0}
+  \renewcommand{\theequation}{\thesection.\arabic{equation}}
+  \renewcommand{\thetheorem}{\thesection.\arabic{theorem}}
+  \renewcommand{\theproposition}{\thesection.\arabic{proposition}}
+  \renewcommand{\thelemma}{\thesection.\arabic{lemma}}
+  \renewcommand{\thecorollary}{\thesection.\arabic{corollary}}
+  \renewcommand{\thedefinition}{\thesection.\arabic{definition}}
+  \renewcommand{\theassumption}{\thesection.\arabic{assumption}}
+  \renewcommand{\theremark}{\thesection.\arabic{remark}}
+}{}{}
 
 
 % Colors -----------------------------------------------------------------------
@@ -142,15 +170,22 @@
 % Section and Subsection Styling -----------------------------------------------
 \usepackage[explicit]{titlesec}
 
+% More academic section styling (similar to the PDF)
 \titleformat{\section}
-  {\large \bf}
-  {\thesection \,---}
-  {0.25em}
+  {\normalfont\large\bfseries\color{zinc700}}
+  {\thesection.}
+  {0.5em}
   {#1}
   
 \titleformat{\subsection}
-  {\fontsize{12}{10}\it}
+  {\normalfont\normalsize\bfseries\color{zinc700}}
   {\thesubsection.}
+  {0.5em}
+  {#1}
+  
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\itshape\color{zinc700}}
+  {\thesubsubsection.}
   {0.5em}
   {#1}
 
@@ -161,51 +196,68 @@
 % \today => Month Year
 \renewcommand{\today}{\ifcase \month \or January\or February\or March\or April\or May \or June\or July\or August\or September\or October\or November\or December\fi\ \number \year}
 
-% Title
-\pretitle{\begin{center}\huge}
-\posttitle{\par\end{center}}
+% Commands for additional title page elements
+\newcommand{\subtitle}[1]{\gdef\@subtitle{#1}}
+\newcommand{\@subtitle}{}
+\newcommand{\attribution}[1]{\gdef\@attribution{#1}}
+\newcommand{\@attribution}{}
 
-% Author
-\preauthor{
-  \begin{center}\large\renewcommand{\arraystretch}{0.75}
-  \begin{tabular}[t]{c}
-}
-\postauthor{
-  \end{tabular}
+% Custom title page similar to the academic PDF style
+\def\@maketitle{%
+  \vspace*{-1in}% Move title closer to top
+  \begin{center}%
+    \let \footnote \thanks
+    % Main title - centeteal and prominent
+    \emph{\color{zinc500}\large Lecture Notes on} \\[-0.5em] 
+    {\Large\scshape \@title \par}%
+    
+    % Subtitle if provided
+    \ifx\@subtitle\empty\else
+      \vspace{0.25em}
+      {\large\itshape \@subtitle \par}%
+    \fi
+    
+    % Author in summer_sky color
+    \vspace{0.25em}
+    {\large\color{teal} \@author \par}
+    \vspace{3em}
   \end{center}
 }
 
-% Date
-\predate{\begin{center}\normalsize\scshape\color{zinc700}}
-\postdate{\end{center}}
+% Custom header and footer -----------------------------------------------------
+% For getting total number of pages
+\usepackage{lastpage}
+\usepackage{fancyhdr}
 
-% Abstract
-\renewenvironment{abstract}
-  {\noindent\rule{\linewidth}{.5pt}\noindent}
-  {\noindent\rule{\linewidth}{.5pt}}
+% Create a command to store the title for use in headers
+\makeatletter
+\newcommand{\lecturetitle}{\@title}
+\makeatother
 
+% % Define custom page style for lecture notes
+\fancypagestyle{lecturenotes}{%
+    \fancyhf{} % Clear all header and footer fields
+    \setlength{\headheight}{18pt}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\headrule}{\color{zinc500}\hrule width\headwidth height\headrulewidth \vskip-\headrulewidth}
+    \renewcommand{\footrulewidth}{0pt} % No footer line
+    
+    % Header left: "Lecture Notes on [Title]"
+    \fancyhead[L]{\small\color{zinc500} \emph{Lecture Notes on} {\color{zinc700}\scshape \lecturetitle}}
+    
+    % Header right: "page X / Y"
+    \fancyhead[R]{\small\color{zinc500} \thepage}
+}
 
-
-% % Update \maketitle command
-% \def\@maketitle{%
-%   % \vspace*{\bigskipamount}
-% 
-%   \begin{flushleft}%
-%   \let \footnote \thanks
-%     {\huge \@title \par}%
-%     
-%     \medskip
-%     {\large \@author \par}%
-% 
-%     \smallskip
-%     {\color{asher} \@date}%
-%   \end{flushleft}%
-% }
-% 
-% % Abstract
-% \renewenvironment{abstract}
-%  {\noindent\rule{\linewidth}{.5pt}\noindent}
-%  {\noindent\rule{\linewidth}{.5pt}}
+\fancypagestyle{firstpage}{%
+    \fancyhf{} % Clear all header and footer fields
+    \renewcommand{\headrulewidth}{0pt} % No header line
+    \renewcommand{\footrulewidth}{0pt} % No footer line
+}
+\pagestyle{lecturenotes}
+\AtBeginDocument{%
+  \thispagestyle{firstpage}%
+}
 
 
 % Footnote ---------------------------------------------------------------------
@@ -232,7 +284,7 @@
 \usepackage{graphicx}
 
 \DeclareCaptionLabelSeparator{threedash}{\,---\,}
-\DeclareCaptionFont{zinc800}{\color{zinc800}}
+\DeclareCaptionFont{jet}{\color{jet}}
 \captionsetup*[table]{format=plain, labelsep=threedash, font={bf}}
 \captionsetup*[figure]{format=plain, labelsep=threedash, font={bf}}
 
@@ -243,7 +295,7 @@
 % multifigure with \caption
 % \begin{subfigure}\caption{} \end{subfigure}
 \usepackage{subcaption}
-\captionsetup*[subfigure]{format=plain, font={zinc800, footnotesize, bf}}
+\captionsetup*[subfigure]{format=plain, font={jet, footnotesize, bf}}
 
 
 % Tables -----------------------------------------------------------------------
@@ -306,6 +358,18 @@
         \node[outer sep=2.5cm,above,rotate=90] at (current page.east) {\thepage};
     }
 }
+
+% tinytable
+\usepackage{tabularray}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage[normalem]{ulem}
+\UseTblrLibrary{booktabs}
+\UseTblrLibrary{siunitx}
+\newcommand{\tinytableTabularrayUnderline}[1]{\underline{#1}}
+\newcommand{\tinytableTabularrayStrikeout}[1]{\sout{#1}}
+\NewTableCommand{\tinytableDefineColor}[3]{\definecolor{#1}{#2}{#3}}
+
 
 % Bibliography -----------------------------------------------------------------
 % You can use either biblatex or natbib, see https://tex.stackexchange.com/questions/25701/bibtex-vs-biber-and-biblatex-vs-natbib for discussion
@@ -404,10 +468,10 @@
 % Enumerate/Itemize ------------------------------------------------------------
 \usepackage[shortlabels]{enumitem}
 \setlist{nosep}
-\setlist[itemize,1]{leftmargin=\parindent,label=\color{zinc700}{\upshape\textbullet}}
-\setlist[itemize,2]{leftmargin=2\parindent,label=\color{zinc700}{\upshape\textendash}}
-\setlist[enumerate,1]{leftmargin=\parindent,label=\color{zinc700}{\upshape\arabic*.}}
-\setlist[enumerate,2]{leftmargin=2\parindent,label=\color{zinc700}{\upshape\roman*.}}
+\setlist[itemize,1]{leftmargin=\parindent,label=\color{zinc600}{\upshape\textbullet}}
+\setlist[itemize,2]{leftmargin=2\parindent,label=\color{zinc600}{\upshape\textendash}}
+\setlist[enumerate,1]{leftmargin=\parindent,label=\color{zinc600}{\upshape\arabic*.}}
+\setlist[enumerate,2]{leftmargin=2\parindent,label=\color{zinc600}{\upshape\roman*.}}
 
 
 % tikz support -----------------------------------------------------------------
@@ -423,33 +487,4 @@
 \newbool{INCLUDECOMMENTS}
 \NewDocumentCommand{\coauthorComment}{O{NAME} +m}{%
     \ifbool{INCLUDECOMMENTS}{{\color{cranberry}\textbf{#1:} #2}}{}
-}
-
-% Code listings ----------------------------------------------------------------
-\usepackage[most]{tcolorbox}
-\usepackage{listings}
-\tcbuselibrary{listings,listingsutf8,skins}
-\tcbset{
-  codelanguage/.style={language = #1},
-  codelanguage/.default = R,
-}
-\DeclareTCBListing{codeblock}{ !O{R} }{
-  listing only,
-  interior hidden,
-  top = -6pt, 
-  bottom = -6pt,
-  left = 4pt, 
-  right = 0pt,
-  boxrule = 0pt, 
-  frame hidden, 
-  sharp corners, 
-  borderline west = {2pt}{0pt}{zinc400}, 
-  enhanced,
-  breakable,
-  listing options={
-    basicstyle = \small\ttfamily,
-    columns = fixed,
-    keepspaces = true,
-    language = #1
-  }
 }
