@@ -51,10 +51,10 @@
 \begin{frame}{The Conditional Expectation Function}
   In particular, we will think a lot about the \alert{Conditional Expectation Function} (CEF) of $y_i$ given $\bm{X}_i = (X_{i1}, \dots, X_{ip})'$:
   $$
-    g(\bm{x}) \equiv \expec{y_i}{\bm{X}_i = \bm{x}}
+    m(\bm{x}) \equiv \expec{y_i}{\bm{X}_i = \bm{x}}
   $$
   \begin{itemize}
-    \item This reads ``$g(\bm{x})$ is the expected value of $y_i$ conditional on the unit having $\bm{X}_i = \bm{x}$''
+    \item This reads ``$m(\bm{x})$ is the expected value of $y_i$ conditional on the unit having $\bm{X}_i = \bm{x}$''
   \end{itemize}
 
   \pause
@@ -74,7 +74,7 @@
     \item Average value of $y_i$ for those units
   \end{itemize}
   
-  This is the value $g(\bm{x})$ for that given $\bm{x}$
+  This is the value $m(\bm{x})$ for that given $\bm{x}$
 \end{frame}
 
 \begin{frame}{Example with Discrete Variable}
@@ -173,7 +173,7 @@
     \end{itemize} 
 
     \bigskip
-    \item \alert{Prediction}: if we know $\bm{X}_i$, our best guess for $y_i$ is $g(\bm{X}_i)$ 
+    \item \alert{Prediction}: if we know $\bm{X}_i$, our best guess for $y_i$ is $m(\bm{X}_i)$ 
     
     \bigskip
     \item \alert{Causal inference}: what happens to $y_i$ if we \emph{manipulate} $\bm{X}_i$ 
@@ -205,7 +205,7 @@
 
 
 % \begin{frame}{Prediction Error and the CEF}
-%   The prediction error of the conditional expectation function is given by $\varepsilon_i = y_i - g(\bm{X}_i)$. For any $x$, we have 
+%   The prediction error of the conditional expectation function is given by $\varepsilon_i = y_i - m(\bm{X}_i)$. For any $x$, we have 
 %   \begin{align*}
 %     \expec{\varepsilon_i}{\bm{X}_i = x} 
 %     &= \expec{y_i - \expec{y_i}{\bm{X}_i = x}}{\bm{X}_i = x} \\
@@ -249,8 +249,8 @@
 % \begin{frame}{Proof: Optimal model for $y$}
 %   The model $f$ that minimizes the mean-square prediction error is the conditional expectation function.
 %   \begin{align*}
-%     &\expec{\left( y_i - f(\bm{X}_i) \right)^2} = \expec{\left( y_i - g(\bm{X}_i) + g(\bm{X}_i) - f(\bm{X}_i) \right)^2} \\ \pause
-%     &\quad= \expec{\left( y_i - g(\bm{X}_i) \right)^2} + \expec{\left( g(\bm{X}_i) - f(\bm{X}_i) \right)^2} + 2 \expec{\left( y_i - g(\bm{X}_i) \right) \left( f(\bm{X}_i) - g(\bm{X}_i) \right)}
+%     &\expec{\left( y_i - f(\bm{X}_i) \right)^2} = \expec{\left( y_i - m(\bm{X}_i) + m(\bm{X}_i) - f(\bm{X}_i) \right)^2} \\ \pause
+%     &\quad= \expec{\left( y_i - m(\bm{X}_i) \right)^2} + \expec{\left( m(\bm{X}_i) - f(\bm{X}_i) \right)^2} + 2 \expec{\left( y_i - m(\bm{X}_i) \right) \left( f(\bm{X}_i) - m(\bm{X}_i) \right)}
 %   \end{align*}
 % 
 %   \begin{itemize}
@@ -261,10 +261,10 @@
 % \begin{frame}{Proof: Optimal model for $y$}
 %   The last term equals $0$: 
 %   \begin{align*}
-%     & \expec{\left( y_i - g(\bm{X}_i) \right) \left( f(\bm{X}_i) - g(\bm{X}_i) \right)} \\
-%     &\quad= \expec{\expec{\left( y_i - g(\bm{X}_i) \right) \left( f(\bm{X}_i) - g(\bm{X}_i) \right)}{\bm{X}_i}} \\
-%     &\quad= \expec{\left( \expec{y_i}{\bm{X}_i} - g(\bm{X}_i) \right) \left( f(\bm{X}_i) - g(\bm{X}_i) \right)} \\
-%     &\quad= \expec{\left( g(\bm{X}_i) - g(\bm{X}_i) \right) \left( f(\bm{X}_i) - g(\bm{X}_i) \right)} \\
+%     & \expec{\left( y_i - m(\bm{X}_i) \right) \left( f(\bm{X}_i) - m(\bm{X}_i) \right)} \\
+%     &\quad= \expec{\expec{\left( y_i - m(\bm{X}_i) \right) \left( f(\bm{X}_i) - m(\bm{X}_i) \right)}{\bm{X}_i}} \\
+%     &\quad= \expec{\left( \expec{y_i}{\bm{X}_i} - m(\bm{X}_i) \right) \left( f(\bm{X}_i) - m(\bm{X}_i) \right)} \\
+%     &\quad= \expec{\left( m(\bm{X}_i) - m(\bm{X}_i) \right) \left( f(\bm{X}_i) - m(\bm{X}_i) \right)} \\
 %     &\quad= 0
 %   \end{align*}
 % \end{frame}
@@ -272,12 +272,12 @@
 % \begin{frame}{Proof: Optimal model for $y$}
 %   The model $f$ that minimizes the mean-square prediction error is the conditional expectation function.
 %   \begin{align*}
-%     &\argmin_{f} \expec{\left( y_i - f(\bm{X}_i) \right)^2} = \expec{\left( y_i - g(\bm{X}_i) + g(\bm{X}_i) - f(\bm{X}_i) \right)^2} \\
-%     &\quad= \argmin_{f} \expec{\left( y_i - g(\bm{X}_i) \right)^2} + \expec{\left( g(\bm{X}_i) - f(\bm{X}_i) \right)^2} + 0
+%     &\argmin_{f} \expec{\left( y_i - f(\bm{X}_i) \right)^2} = \expec{\left( y_i - m(\bm{X}_i) + m(\bm{X}_i) - f(\bm{X}_i) \right)^2} \\
+%     &\quad= \argmin_{f} \expec{\left( y_i - m(\bm{X}_i) \right)^2} + \expec{\left( m(\bm{X}_i) - f(\bm{X}_i) \right)^2} + 0
 %   \end{align*}
 % 
 %   \begin{itemize}
-%     \item Minimizing this with respect to $f$ only involves the second term so we set $f(\bm{X}_i) = g(\bm{X}_i)$
+%     \item Minimizing this with respect to $f$ only involves the second term so we set $f(\bm{X}_i) = m(\bm{X}_i)$
 %   \end{itemize}
 % \end{frame}
 % 
@@ -300,7 +300,7 @@
 \end{frame}
 
 \begin{frame}{Estimation of the CEF}
-  As we discussed before, we could estimate $g(\bm{x}) \equiv \expec{y_i}{\bm{X}_i = \bm{x}}$ by averaging over individuals with $\bm{X}_i = \bm{x}$
+  As we discussed before, we could estimate $m(\bm{x}) \equiv \expec{y_i}{\bm{X}_i = \bm{x}}$ by averaging over individuals with $\bm{X}_i = \bm{x}$
 
   \bigskip
   But as $\bm{X}_i$ has more variables, ``curse of dimensionality'' makes this procedure infeasible
@@ -396,7 +396,7 @@
 \begin{frame}{A `correctly specified' model}
   We say a \emph{linear model} is \alert{correctly specified} if the CEF is exactly equal to the model we are estimating:
   $$
-    g(\bm{x}) \equiv \expec{Y_i}{\bm{X}_i = \bm{x}}= \bm{w} \gamma_0
+    m(\bm{x}) \equiv \expec{Y_i}{\bm{X}_i = \bm{x}}= \bm{w} \gamma_0
   $$
 
   \bigskip
