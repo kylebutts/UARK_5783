@@ -1,0 +1,168 @@
+\documentclass[12pt]{article}
+\usepackage{../../lecture_notes}
+\usepackage{../../math}
+\usepackage{../../uark_colors}
+
+\title{Regression Discontinuity Design}
+\author{Prof. Kyle Butts}
+\date{}
+
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\begin{document}
+\maketitle
+\begin{multicols}{2}
+
+\section*{Motivation}
+
+Many policies are typically decided according to some rules:
+subsidies awarded based on income thesholds, minimum test-score cutoffs, DUIs given for being over legal-limit, or referendum pass by reaching at least $50\%$ vote share.
+
+In these settings, being above or below the threshold will determine treatment status (or, at least partially).
+In RDD parlance, we have a \emph{running variable} (or \emph{score}) $X_i$, a cutoff $c$, and a treatment indicator
+$$
+  D_i = \one{X_i \geq c}
+$$
+Units with $X_i < c$ are untreated, units with $X_i \geq c$ are treated.
+
+Typically the running variable $X_i$ is correlated with a lot of unobservables, e.g. SAT test score is correlated with school smarts and family income.
+Therefore comparing individuals above and below the threshold will be biased from selection into treatment. 
+
+However, if we `zoom into' individuals quite near to the threshold, it's reasonable to think these individuals start to look very similar to each other. 
+Is there really a difference between someone with a 1399 and a 1400 SAT score? 
+As you move along the score variable, it is often reasonable to assume that characteristics evolve `smoothly'. 
+If we think that, then outcomes should evolve smoothly too. 
+Under this `continuity' of characteristics, the \emph{only thing} that is changing discretely right at the threshold is the treatment status.
+
+If there is a treatment effect, then we should see a `jump' right at the threshold!
+Under this `continuity' of characteristics idea, we can ascribe this jump as being due to treatment. 
+This is the crux of the RDD identification strategy. 
+
+Continuity, in general, feels very natural. 
+Since most scores have some level of randomness to them (test scores, vote shares) or since thresholds are often arbitrary (round numbers for income threshhold or legal-limit), people tend to buy continuity.
+
+However, there is a big problem you must think through. 
+If people know the cut-off, then people could strategically try to \emph{manipulate} their score to end up on either side of the cut-off.
+People might work slightly fewer hours to make sure they stay under an income threshold; certain kinds of students might retake the SAT test to reach a certain score; cops might `fudge the numbers' when recording the results of a breathalyzer test. 
+
+These kinds of sorting behaviors create a problem for our `continuity' of characteristics assumption. 
+Right at the cut-off, we might suspect a jump in characteristics due to sorting.
+This would create a discontinuity at the cut-off in terms of $Y_i(0)$ that prevents us from calling the discontinuity in observed outcomes the causal effect of the policy.
+
+
+
+
+
+
+% We distinguish between \emph{sharp} RDDs (treatment is a deterministic function of the score) and \emph{fuzzy} RDDs (treatment probability jumps but is not 0/1).
+
+% \section*{Identification Intuitions}
+% There are two complementary ways to think about identification in RDDs.
+% \begin{enumerate}
+%   \item \textbf{Local randomization.}  If the running variable contains enough idiosyncratic noise, then units with latent characteristics close to the threshold are effectively randomized into treatment or control by small perturbations.
+%   In practice, this motivates comparing units in a narrow window $\left(c-h, c+h\right)$ and treating the design like a local experiment.
+% 
+%   \item \textbf{Continuity of potential outcomes.}  More commonly, we assume the conditional expectations of potential outcomes,
+%   $$\mu_d(x) = \expec{Y_i(d)}{X_i = x},$$
+%   are continuous in a neighborhood around $c$.
+%   Under this continuity assumption, the only possible source of a jump in the observed outcome at $c$ is the treatment itself.
+% \end{enumerate}
+
+\section*{Identification Strategy}
+The above discussion motivates out \emph{causal assumption} that the conditional expectations of potential outcomes,
+$$\mu_d(x) = \expec{Y_i(d)}{X_i = x},$$
+are continuous in a neighborhood around $c$.
+Under this continuity assumption, the only possible source of a jump in the observed outcome at $c$ is the treatment itself.
+
+The regression discontinuity estimand is the local average treatment effect at the cutoff:
+\begin{align*}
+  \tau_{\text{RD}} &= 
+  \expec{Y_i(1) - Y_i(0)}{X_i = c} \\ 
+  &= \lim_{x \downarrow c} \expec{Y_i}{X_i = x} - 
+  \lim_{x \uparrow c} \expec{Y_i}{X_i = x}.
+\end{align*}
+In words: take the right-hand limit of the conditional mean and subtract the left-hand limit.
+
+Under continuity, 
+\begin{align*}
+  \lim_{x \downarrow c} \expec{Y_i}{X_i = x} &=
+  \lim_{x \downarrow c} \expec{Y_i(0)}{X_i = x} \\
+  &= \expec{Y_i(0)}{X_i = c},
+\end{align*}
+where the last equality assumes continuity of potential outcomes (i.e. there is no `jump' at the cut-off).
+Similarly, the right-hand limit equals $\expec{Y_i(1)}{X_i = c}$.
+
+This identifies the conditional ATE for units with $X_i \approx c$.
+When interpreting the estimate, remember that you only identify effects for people right at the cutoff (e.g. students with SAT score right around 1400).
+
+\section*{When Continuity Fails}
+Continuity can fail when agents can precisely manipulate the running variable or when other policies or treatments change at the same cutoff.
+Examples include students retaking exams to clear a threshold, municipalities that ``game'' an index to qualify for a program, or spatial borders that feature many policies changing (e.g. town borders).
+Such sorting contaminates one side of the cutoff and invalidates the simple continuity argument.
+
+There are ways you can try and assess the plausability of the continuity assumption. 
+First, you can ask ask whether units just above and below the cutoff are similar on observable pre-treatment characteristics — rerun the RD using prior outcomes or demographics as the outcome and test whether the estimated jump is zero.
+Second, you can check the density of the running variable for mass points or spikes near the cutoff; a pile-up just above the threshold suggests strategic behavior (e.g., retaking an exam, rounding a score, or gaming an index).
+
+\section*{Estimation Strategies}
+There are several common estimators in practice.
+The \emph{locally-constant} (difference-in-means) estimator compares average outcomes in $(c-h, c)$ and $(c, c+h)$.
+The \emph{locally-linear} estimator fits simple linear models on each side and extrapolates to the cutoff; this is often implemented via the interacted regression
+$$
+Y_i = \alpha_0 + \alpha_1 D_i + \beta_0 (X_i - c) + \beta_1 D_i (X_i - c) + u_i
+$$
+on the subsample with $X_i \in (c-h, c+h)$, where recentering makes $\alpha_1$ the RDD estimate.
+One can extend to higher-order local polynomials, but higher-order terms can induce extreme extrapolation and instability; prefer simpler local fits with careful bandwidth choice.
+
+\section*{Bandwidth Selection}
+Bandwidth selection balances a bias–variance trade-off: smaller $h$ reduces bias from extrapolation but increases variance; larger $h$ improves precision but risks misspecifying the local relationship.
+Data-driven selectors (e.g. methods implemented in \texttt{rdrobust}) provide practical default choices, but applied work should report sensitivity across a range of bandwidths and polynomial orders.
+
+\section*{Sorting and Falsification Checks}
+Two standard gut checks are (i) covariate balance tests (apply the RD to pre-determined covariates) and (ii) density checks (McCrary test) for continuity of the running-variable distribution.
+Additional falsifications include testing placebo cutoffs, testing leads/lags of the outcome, and checking whether the jump existed in pre-policy periods.
+
+\section*{Extensions and Complications}
+
+\subsection*{Spatial RDD}
+Spatial RDDs view distance to a border as the running variable; they carry the same logic but raise additional concerns about geographic heterogeneity and multiple treatments at borders.
+Multiple policies turning on at the same cutoff create bundled treatments and complicate interpretation.
+Fuzzy RDDs occur when the probability of treatment jumps but is not deterministic; these are naturally interpreted with an instrumental-variables framework, estimating a local Wald ratio.
+
+\subsection*{Difference-in-Discontinuities}
+When a new policy is introduced into a context with pre-existing discontinuities, comparing RDs before and after the change (difference-in-discontinuities) can isolate the new policy effect under assumptions that pre-existing jumps are stable and that no new sorting occurs because of the new policy.
+
+\end{multicols}
+
+\section*{One-Page Checklist}
+\begin{itemize}
+  \item \textbf{Density:} Check for mass points or pile-ups in the running variable histogram; a spike just above the cutoff suggests strategic behavior or manipulation.
+  
+  Useful: \texttt{rddensity::rddensity()}.
+
+  \item \textbf{Balance:} Test pre-treatment covariates and prior outcomes for jumps at the cutoff (e.g., prior grades, demographics, or baseline earnings).
+  
+  Useful: \texttt{rdrobust::rdplot()} and \texttt{rdrobust::rdrobust()}.
+
+  \item \textbf{Context checks:} Ask whether other policies or treatments turn on at the cutoff.
+  
+  \item \textbf{Bandwidth:} Choose a baseline estimator (locally-linear is a good default), justify the window $h$, and report sensitivity to smaller and larger bandwidths.
+
+  Useful: \texttt{rdrobust::rdrobust()} for automatic bandwidth selection and bias-corrected inference.
+  
+  \item \textbf{Functional form:} Favor simple local fits (linear) over high-order polynomials; where you compare polynomials, show how estimates change.
+
+  Useful: local-polynomial options in \texttt{rdrobust} or by-hand fits with \texttt{fixest} on trimmed samples.
+
+  \item \textbf{Plot:} Visualize the raw scatter, binned averages, and smoothed lines near the cutoff — look for a clear jump that is not driven by a few extreme bins.
+  Useful: \texttt{rdrobust::rdplot()} or ggplot2 with binned summaries.
+  
+  \item \textbf{Report:} Present the main estimate with a sensitivity table/plot (varying bandwidths, kernels, and polynomial orders) and clearly document assumptions, diagnostics, and links to results from \texttt{rdrobust} and \texttt{rddensity}.
+\end{itemize}
+
+\end{document}

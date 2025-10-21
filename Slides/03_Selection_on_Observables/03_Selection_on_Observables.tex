@@ -409,7 +409,7 @@
   \bigskip
   Then, the above becomes $\tau_{\texttt{ATE}} = \expec{ \mu_1(\bm{X}_i) - \mu_0(\bm{X}_i) }$
   \begin{itemize}
-    \item If we knew the CEF, then we can estimate this with $\frac{1}{n} \sum_{i=1}^n \mu_1(\bm{X}_i) - \mu_0(\bm{X}_i)$
+    \item If we knew the CEF, then we can estimate this with $\frac{1}{n} \sum_{i=1}^N \mu_1(\bm{X}_i) - \mu_0(\bm{X}_i)$
   \end{itemize}
 \end{frame}
 
@@ -448,10 +448,10 @@
   $$
     \hat{\tau}_{\texttt{ATE}} = 
     \underbrace{
-      \frac{1}{n} \sum_{i=1}^n \left( \hat{\alpha}_1 + \bm{X}_i' \hat{\beta}_1 \right)
+      \frac{1}{n} \sum_{i=1}^N \left( \hat{\alpha}_1 + \bm{X}_i' \hat{\beta}_1 \right)
     }_{\expechat{Y_i(1)}} -
     \underbrace{
-      \frac{1}{n} \sum_{i=1}^n \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right)
+      \frac{1}{n} \sum_{i=1}^N \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right)
     }_{\expechat{Y_i(0)}} 
   $$
   
@@ -474,10 +474,10 @@
   $$
     \hat{\tau}_{\text{ATT}} = 
     \underbrace{
-      \frac{1}{n_1} \sum_{i=1}^n Y_i
+      \frac{1}{n_1} \sum_{i=1}^N Y_i
     }_{\expechat{Y_i(1)}{D_i = 1}} - 
     \underbrace{
-      \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right)
+      \frac{1}{n_1} \sum_{i=1}^N D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right)
     }_{\expechat{Y_i(0)}{D_i = 1}} 
   $$
 \end{frame}
@@ -489,10 +489,10 @@
 %   So, we can rewrite the 
 %   \begin{align*}
 %     \hat{\tau}_{\text{ATT}} &= 
-%     \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_1 + \bm{X}_i' \hat{\beta}_1 \right) -
-%     \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right) \\ 
-%     &= \frac{1}{n_1} \sum_{i=1}^n D_i Y_i - 
-%     \frac{1}{n_1} \sum_{i=1}^n D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right) 
+%     \frac{1}{n_1} \sum_{i=1}^N D_i \left( \hat{\alpha}_1 + \bm{X}_i' \hat{\beta}_1 \right) -
+%     \frac{1}{n_1} \sum_{i=1}^N D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right) \\ 
+%     &= \frac{1}{n_1} \sum_{i=1}^N D_i Y_i - 
+%     \frac{1}{n_1} \sum_{i=1}^N D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right) 
 %   \end{align*}
 %   \begin{itemize}
 %     \item Only relying on the model for $\mu_{0}(\bm{x})$ to estimate the \text{ATT}
@@ -582,14 +582,14 @@
   Our treatment effect estimator is given by:
   $$
     \hat{\tau}_{\text{Matching}}
-    \underbrace{\frac{1}{N_1} \sum_{i = 1}^n D_i Y_i}_{\text{Treated group average}} -
-    \underbrace{\frac{1}{N_1} \sum_{i = 1}^n D_i Y_{j(i)}}_{\text{Matched control group average}}
+    \underbrace{\frac{1}{N_1} \sum_{i = 1}^N D_i Y_i}_{\text{Treated group average}} -
+    \underbrace{\frac{1}{N_1} \sum_{i = 1}^N D_i Y_{j(i)}}_{\text{Matched control group average}}
   $$
 \end{frame}
 
 \begin{frame}{Matching estimator}
   $$
-    \expechat{Y_i(0)}{D_i = 1} = \frac{1}{N_1} \sum_{i = 1}^n D_i Y_{j(i)}
+    \expechat{Y_i(0)}{D_i = 1} = \frac{1}{N_1} \sum_{i = 1}^N D_i Y_{j(i)}
   $$
 
   \bigskip
@@ -1134,8 +1134,8 @@
 \begin{frame}{Doubly-robust treatment effect estimator}
   The augmented IPW (AIPW) estimator of Robins, Rotnitzky, and Zhao (1994):
   \begin{align*}
-    \hat{\tau}_{\texttt{DR}} &= \frac{1}{n} \sum_{i=1}^n \left( \hat{\mu}_{1}(\bm{X}_i) - \hat{\mu}_{1}(\bm{X}_i) \right) \\
-    &\quad+ \frac{1}{n} \sum_{i=1}^n \left( 
+    \hat{\tau}_{\texttt{DR}} &= \frac{1}{n} \sum_{i=1}^N \left( \hat{\mu}_{1}(\bm{X}_i) - \hat{\mu}_{1}(\bm{X}_i) \right) \\
+    &\quad+ \frac{1}{n} \sum_{i=1}^N \left( 
        \frac{D_i}{\hat{\pi}(\bm{X}_i)} (Y_i - \hat{\mu}_{1}(\bm{X}_i)) -
        \frac{(1 - D_i)}{1 - \hat{\pi}(\bm{X}_i)} (Y_i - \hat{\mu}_{0}(\bm{X}_i)) 
     \right) 
@@ -1148,7 +1148,7 @@
 \begin{frame}{Adjustment term}
   \vspace*{-\bigskipamount}
   $$
-    \frac{1}{n} \sum_{i=1}^n \left( 
+    \frac{1}{n} \sum_{i=1}^N \left( 
       \frac{D_i}{\hat{\pi}(\bm{X}_i)} (Y_i - \hat{\mu}_{1}(\bm{X}_i)) -
       \frac{(1 - D_i)}{1 - \hat{\pi}(\bm{X}_i)} (Y_i - \hat{\mu}_{0}(\bm{X}_i)) 
     \right) 
