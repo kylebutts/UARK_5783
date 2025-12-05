@@ -1,0 +1,333 @@
+\documentclass[12pt]{article}
+\usepackage{../../lecture_notes}
+\usepackage{../../math}
+\usepackage{../../uark_colors}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,decorations,arrows,calc,arrows.meta,fit,positioning}
+% Tikz settings optimized for causal graphs.
+\tikzset{
+    -Latex,auto,node distance =1 cm and 1 cm,semithick,
+    state/.style ={ellipse, draw, minimum width = 0.7 cm},
+    point/.style = {circle, draw, inner sep=0.04cm,fill,node contents={}},
+    bidirected/.style={Latex-Latex,dashed},
+    el/.style = {inner sep=2pt, align=left, sloped}
+}
+
+\title{Instrumental Variables}
+\author{Prof. Kyle Butts}
+\date{}
+
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\begin{document}
+\maketitle
+\begin{multicols}{2}
+
+\section*{Introduction to Instrumental Variables}
+
+Instrumental variables represent one of the oldest and most powerful identification strategies in econometrics.
+At their core, they provide a way to estimate causal relationships when treatment assignment is not random but is influenced by some external factor that we can leverage.
+
+To motivate the key idea, let's start with a modern and widely-used application: the \textbf{judge leniency design}.
+Consider studying the causal effect of incarceration on future criminal behavior.
+The challenge is that judges don't randomly assign sentences. 
+They consider factors like the severity of the crime and the defendant's criminal history, which also affect future outcomes. 
+Namely, when the judge has discretion to assign jail time or other punishments, they will non-randomly assign the people who go to jail.
+
+The judge leniency design exploits the fact that defendants are often \textbf{randomly assigned} to different judges.
+Different judges vary systematically in how lenient they are in sentencing.
+Some are ``tough'' judges who sentence more defendants to prison, while others are ``lenient'' judges who more often opt for probation.
+
+This random assignment creates something like a natural experiment.
+Defendants with similar backgrounds who happen to appear before different judges receive different sentences, allowing us to isolate the causal effect of incarceration from the other confounding factors.
+
+But, how do we leverage the `good variation' produced by random judges? 
+We can not just compare people who were sent to jail to those that were not, even though some of them might not be in jail if the judge they had was less harsh.
+\textbf{Instrumental variables} is the empirical strategy that will let us take this randomly assigned thing (judge assignment) use it to isolate `good variation' in a variable of interest.
+
+\section*{Idea of the IV Estimation}
+
+The idea of the IV estimator is as follows.
+Our model of interest is $y_i = X_i \beta + \varepsilon_i$ for some `treatment' $X_i$.
+We want to identify the effect of $X$ on $Y$, but can not because of some omitted variables bias.
+
+First, we have some `external shock' that we will use as the instrument. 
+For now, think of this as just a lightning bolt that shocks some people randomly and changes their X.
+We then ask on average (across everyone) how much does $X$ change from the instrument? 
+
+\bigskip
+\begin{adjustbox}{width = 0.8\linewidth, center}
+  \begin{tikzpicture}
+    \node[state] (X) at (0,0) {$X$};
+    \node[state] (Y) at (2,0) {$Y$};
+    % \node[state, red] (epsilon) at (1,1.5) {$\epsilon$};
+    \node[state, cranberry] (Z) at (-2,0) {$Z$};
+  
+    \path[teal, thick] (X) edge node[above, el] {$\beta$} (Y);
+    % \path[red, thick] (epsilon) edge (Y);
+    % \path[red, thick] (epsilon) edge (X);
+    \path[cranberry, thick] (Z) edge (X);
+  \end{tikzpicture}
+\end{adjustbox}
+\bigskip
+
+Second, we ask how much does $Z$ on average impact $Y$? 
+Since our shock only affects $X$ and nothing else, the impact of $Z$ on $Y$ must equal the change of $X$ multipled by $\beta$. 
+This is just a mechanically true thing based on our model, remember ``a 1 unit change in X produces a $\beta$ unit change in $Y$''.
+
+So then, we can take the effect of $Z$ on $Y$ ($\Delta X \beta$) and divide it by the effect of $Z$ on $X$ ($\Delta X$). 
+This should identify the per-unit effect of $X$, $\beta$.
+
+
+% Note: no arrow connecting $\varepsilon$ and $Z$ (``as-good-as-random assignment''), and no arrow from $Z$ to $Y$ directly (``exclusion'')
+
+
+\section*{Two-Stage Least Squares}
+
+The \textbf{two-stage least squares} (2SLS) estimator is the most popular way to implement IV estimation as sketched above. 
+It is the typical estimator because it can easily extend to ahve multiple instruments and/or adding control variables.
+
+
+The 2SLS estimator is the ratio of two reduced-form regressions:
+\begin{itemize}
+  \item \textbf{Reduced-form}: $y_i = Z_i \gamma + u_i$
+  \item \textbf{First-stage}: $X_i = Z_i \pi + v_i$
+\end{itemize}
+We estimate each of these regressions via OLS to produce $\hat{\gamma}$ and $\hat{\pi}$.
+The 2SLS estimator is then $\hat{\beta}_{\text{2SLS}} = \hat{\gamma} / \hat{\pi}$.
+
+% The canonical IV setup formalizes the relationship between instrument, treatment, and outcome:
+% \begin{align*}
+%   y_i &= X_i \beta + \varepsilon_i \\
+%   X_i &= Z_i \pi + u_i
+% \end{align*}
+% The first equation is the structural relationship we want to estimate, while the second is the first-stage relationship showing how the instrument affects treatment.
+
+An equivalent way of writing the 2SLS estimator is as follows:
+$$
+  \hat{\beta}_{\text{2SLS}} = \frac{\hat{X}' \hat{y}}{\hat{X}' \hat{X}},
+$$
+where $\hat{X}_i$ and $\hat{y}_i$ are the predicted values from regressing $X_i$ and $y_i$ on the instrument(s) $Z_i$.
+
+This suggests a two-step procedure:
+\begin{enumerate}
+  \item \textbf{First Stage}: Regress $X_i$ on $Z_i$ to get $\hat{X}_i$
+  \item \textbf{Second Stage}: Regress $y_i$ on $\hat{X}_i$ to get $\hat{\beta}_{\text{2SLS}}$
+\end{enumerate}
+
+One way you can think of the IV procedure is by `isolating good variation'. 
+By that I mean the variation in $X$ and $y$ that is due to the external shock, $Z$, and not other confounders.
+That is exactly what $\hat{X}$ and $\hat{y}$ are: the variation in $X$ and $y$ that is being caused by $Z$.
+
+\subsection*{OLS with Controls vs. IV}
+
+Note this is a distinct approach to getting at causal effects compare to OLS with control variables. 
+Both estimators seek to isolate ``good'' variation in the treatment variable, but they do so in different ways.
+
+OLS with controls \textbf{removes bad variation} in $X$ and $y$ that is related to confounders.
+The Frisch-Waugh-Lovell theorem shows us that our identifying variation is the regression of $\tilde{y}$ on $\tilde{X}$. 
+We hoped that the remaining variation in $X$ and $y$ was as good as randomly assigned.
+
+IV instead \textbf{isolates good variation} by using only the variation in treatment that comes from the external shock, i.e. the instrument.
+The identifying variation is the regression of $\hat{y}$ on $\hat{X}$. 
+Here, we need the variation in $y$ and $X$ due to the instrument to be as good as randomly assigned.
+
+
+\section*{What Makes a Good Instrument?}
+
+In the wild, you will see a lot of instruments; some good, others not so good. 
+In IV parlance we are looking for a `\textbf{valid}' instrument.
+
+Consider the standard setup where we want to estimate the causal effect of $X_i$ on $y_i$:
+$$
+  y_i = X_i \beta + \varepsilon_i,
+$$
+where $\expec{\varepsilon_i}{X_i} \neq 0$, meaning $X_i$ is endogenous.
+
+An instrument $Z_i$ must satisfy two fundamental conditions:
+
+\begin{enumerate}
+  \item \textbf{Relevance Condition}: The instrument must actually affect the treatment variable.
+  Formally, $\cov{Z_i, X_i} \neq 0$.
+  We need the instrument to \emph{cause} a change in $X$ so that we can subsequently trace out the effect of changing $X$ has on $y$.
+  
+  \item \textbf{Exclusion Restriction}: The instrument affects the outcome only through its impact on the treatment.
+  Formally, $\cov{Z_i, \varepsilon_i} = 0$.
+
+  In the judge example, this requires that (1) judge assignment affects future criminal behavior only through the sentencing decision, not through other channels and (2) the assignment of judges is not related to other factors that drive criminal behaviors.
+\end{enumerate}
+
+To see why both conditions matter, consider the IV estimator and plug-in the model for $y_i$:
+\begin{align*}
+  \hat{\beta}_{\text{IV}} 
+  &= \frac{\cov{Z_i, X_i \beta + \varepsilon_i}}{\cov{Z_i, X_i}} \\
+  &= \beta + \frac{\cov{Z_i, \varepsilon_i}}{\cov{Z_i, X_i}}
+\end{align*}
+
+The first term $\beta$ is what we want to estimate.
+The second term represents bias.
+For the estimator to be consistent, we need both $\cov{Z_i, X_i} \neq 0$ (relevance) and $\cov{Z_i, \varepsilon_i} = 0$ (exclusion).
+
+In general, exclusion restriction is going to be the difficult one to satisfy in most applications. 
+Usually, the instruments we will think of will actually have an impact on the $X$ variable. 
+
+When thinking about exclusion you want to think about two things.
+\begin{enumerate}
+  \item We want to make sure that $Z$ only impacts $X$ and not any other possible variables $\bm{W}$. 
+  Otherwise, the effect of $Z$ on $y$ can't be wholely attributed to the change in $X$.
+
+  \item We want to make sure that a person's value of the instrument $Z_i$ is not related to any characteristic that impact the outcome $\varepsilon_i$ (`as good as randomly assigned'). 
+  In the Judge IV example this was satisfied trivially from random assignment. 
+  In other settings without random assignment, we want to think of $Z_i$ as a treatment variable and think of selection bias.
+\end{enumerate}
+
+\subsection*{Practical Issues in IV}
+
+Several practical challenges arise when implementing IV estimation:
+
+\textbf{Weak Instruments}: When the instrument has little effect on treatment ($\pi \approx 0$)
+Weak instruments lead to imprecise estimates because the first-stage coefficient is in the denominator and dividing by something close to zero makes the fraction get very big!
+
+The easiest way to try and look for this is to examine the $F$-statistic from the first-stage (the effect of $Z$ on $X$). 
+The conventional rule of thumb is to require $F \geq 10$ (equivalently, $t \geq 3.16$ for a single instrument).
+Though, $F \geq 20$ is probably a safer rule of thumb.
+
+
+\textbf{Many Instruments}: When using many instruments relative to sample size, 2SLS can overfit the first-stage relationship.
+As the number of instruments grows, $\hat{X}_i$ approaches $X_i$, and the 2SLS estimator converges to the biased OLS estimator.
+This is particularly problematic in judge leniency designs where each judge gets its own dummy variable.
+
+In a typical judge leniency study, we might have dozens of judges, each with their own dummy variable as an instrument.
+If we have 50 judges, we're using 49 judge dummies (leaving one out as reference) as instruments for incarceration.
+With many judges relative to the number of defendants, the first-stage can overfit, making the 2SLS estimator behave more like OLS.
+
+The \textbf{JIVE} (Jackknife IV) estimator addresses this issue by using leave-one-out predictions in the first stage.
+For each observation $i$, predict $X_i$ using all other observations, then regress $y_i$ on these leave-one-out predictions.
+In the judge context, this means predicting each defendant's probability of incarceration using all other defendants assigned to the same judge, avoiding overfitting.
+
+\section*{IV with Heterogeneous Treatment Effects}
+
+So far we have implicitly assumed that the treatment effect $\beta$ is constant across individuals.
+However, in many applications, treatment effects vary across people.
+When we allow for \textbf{heterogeneous effects}, the interpretation of IV estimates becomes more nuanced.
+
+The \textbf{Angrist-Imbens-Rubin} framework provides a way to understand IV estimates with heterogeneous effects.
+Consider a binary treatment $D_i$, binary instrument $Z_i$, and allow individual treatment effects $\tau_i = y_i(1) - y_i(0)$ to vary.
+
+The classic example is the Vietnam draft: $y$ is later-life wages, $D_i$ is whether or not you serve in the military, and $Z_i$ is whether or not you were drafted.
+
+For each person, we have two sets of potential outcomes: the normal $y_i(1)$ and $y_i(0)$ for potential wages if a person served and if a person did not serve in the military.
+But also, we have potential $D_i$: 
+
+The framework defines potential treatment outcomes under both instrument states:
+\begin{itemize}
+  \item $D_i(1)$ corresponds to whether a person would serve if they were drafted ($Z_i = 1$)
+  \item $D_i(0)$ corresponds to their service choice if they were not drafted ($Z_i = 0$)
+\end{itemize}
+
+Since there are two values of $D$ and two values of $Z$, there are four possible types of individuals:
+\begin{enumerate}
+  \item \textbf{Compliers}: $D_i(1) = 1$ and $D_i(0) = 0$ (only serve if drafted)
+  \item \textbf{Always-takers}: $D_i(1) = 1$ and $D_i(0) = 1$ (always would serve)
+  \item \textbf{Never-takers}: $D_i(1) = 0$ and $D_i(0) = 0$ (would never serve)
+  \item \textbf{Defiers}: $D_i(1) = 0$ and $D_i(0) = 1$ (only would serve if undrafted(?))
+\end{enumerate}
+
+Defiers are often ruled out as implausible which turns out to be \emph{essential} to identification.
+This assumption of no defiers is called the \textbf{monotonicity assumption}.
+Here, monotonocity is used to mean that $Z = 1$ can either (i) only knock people into treatment or (ii) only knock people out.
+
+
+\subsection*{Local Average Treatment Effect}
+
+Under the exclusion restriction (random assignment of $Z$) and monotonicity, the 2SLS estimator identifies the \textbf{Local Average Treatment Effect} (LATE):
+$$
+  \hat{\beta}_{\text{2SLS}} = \expec{y_i(1) - y_i(0)}{\text{Complier}_i}
+$$
+
+This is the average treatment effect among compliers only---those whose treatment status is actually changed by the instrument.
+
+The derivation follows from the ratio of reduced-form to first-stage coefficients:
+\begin{align*}
+  \hat{\delta} 
+  &= \expec{y_i}{Z_i = 1} - \expec{y_i}{Z_i = 0} \\
+  &= \prob{\text{Complier}_i} \cdot \expec{y_i(1) - y_i(0)}{\text{Complier}_i} \\[4mm]
+  \hat{\pi} &= \expec{D_i}{Z_i = 1} - \expec{D_i}{Z_i = 0} \\
+  &= \prob{\text{Complier}_i}
+\end{align*}
+
+The LATE interpretation has important implications for external validity.
+When we compare IV estimates across studies, we must remember that each identifies the effect for a different complier population.
+
+For example:
+\begin{itemize}
+  \item Card (1995) uses distance to college as an instrument for education, identifying the effect for students who attend college only if it's nearby
+  \item Angrist and Evans (1998) use same-sex siblings as an instrument for family size, identifying the effect for parents who have a third child only when their first two are the same gender
+\end{itemize}
+
+\subsection*{Characterizing Compliers}
+
+Since we can only identify effects for compliers, it's important to understand who they are.
+While we cannot directly identify compliers in the data, we can characterize their observable characteristics using special 2SLS estimators:
+
+\begin{itemize}
+  \item 2SLS of $X_i D_i$ on $D_i$ with instrument $Z_i$ identifies $\expec{X_i}{\text{Complier}_i}$
+  \item 2SLS of $y_i D_i$ on $D_i$ with instrument $Z_i$ identifies $\expec{y_i(1)}{\text{Complier}_i}$
+  \item 2SLS of $y_i (1-D_i)$ on $(1-D_i)$ with instrument $Z_i$ identifies $\expec{y_i(0)}{\text{Complier}_i}$
+\end{itemize}
+
+These results help us understand how compliers differ from the overall population, providing insight into the external validity of our estimates.
+
+
+% \section*{The IV Estimator}
+% 
+% Building on the judge leniency example, let's formalize the IV approach.
+% Suppose we want to estimate the causal effect of incarceration ($D_i$) on future criminal behavior ($y_i$).
+% The naive regression would be:
+% $$
+%   y_i = D_i \beta + \varepsilon_i
+% $$
+% 
+% But judges consider factors like criminal history and crime severity when sentencing, and these same factors also affect future criminal behavior.
+% This creates confounding: $\expec{\varepsilon_i}{D_i} \neq 0$.
+% 
+% Say there are two judges: one tough and one lenient. 
+% The IV estimator would use the assignment of the tough judge as the instrument.
+% Let $Z_{i}$ be an indicator for whether defendant $i$ is assigned to the tough judge.
+% The IV estimator compares how judge assignment affects both incarceration and future outcomes:
+% $$
+%   \hat{\beta}_{\text{IV}} = \frac{\expec{y_i}{Z_i = 1} - \expec{y_i}{Z_i = 0}}{\expec{D_i}{Z_i = 1} - \expec{D_i}{Z_i = 0}}
+% $$
+% 
+% The numerator captures how much future criminal behavior differs between defendants assigned to tough versus lenient judges.
+% The denominator captures how much incarceration rates differ between these same groups.
+% Their ratio gives us the causal effect of incarceration.
+
+
+\section*{Extensions and Advanced Topics}
+
+\textbf{Multi-valued Instruments}: The judge leniency design is a perfect example of multi-valued instruments.
+Instead of a single binary instrument, we have multiple judges, each with their own sentencing propensity.
+When we use judge dummy variables as instruments, 2SLS identifies a weighted average of LATEs for each judge, provided monotonicity holds.
+
+Monotonicity in the judge context requires that if Judge A is tougher than Judge B (sentences more defendants to prison), then for any defendant, if Judge B would sentence them to prison, Judge A would also sentence them to prison.
+This assumption rules out defiers---defendants who would be sentenced by the more lenient judge but not by the tougher judge.
+
+\textbf{Intent-to-Treat Effects}: When we only observe the instrument but not the treatment, we can still estimate the reduced-form effect:
+$$
+  \hat{\delta} = \prob{\text{Complier}_i} \cdot \expec{y_i(1) - y_i(0)}{\text{Complier}_i}
+$$
+
+This is called the \textbf{intent-to-treat} (ITT) effect---the effect of being assigned to treatment, regardless of actual treatment received.
+While not a causal effect of treatment itself, the ITT provides a lower bound on the LATE when we can bound the compliance rate.
+
+The IV framework provides a powerful approach to causal inference in settings with endogenous treatment, but it requires careful consideration of both the statistical properties of the instruments and the economic interpretation of the identified parameters.
+
+\end{multicols}
+\end{document}
