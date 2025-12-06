@@ -1,0 +1,284 @@
+\documentclass[12pt]{article}
+\usepackage{../../lecture_notes}
+\usepackage{../../math}
+\usepackage{../../uark_colors}
+
+
+\title{Fixed Effects and Difference-in-Differences}
+\author{Prof. Kyle Butts}
+\date{}
+
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\begin{document}
+\maketitle
+\begin{multicols}{2}
+
+\section*{Fixed Effects}
+
+In the narrowest sense, when an economist says they are using `fixed effects', what they \emph{actually} mean is that they are including a set of indicator variables for some categorical variable (e.g. indicators for each state, indicators for each time period, indicators for each school, etc.).
+But economists like fixed effects because they are able to wipe out entire classes of confounders in `one fell swoop'. 
+
+Let's start with an example to build intuition.
+Consider estimating the effect of a school tutoring program on individual student test scores.
+Schools do not adopt tutoring randomly since adoption may depend on school resources, principal leadership, or overall school quality.
+If we compare students who receive tutoring to those that do not, we are essentially comparing students in very different school contexts. 
+Estimates will be biased because school-level factors that affect scores are correlated with program adoption.
+
+To formalize this and to see why \textbf{fixed effects} might be able to help, let's write a model for outcomes as
+$$
+  y_i = D_i \tau + Z_{s(i)} \gamma + \varepsilon_i,
+$$
+where $y_i$ is student test score, $D_i$ indicates that student \(i\)'s school offers tutoring, and $Z_{s(i)}$ is some school-level attributes (peer environment). 
+For now, we will assume a single $Z$ variable but we will see that the power of fixed effects is that $Z$ can contain a bunch of school-level attributes.
+
+Estimating \(y_i\) on \(D_i\) alone yields
+$$
+  \hat{\tau}_{\text{OLS}} = \tau + \gamma\frac{\cov(D_i, Z_{s(i)})}{\var(D_i)},
+$$
+so if schools with tutoring systematically differ in $Z_{s(i)}$ (e.g., wealthier schools adopt tutoring), the OLS estimate is contaminated by omitted school characteristics.
+% 
+% Say we now add school fixed effects (indicator variables for each school),
+% $$
+%   y_i = D_i \tau + \sum_{k=1}^K \one{s(i)=k}\alpha_k + u_i,
+% $$
+
+To understand how fixed-effects can help, consider the infeasible regression that includes both $Z_{s(i)}$ and school indicators:
+$$
+  y_i = D_i \tau + Z_{s(i)} \gamma + \sum_{k=1}^K \one{s(i)=k}\alpha_k + u_i.
+$$
+
+By the Frisch-Waugh-Lovell theorem, we can residualize all variables by the school indicators:
+$$
+  \tilde{y}_i = \tilde{D}_i \tau + \tilde{Z}_{s(i)} \gamma + \tilde{u}_i.
+$$
+
+But what happens when we residualize $Z_{s(i)}$ on school indicators? 
+Since $Z_{s(i)}$ varies only at the school level, the regression
+$$
+  Z_{s(i)} = \sum_{k=1}^K \one{s(i)=k}\alpha_k + e_i
+$$
+fits perfectly by setting $\alpha_k = Z_k$ (the value of $Z$ for school $k$). Consequently, $\tilde{Z}_{s(i)} = 0$ for all observations!
+
+Therefore, the infeasible regression reduces to:
+$$
+  \tilde{y}_i = \tilde{D}_i \tau + \tilde{u}_i,
+$$
+which is exactly what we estimate when we include school fixed effects. 
+The key insight is that school fixed effects automatically control for \emph{all} school-level confounders, whether observed or unobserved, because any school-level variable is perfectly collinear with the school indicators.
+
+So we have seen fixed-effects are powerful in removing whole sets of confounders. 
+But how should we think about $\tilde{y}_i$ and $\tilde{D}_i$ since this is the regression that will estimate $\tau$.
+The residualized treatment variable $\tilde{D}_i = D_i - \expec{D_i}{s(i)}$ represents how much a student's treatment status differs from their school's average. 
+Similarly, $\tilde{y}_i = y_i - \expec{y_i}{s(i)}$ represents how much their outcome differs from their school's average outcome. 
+By regressing $\tilde{y}_i$ on $\tilde{D}_i$, we're essentially asking: ``do students who take more tutoring than \emph{their school's average} have better outcomes than \emph{their school's average}?''
+
+The identifying assumption then becomes is $\tilde{D}_i$ as good as randomly assigned? 
+That is, do students that use tutoring more than their school's average differ than those that use it less? 
+
+% Economists often say we compare students ``within each school'' (those with more tutoring to those with less), but this is shorthand.  
+% What the fixed-effects regression actually does is pool residualized comparisons across all schools: it regresses \(\tilde{y}_i\) on \(\tilde{D}_i = D_i - \expec{D_i}{s(i)}\), so we are effectively comparing students who are above their school's average treatment to students who are below their school's average treatment, across schools. 
+% Concretely, the estimator is the pooled slope
+% \[
+%   \hat{\tau} \;=\; \frac{\sum_i \tilde{D}_i \tilde{y}_i}{\sum_i \tilde{D}_i^{\,2}},
+% \]
+% so schools with more within‑school variation (and more observations) receive more weight.  Note also that any school with no within‑school variation in \(D\) drops out of the identifying comparison entirely.
+
+\section*{Fixed Effects in Panel Data}
+
+Panel data extends the fixed effects idea to observe units over multiple time periods.
+We observe units $i \in \{1, \dots, N\}$ over time $t \in \{1, \dots, T\}$.
+
+Consider studying the effect of caffeine ($d_{it}$) on worker productivity ($y_{it}$).
+Workers who drink coffee may differ systematically from those who don't---perhaps in underlying ability or motivation.
+
+The panel data model with unit fixed effects is:
+$$
+  y_{it} = \mu_i + \tau d_{it} + \varepsilon_{it}
+$$
+
+Here $\mu_i$ is a time-invariant worker characteristic (like innate ability) and $\tau$ is the causal effect of caffeine.
+
+After including unit fixed effects, the within-transformation gives:
+$$
+  y_{it} - \bar{y}_i = \tau (d_{it} - \bar{d}_i) + (\varepsilon_{it} - \bar{\varepsilon}_i)
+$$
+
+We're now comparing each worker to themselves on days with above-average versus below-average caffeine consumption.
+The identifying assumption is that, conditional on worker fixed effects, caffeine consumption is as good as random.
+
+This is a powerful assumption because it rules out all time-invariant confounders, whether observed or unobserved.
+However, it requires that there are no time-varying confounders---for example, if workers drink more coffee on days when they're feeling tired (which also affects productivity), the estimate will be biased.
+
+
+\newpage
+
+\section*{Difference-in-Differences}
+
+Difference-in-differences (DID) is arguably the most widely used quasi-experimental strategies in economics.
+The idea is to compare \emph{changes} in outcomes over time for treated compared to control units. 
+
+\subsection*{The $2 \times 2$ DID Framework}
+
+The canonical DID setup observes units for two periods (before and after) with some units receiving treatment.
+Let $D_i$ indicate treatment assignment and $\text{Post}_t = \one{t = 1}$ indicate the post-treatment period.
+
+The treatment effect of interest is the average treatment effect on the treated in the post-period:
+$$
+  \text{ATT}_1 = \expec{y_{i1}(1) - y_{i1}(0)}{D_i = 1}
+$$
+
+The first modern example is the study of a minimum wage increase in New Jersey by Card and Krueger (1994).
+In 1992, New Jersey raised its minimum wage from \$4.25 to \$5.05, while neighboring Pennsylvania maintained its rate at \$4.25.
+Card and Krueger collected data on fast-food employment before and after the policy change.
+
+It would not be enough to compare PA after the minimum wage change to PA before the minimum wage change since other shocks to the economy be happening over time in PA. 
+The key insight was to compare the \emph{change} in employment for New Jersey (treated) to the \emph{change} for Pennsylvania (control).
+The idea is that since eastern PA and NJ are in the same labor market, they are subject to similar economic shocks. 
+Therefore, the change in employment in Pennsylvania would reflect general economic shocks. 
+Comparing New Jersey's change in employment to PA would remove these \emph{other shocks} to identify the effect.
+
+In general, difference-in-differences use the control units' outcome trends as a way of imputing how time  to estimate what the change over time would be in the absence trend in outcomes
+Formalizing this, we have the is \textbf{parallel counterfactual trends}  causal assumption:
+\begin{align*}
+  &\expec{y_{i1}(0) - y_{i0}(0)}{D_i = 1} \\
+  &\quad= \expec{y_{i1}(0) - y_{i0}(0)}{D_i = 0}
+\end{align*}
+This states that, in the absence of treatment, the treated and control groups would have experienced the same change in outcomes over time.
+
+Our difference in differences estimator is just the difference the average change in $y$ for treated units compared to the average change in $y$ for te comparison units: 
+$$
+  \expechat{y_{i1} - y_{i0}}{D_i = 1} - \expechat{y_{i1} - y_{i0}}{D_i = 0}
+$$
+Under parallel trends, the bias terms cancel and $\hat{\tau}_{\text{DID}}$ identifies the causal effect.
+
+% To show that this identifies the ATT under parallel trends, we can use the ``add and subtract'' trick:
+% \begin{align*}
+%   \hat{\tau}_{\text{DID}} &= \expechat{y_{i1} - y_{i0}}{D_i = 1} - \expechat{y_{i1} - y_{i0}}{D_i = 0} \\
+%   &= \text{ATT}_1  + \expec{y_{i1}(0) - y_{i0}(0)}{D_i = 1} \\
+%   &\quad - \expec{y_{i1}(0) - y_{i0}(0)}{D_i = 0}
+% \end{align*}
+
+This estimate can be estimated by regressing the outcome on the treatment indicator ($d_{it}$) and unit and time fixed effects, often called the two-way fixed effect (TWFE) model:
+$$
+  y_{it} = \mu_i + \lambda_t + \tau d_{it} + u_{it}
+$$
+
+In the 2 $\times$ 2 case, we could also run the following regression:
+$$
+  \Delta y_{i} \equiv y_{i1} - y_{i0} = \alpha + \tau D_i + \nu_i,
+$$
+where $D_i$ denotes whether you are a treated unit. 
+The estimate $\hat{\tau}$ would be numerically identical to the estimate from the TWFE regression.
+
+Using \emph{changes} in $y$ as an outcome turns out to be a quite useful way of thinking about DID in general.
+The first-differences regression is just a standard difference-in-means estimator, comparing the change in $y$ for the treated unit to the change in $y$ for the control unit.
+Our parallel counterfactual trends causal assumption just says that $\Delta y_i(0)$ is unrelated to treatment status.
+
+
+\subsection*{Event Studies ($2 \times T$)}
+
+When we observe multiple pre- and post-periods, we can estimate dynamic treatment effects.
+Event studies examine how effects evolve over time relative to treatment implementation.
+
+Define event-time as $\ell = t - T_0$, where $T_0$ is the treatment period.
+The event-study regression is:
+$$
+  y_{it} = \mu_i + \lambda_t + \sum_{\ell = -T_0}^{T-T_0} d_{it}^\ell \tau^\ell + u_{it}
+$$
+where $d_{it}^\ell = \one{t - T_0 = \ell}$ are event-study indicators.
+
+The coefficients for $\ell \geq 0$ trace out \textbf{dynamic treatment effects}, i.e. how the effect of treatment changes over time. 
+For example, some treatments might cause large effects that fade out and we would expect $\tau^\ell$ to be large for $\ell = 0$ and shrink to 0 as $\ell$ grows.
+
+The estimates for $\ell < 0$ are called `pre-trends' estimates and form a measure of how closely the treated and control units' outcomes are evolving prior to treatment. 
+If we see $\tau^\ell$ be very close to zero for all of the $\ell = -T_0, \dots, -2$, then this suggests the treated and control units evolved in parallel all the way up to treatment.
+This helps \emph{bolster confidence} in parallel counterfactual trends in the post-period. 
+
+Event-study plots are now standard in applied work to:
+\begin{itemize}
+  \item Provide support for the parallel trends assumption using pre-treatment periods
+  
+  \item Show how treatment effects evolve over time
+\end{itemize}
+
+\section*{Conditional Parallel Trends}
+
+Sometimes the parallel trends assumption is too strong.
+We can relax it by assuming parallel trends hold for individuals with the same value of $\bm{X}_i$, i.e. \emph{conditional on observable characteristics}.
+
+Let $\bm{X}_i$ be time-invariant unit characteristics (like gender, education, etc.).
+The conditional parallel trends assumption is:
+\begin{align*}
+  &\expec{y_{i1}(0) - y_{i0}(0)}{D_i = 1, \bm{X}_i = \bm{x}} \\
+  &\quad = \expec{y_{i1}(0) - y_{i0}(0)}{D_i = 0, \bm{X}_i = \bm{x}}
+\end{align*}
+This allows different groups to have different trends, as long as units with the same $\bm{X}_i$ have parallel counterfactual trends.
+
+We can rewrite out conditional parallel trends as a \emph{selection on observables assumption} where we use $\Delta y_i(0) = y_{i1}(0) - y_{i0}(0)$ as the outcome variable.
+
+Therefore, we can use any of our selection-on-observables methods to estimate treatment effects using $\Delta y_i$ as our varaible:
+\begin{itemize}
+  \item Matching on $\bm{X}_i$ and comparing $\Delta y_i$ between treated and matched control units
+  
+  \item Regression adjustment: estimate $\Delta y_i(0) = \alpha + \bm{W}_i \beta + u_i$ using control units and impute for treated units
+  
+  \item Inverse probability weighting using logistic model for $D_i$
+\end{itemize}
+
+\newpage
+\section*{Staggered Treatment Timing}
+
+Many policy settings feature staggered adoption, where different units receive treatment at different times.
+Let $G_i$ denote the period when unit $i$ first receives treatment.
+
+With staggered timing, treatment effects can vary by both when treatment is received and how long it has been in effect.
+The group-time average treatment effect is:
+$$
+  \text{ATT}(g, t) = \expec{y_{it}(g) - y_{it}(\infty)}{G_i = g}
+$$
+where $y_{it}(\infty)$ is the never-treated potential outcome.
+
+Two main estimation approaches have emerged:
+
+\subsection*{``Building Blocks Approach''}
+
+The Callaway and Sant'Anna (2021) approach estimates group-time ATT$(g,t)$ parameters using $2 \times 2$ DID comparisons.
+For each group-time pair, they compare units first treated in period $g$ to appropriate control groups (never-treated or not-yet-treated).
+Since this is a $2 \times 2$ setup (group $g$ and comparison group), we can use the previous methods to estimate treatment effects.
+
+The overall ATT is constructed as a weighted average:
+$$
+  \text{ATT}_{\text{overall}} = \sum_{g} \sum_{t} \one{t \geq g} \frac{1}{N_{g,t}} \text{ATT}(g,t)
+$$
+
+Dynamic effects are obtained by averaging across groups:
+$$
+  \text{ATT}^k = \sum_{g} \sum_{t} \one{t - g = k} \frac{1}{N_{g,t}} \text{ATT}(g,t)
+$$
+
+\subsection*{``Imputation Approach''}
+
+The Borusyak, Jaravel, and Spiess (2024) and Gardner (2021) approach explicitly models the never-treated potential outcome:
+$$
+  y_{it}(\infty) = \mu_i + \lambda_t + f_t(\bm{X}_i) + u_{it}
+$$
+
+The two-stage procedure is:
+\begin{enumerate}
+  \item Estimate the model using observations with $d_{it} = 0$ (never-treated and not-yet-treated)
+  \item Predict $\hat{y}_{it}(\infty)$ for all observations
+  \item Estimate treatment effects as $y_{it} - \hat{y}_{it}(\infty)$ for treated observations
+\end{enumerate}
+
+% This approach offers flexibility in modeling the counterfactual trend and can incorporate covariates to relax parallel trends.
+
+
+\end{multicols}
+\end{document}
+  
