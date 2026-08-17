@@ -1,5 +1,6 @@
 \documentclass[aspectratio=169,t,11pt,table]{beamer}
 \usepackage{../../slides,../../math}
+\usetikzlibrary{decorations.pathmorphing}
 
 % Optionally define `accent`/`accent2` colors for theme customization
 % I recommend changing the top slider on this: https://hslpicker.com/#1e9400
@@ -125,9 +126,18 @@
 \begin{frame}{Random Allocation ensures comparability}
   \bigskip
   \begin{quote}
-    Having used a random allocation, the sternest critic is unable to say when we eventually dash into print that quite probably the groups were differentially biased through our predilections or through our stupidity.
+    Randomisation properly carried out... relieves the experimenter from the anxiety of considering and estimating the magnitude of the innumerable causes by which his data may be disturbed.”
 
-    \emph{—Austin Bradford Hill, 1952}
+    \textnormal{—Ronald Fisher, The Design of Experiments (1935)}
+  \end{quote}
+  
+  \pause
+  \bigskip
+  \bigskip
+  \begin{quote}
+    And, having used a random allocation, the sternest critic is unable to say when we eventually dash into print that quite probably the groups were differentially biased through our predilections or through our stupidity.
+
+    \textnormal{—Austin Bradford Hill, The Clinical Trial (1952)}
   \end{quote}
   % Quote taken from https://pmc.ncbi.nlm.nih.gov/articles/PMC8718586/#:~:text=The%20Opportunity%20and%20Challenges%20for%20Conducting%20RCTs,our%20stupidity.%20%E2%80%94Austin%20Bradford%20Hill%2C%201952%2010.
 \end{frame}
@@ -284,12 +294,17 @@
   Don't forget to rule out potential explanations!
 \end{frame}
 
+% 
+% “Randomisation properly carried out... relieves the experimenter from the anxiety of considering and estimating the magnitude of the innumerable causes by which his data may be disturbed.”
+% — The Design of Experiments (1935)
+
+
 
 % \begin{frame}{Research Strategy}
-%   
+%     TODO: Quick assignment with this? 
+%     https://economicspsychologypolicy.blogspot.com/2015/06/list-of-19-natural-experiments.html
 % \end{frame}
 % 
-% https://economicspsychologypolicy.blogspot.com/2015/06/list-of-19-natural-experiments.html
 
 
 \section{Difficulties of Establishing Causality}
@@ -450,6 +465,45 @@
   \alert{PROBLEM:} we can \emph{never} observe both states of the world \emph{at the same point in time}.
 \end{frame}
 
+\begin{frame}{Statistical vs. Causal Inference}
+  There are two different questions we could ask about the relationship between $X$ and $Y$:
+
+  \pause
+  \bigskip
+  \alert{Causal inference} is comparing two counterfactual worlds:
+  \begin{itemize}
+    \item Take a person and compare the world where they have a larger $X$ to the world where they have a smaller $X$
+  \end{itemize}
+
+  \pause
+  \bigskip
+  \alert{Statistical inference} (prediction) is comparing two people in this world:
+  \begin{itemize}
+    \item Compare two people, one with a higher $X$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Statistical vs. Causal Inference}{The hospital paradox}
+  Say you are trying to predict whether someone dies:
+  \begin{itemize}
+    \item Compare two people: one in the hospital with heart pains and one who is not. Who is more likely to die?
+  \end{itemize}
+
+  \pause
+  \bigskip
+  The person \emph{in} the hospital, of course!
+  \begin{itemize}
+    \item Hospitals are \emph{correlated} with death because sick people go there
+  \end{itemize}
+
+  \pause
+  \bigskip
+  But take \emph{one person} with heart pains: are they more likely to die if they were in the hospital or out of the hospital?
+  \begin{itemize}
+    \item Out of the hospital! Being in the hospital \emph{causes} them to be \emph{less} likely to die
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Observational Studies}
   When we look out into the world, people have different $X$s. Why can we not just compare $Y$s for people with different values of $X$? 
   
@@ -477,6 +531,7 @@
     \item What would have happened to a patient had they taken a different medicine or no medicine at all?
   \end{itemize}
 
+  \bigskip
   To be clear, these counterfactual worlds are \alert{made up}. They do not exist. This notion is straight out of sci-fi parallel universe kind of thinking.
 \end{frame}
 
@@ -620,6 +675,7 @@
 For any individual, we can only observe \emph{one} of these potential outcomes, never both simultaneously
 \end{frame}
 
+
 \begin{frame}{Unit-level treatment effect}
   Define the \alert{unit-level treatment effect} to be $\tau_i = Y_i(1) - Y_i(0)$
   \begin{itemize}
@@ -671,17 +727,67 @@ For any individual, we can only observe \emph{one} of these potential outcomes, 
           $i$ & $D_i$ & $Y_i$ & $Y_i(1)$ & $Y_i(0)$ \\
           \midrule
 
-          1 & 1 & \$1200 & \$1200 & \only<1>{\$1225}\only<2>{\color{purple} ?} \\
-          2 & 0 & \$1000 & \only<1>{\$950}\only<2>{\color{purple} ?} & \$1000 \\
-          3 & 1 & \$1150 & \$1150 & \only<1>{\$1150}\only<2>{\color{purple} ?}\\
+          1 & 1 & \$1200 & \$1200 & \only<1>{\$1225}\only<2>{\color{purple} \textbf{?}} \\
+          2 & 0 & \$1000 & \only<1>{\$950}\only<2>{\color{purple} \textbf{?}} & \$1000 \\
+          3 & 1 & \$1150 & \$1150 & \only<1>{\$1150}\only<2>{\color{purple} \textbf{?}}\\
           & & \vdots & & \\
-          n & 0 & \$1100 & \only<1>{\$1090}\only<2>{\color{purple} ?} & \$1100 \\
+          n & 0 & \$1100 & \only<1>{\$1090}\only<2>{\color{purple} \textbf{?}} & \$1100 \\
       
           \bottomrule
         \end{tabular}
       \end{center}
     \end{column}
   \end{columns}
+\end{frame}
+
+
+\begin{frame}{Using Observed Data to Impute the Counterfactual}
+\adjustbox{max width=0.9\textwidth, max height=0.8\textheight, center}{
+  \begin{tikzpicture}[
+    box/.style={draw, rectangle, minimum width=4cm, minimum height=1.6cm, align=center, inner sep=6pt},
+    observed/.style={box, thick},
+    unobserved/.style={box, dashed, thick, text=gray!90},
+    data/.style={box, very thick}
+  ]
+
+  % Potential outcomes boxes
+  \node[observed] (treated) at (-4,1.4) {
+    \textbf{\large Observed Treated Outcome} \\[0.3cm]
+    $Y_i(1)$ \\[0.2cm]
+    {\small\itshape Bob's outcome had they} \\
+    {\small\itshape been treated in this period}
+  };
+
+  \node[unobserved] (untreated) at (4,1.4) {
+    \textbf{\large Unobserved Untreated Outcome} \\[0.3cm]
+    $Y_i(0)$ \\[0.2cm]
+    {\small\itshape Bob's outcome had they} \\
+    {\small\itshape not been treated in this period}
+  };
+
+  % Observed data box below
+  \node[data] (data) at (-2,-3) {
+    \textbf{\large Other Observed Untreated Outcomes} \\[0.3cm]
+    $\left\{ Y_j(0) : D_j = 0 \right\}$ \\[0.2cm]
+    {\small\itshape Use other people's outcome to ``guess'' Bob's } \\
+    {\small\itshape missing counterfactual.}
+  };
+
+  % Arrow between potential outcomes
+  \draw[<->, very thick, teal, bend left=20]
+    ([yshift=5pt]treated.north) to
+    node[midway, above, align=center] {
+      \textbf{True causal effect}: \\
+      $Y_i(1) - Y_i(0)$
+    }
+    ([yshift=5pt]untreated.north);
+
+  % Squiggly line from observed data to the missing counterfactual
+  \draw[->, very thick, purple, bend right=20, decorate, decoration={snake, amplitude=2.5pt, segment length=12pt}, ]
+    (data.east) to node[midway, right] {\includegraphics[height=0.8cm]{figures/1f91e.png}} (untreated.south);
+
+  \end{tikzpicture}
+}
 \end{frame}
 
 \begin{frame}{Causal Estimands}

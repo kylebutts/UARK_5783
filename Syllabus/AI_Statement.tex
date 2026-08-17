@@ -1,0 +1,148 @@
+\documentclass[12pt]{article}
+\usepackage{../paper,../math}
+\usepackage{../uark_colors}
+% \addbibresource{references.bib}
+\hypersetup{
+  pdftitle = {UARK ECON 5783 AI Statement},
+  pdfauthor = {Kyle Butts},
+}
+
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  linkbordercolor = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\usepackage{tcolorbox} 
+\newtcolorbox{callout}[2][]{
+  colback = apple_blossom,    % Background color
+  coltext = ozark_mountains,  % Text color
+  boxrule = 1pt,              % Border
+  colframe = black!17,        % Border color 
+  left = 1em,                 % Left padding
+  right = 1em,                % Right padding
+  top = 1em,                  % Top padding
+  bottom = 0.75em,            % Bottom padding
+  arc = 2mm                   % Rounded corners
+  title = #2,                 % #2: title
+  #1,                         % #1: tcolorbox options
+}
+
+% \usepackage{fontawesome} % For icons
+\usepackage{setspace, titling}
+\title{
+  \vspace{-2em}
+	{\huge \ttfamily Statement on AI} \\[-0.75em]
+  {\Large \ttfamily [ECON 5783]} \\[-0.5em]
+	{\Large Fall 2026}
+}
+\author{}
+\date{}  % Toggle commenting to test
+
+\begin{document}
+\maketitle
+
+This document details my thoughts on the use of large language models (`AI') in the classroom. 
+Explicitly, I am choosing not to `ban' their use in the classroom for two reasons:
+(i) much like calculators in the 1980s, these will be used in your career and you need to start learning to use them, and much more importantly, 
+(ii) they are an incredibly helpful tool in \emph{the process of learning}.
+
+Regularly, I use LLM when trying to learn something:
+\begin{itemize}
+  \item Ask questions: ``can you give me an introduction to X?''
+  
+  \item Clarify terminology: ``when they write `X', what do they mean?''
+  
+  \item Confirm my understanding: ``is this the right idea: ...?''
+  
+  \item Fix coding mistakes: ``This is my code and here is the error I am getting. Can you help me correct it?''
+\end{itemize} 
+
+It is really helpful! 
+I can more quickly let my curiosity run wild and learn things I might have previously not had the energy/time to learn. 
+From a liberal arts perspective, it is \emph{incredible} you have a personal tutor for free than can let you engage and learn from hundreds of years of scholarly thinking.
+Because of the benefits to your learning, my job as your educator is to figure out how to get you these benefits without hurting your learning experiences.
+
+\subsection*{AI use in this Course}
+
+For the first goal (`learning to use LLMs'), I have not much concern. 
+LLMs are pretty good at taking abstract requests and producing \emph{something}. 
+Some might argue that prompting well is a skill that can be grown, but this does not seem to be true anymore.
+However, very quickly `prompt engineering' is becoming a relic of earlier lower quality models. 
+So learning to use LLMs is likely of little value in your career. 
+Anyone can type requests into a LLM, so that is not how you will earn good salaries.
+
+For the second goal (`using LLMs to learn'), I have more to say.  
+There are two ways you can use LLMs in this class:
+\begin{enumerate}
+  \item \textbf{`Cheating model'} Hand off assignments to the LLM and it will produce something passable, perhaps even good.
+  
+  \item \textbf{`Tutor model'} Work with the LLM to complete the assignment in a way that you are able to learn more while completing the assignment. 
+\end{enumerate}
+There is a sort of continuum between these two extremes: somewhere in the middle, you are asking some questions, but ultimately just taking the solution given to you. 
+Of course, the Cheating model is far less effort and given your competing interests, it becomes easy to slide along the continuum towards the Cheating model.
+
+It is my job, therefore, to try and provide a counter-force that increases the value of the `Tutor model'. 
+This semester, I am making my first attempt at this, but I need your help to gauge the effectiveness of this. 
+The pitch: 
+\begin{itemize}
+  \item I will continue to give you take-home assignments that you will be required to turn in. 
+  These will complement the lecture material and make sure you have a chance to work with real data and engage with the concepts in a hands-on way. 
+
+  \item The class following the assignment's due date, we will have a short in-class quiz that will be based on the take-home assignment. 
+\end{itemize}
+The grade of the assignment will be a combination of the completed assignment and your grade on the in-class quiz. 
+My hope is that the in-class quiz will require you to engage with the assignment more in the `Tutor model' and better learn from it.
+
+
+\subsection*{Is it worth learning?}
+
+A final thing worth discussing is the existential question: `why should I want to learn if `AI' knows everything already?'. 
+
+My experience is that LLMs are a \emph{multiplier}. 
+Production is something like this:
+$$
+  \text{Firm Productivity} = \text{Firm's Accumulated Judgement} \times \text{LLM Productivity Multiplier}
+$$
+If this equation is true, then it is obvious why you want to learn. 
+Relative to before, learning is actually \emph{more valuable}, since you have the LLM multiplier to increase your abilities.
+
+So is this equation true? 
+For causal inference, I think this is absolutely true. 
+The cost of running a regression and producing figures is near 0 now. 
+There are 100s of models you can train, 100s of figures you can make, dashboards galore!! 
+
+What's scarce isn't information. It's knowing which information to trust.
+
+There's a famous book, How to Lie with Statistics, that shows how easy it is to use numbers to deceive people. 
+LLMs create a closely related problem: it is now trivially easy to produce confident, well-formatted information that is completely wrong. 
+And because it looks right, you believe it. 
+You've \emph{lied with statistics to yourself}, and you might not even notice.
+
+Think of it like this. 
+An LLM is a research assistant who works incredibly fast, sounds authoritative, and produces valuable insights 20\% of the time. 
+The hard part is not getting the output. 
+The hard part is knowing which 20\% is useful.
+
+One of the central goals of this class is learning to do exactly that: to read model output and figures critically. 
+Learn to ask what's missing or misleading. 
+That is the value-add I hope you will learn in this class.
+
+More generally, I have a simple explanation for why I think that humans are essential in the production function.
+Assume that companies like Google, OpenAI, and Anthropic want to make money (they, of course, want you to think they have more noble intentions). 
+If their models casn do all that we as people can do, then what would be more profitable:
+\begin{enumerate}
+  \item Tell a LLM to start a company and make profits
+  
+  \item Sell `tokens' to companies and allow them to collect the excess profit. 
+\end{enumerate}
+Clearly, the former is more profitable as the excess value that a company makes would accrue to one of the big AI models rather than companies.
+The reason they have to sell tokens and not just start a bunch of companies themselves is that without discernment, they are multiplying by 0 and end up with no productivity. 
+
+
+
+
+
+\end{document}

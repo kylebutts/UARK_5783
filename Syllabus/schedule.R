@@ -5,22 +5,23 @@ library(tinytable)
 library(glue)
 
 # %%
-# # get dates
+# ## get dates
 # library(tidyverse)
-# first_day <- ymd("2024-08-19")
-# last_day <- ymd("2024-12-05")
-# labor_day <- ymd("2024-09-02")
-# fall_break <- c(ymd("2024-10-14"), ymd("2024-10-15"))
+# first_day <- ymd("2026-08-16")
+# last_day <- ymd("2026-12-03")
+# labor_day <- ymd("2026-09-07")
+# fall_break <- c(ymd("2026-10-19"), ymd("2026-10-20"))
 #
-# seq(first_day, last_day, by = "day") |>
+# days <- seq(first_day, last_day, by = "day") |>
 #   enframe(name = NULL, value = "day") |>
 #   mutate(
 #     day_of_week = wday(day, label = TRUE, abbr = FALSE)
 #   ) |>
-#   filter(day_of_week %in% c("Monday", "Wednesday")) |>
-#   # labor day
-#   # filter(day != ymd("2024-09-02")) |>
-#   mutate(Week = if_else(1 + week(day) - week(first_day)) |>
+#   filter(day_of_week %in% c("Monday", "Wednesday"))
+#
+# week_to_dates <- days |>
+#   mutate(Week = 1 + floor(as.numeric(day - first_day) / 7)) |>
+#   # filter(day != labor_day) |>
 #   mutate(value = "") |>
 #   mutate(
 #     .by = Week,
@@ -29,7 +30,23 @@ library(glue)
 #       collapse = " - "
 #     )
 #   ) |>
-#   select(Week, Dates, name = day_of_week, value)
+#   select(Week, Dates, name = day_of_week)
+#
+# # Update schedule.csv dates using week_to_dates
+# updated_schedule <- here("Syllabus/schedule.csv") |>
+#   read_csv(show_col_types = FALSE) |>
+#   mutate(Week = as.character(Week)) |>
+#   left_join(
+#     week_to_dates |>
+#       distinct(Week, Dates) |>
+#       mutate(Week = as.character(Week)) |>
+#       rename(Dates_new = Dates),
+#     by = "Week"
+#   ) |>
+#   mutate(Dates = coalesce(Dates_new, Dates)) |>
+#   select(Week, Dates, name, value)
+#
+# write_csv(updated_schedule, here("Syllabus/schedule.csv"))
 
 # %%
 cal <- here("Syllabus/schedule.csv") |>
@@ -53,7 +70,7 @@ tab <- cal |>
     width = c(0.1, 0.2, 0.3, 0.3, 0.3)
   ) |>
   style_tt(i = nrow(cal), j = "Assignments", color = "#9a2515") |>
-  style_tt(i = midterm_idx_monday, j = "Monday", color = "#9a2515") |>
+  style_tt(i = midterm_idx_wednesday, j = "Wednesday", color = "#9a2515") |>
   style_tt(i = noclass_idx_monday, j = "Monday", color = "#f26d21") |>
   style_tt(i = noclass_idx_wednesday, j = "Wednesday", color = "#f26d21")
 
