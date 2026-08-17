@@ -1,0 +1,108 @@
+\documentclass[12pt]{article}
+\usepackage{../../../assignment}
+\usepackage{../../../math}
+\usepackage{../../../uark_colors}
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\begin{document}
+\begin{center}
+  {\Huge\bf Final - Fall 2025}
+
+  \smallskip
+  {\large\it ECON 5783 — University of Arkansas}
+\end{center}
+\medskip
+
+\begin{enumerate}
+  \item A researcher wants to evaluate whether a school having an arts program benefits children's educational outcomes. 
+  The researcher surveys schools and records their average GPA ($Y_i$) and whether or not they have an arts program ($D_i$).
+  \begin{enumerate}
+    \item In this context, describe in words what the potential outcomes, $Y_i(0)$ and $Y_i(1)$, are.
+    
+    \medskip
+    \item Do you think the difference-in-means estimator would be biased in this context? 
+    If so, which direction do you the treatment effect estimate is biased?
+    
+    \medskip
+    \item Why might a table of summary statistics consisting of sample means of observables, broken down by $D_i = 0$ and $D_i = 1$, be useful in this setting?
+  \end{enumerate}
+\end{enumerate}
+
+\bigskip\bigskip
+%% https://www.christopher-neilson.com/work/documents/UPK/w33038.pdf
+\noindent The following questions are about Rosenthal and Strange (2008, Journal of Urban Economics). 
+They want to understand if having a higher density of firms in an area increases the average wages of workers. 
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item Consider regressing the average wages of a worker in a city on the density of firms in the area. 
+  Say you find a large, positive estimate.
+  Using the concept of omitted variables bias, give an example of why we should not believe we identified the causal effect of density.
+
+  \medskip
+  \item Rosenthal and Strange use as an instrument the proportion of soil in the city that contains sedimentary rock. 
+  The idea being that sedimentary soil is more difficult to build on which causes less density. 
+  Argue why the exclusion restriction might be reasonable in this context.
+
+  \medskip
+  \item The first-stage regression of density on the sedimentary rock share has a $F$-statistic of 1.907. 
+  Describe why this might cause a problem when conducting inference on our 2SLS estimate.
+\end{enumerate}
+
+
+
+\newpage
+\noindent The following questions are about Leah Boustan's work on court-enforced school desegregation (2012, AEJ Applied).
+They ask whether forced school desegregation in the city-center led to a larger decline in the housing price in the city-center.
+The unit of observation is a metro area and they are observed in 1960, 1970, and 1980 (post-period).
+Below is the primary DID estimates.
+
+\bigskip
+\begin{enumerate}
+  \setcounter{enumi}{4}
+  \item The row with $\Delta$ 1970--1980 presents the difference-in-differences estimate. 
+  What do we have to assume about the cities that were and were not placed under court orders in order to belive the 5.8\% decrease in home prices estimate?
+  
+  \medskip
+  \item Why is the row labeled ``$\Delta$ 1960--1970'' helpful for justifying the causal assumption?
+  
+  \medskip
+  \item Boustan suggests that cities that had larger shares of Black residents might have had larger suburbanization rates during this time (`White flight'). 
+  Moreover, cities that put under court-ordered forced desegregation had larger declines in city housing prices.
+  Why might this represent concerns for our parallel trends assumption?
+
+  \medskip
+  \item Say you are willing to assume parallel trends \emph{conditional on} the share of Black residents in 1970, i.e. $\Delta Y_i(0) \Perp D_i \ \vert \ X_i = x$.
+  Describe how you would estimate a treatment effect using the regression adjustment strategy. 
+\end{enumerate}
+
+\bigskip
+\begin{table}[hb]
+\centering
+\caption{School Desegregation and Relative City Housing Prices at the District Border, 1960--1980}
+\label{tab:desegregation}
+\begin{tabular}{lccc}
+\toprule
+Dependent variable & Placed under & Not placed under & \\
+$= \ln(\text{housing value})$; & court order & court order & \\
+coefficient on & during 1970s & during 1970s & Difference \\
+\midrule
+% 1970 & $-0.047***$ & $-0.026*$ & $-0.021$ \\
+%      & (0.014) & (0.015) & (0.020) \\[0.5em]
+% 1980 & $-0.097***$ & $-0.023$ & $-0.073**$ \\
+%      & (0.028) & (0.022) & (0.035) \\[0.5em]
+$\Delta$ 1970--1980 & $-0.065**$ & $-0.007$ & $-0.058**$ \\
+     & (0.024) & (0.015) & (0.028) \\[0.5em]
+\textit{Pre-trend:} & & & \\
+$\Delta$ 1960--1970 & $-0.023*$ & $-0.022$ & $-0.001$ \\
+     & (0.013) & (0.017) & (0.022) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}
