@@ -434,7 +434,7 @@
     
     \item People who try new medicines have higher mortality rates
   \end{itemize}
- f
+
   \bigskip
   We want to think carefully if $X$ causes $Y$ or $Y$ causes $X$
 \end{frame}
@@ -452,6 +452,7 @@
   \end{itemize}
 \end{frame}
 
+
 \section{Counterfactual Thinking and Potential Outcomes}
 
 \begin{frame}{What is causality?}
@@ -464,6 +465,39 @@
   \bigskip
   \alert{PROBLEM:} we can \emph{never} observe both states of the world \emph{at the same point in time}.
 \end{frame}
+
+
+\begin{frame}{Observational Studies}
+  When we look out into the world, people have different $X$s. Why can we not just compare $Y$s for people with different values of $X$? 
+  
+  \begin{itemize}
+    \item As economists, we know that people are optimizers. They chose their `optimal' $X$ for different reasons. 
+    
+    \item People's background characteristics and environment shape what is the optimal $X$ and these factors likely shape their value of $Y$ too.
+  \end{itemize}
+
+  \pause
+  \bigskip
+  So comparing people with different $X$s often involves comparing people with different lurking variables, $\bm{Z}$, too
+  \begin{itemize}
+    \item Is it $X$ causing the change in $Y$ or is it the multiude of lurking variables?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Notions of Counterfactual}
+  Causal inference is looking for some notion of a \alert{counterfactual} world:
+  \begin{itemize}
+    \item What would have happened to home prices if the new apartments were not built? 
+    
+    \item What would have happened to employment if the minimum wage was not increased? 
+    
+    \item What would have happened to a patient had they taken a different medicine or no medicine at all?
+  \end{itemize}
+
+  \bigskip
+  To be clear, these counterfactual worlds are \alert{made up}. They do not exist. This notion is straight out of sci-fi parallel universe kind of thinking.
+\end{frame}
+
 
 \begin{frame}{Statistical vs. Causal Inference}
   There are two different questions we could ask about the relationship between $X$ and $Y$:
@@ -501,91 +535,6 @@
   But take \emph{one person} with heart pains: are they more likely to die if they were in the hospital or out of the hospital?
   \begin{itemize}
     \item Out of the hospital! Being in the hospital \emph{causes} them to be \emph{less} likely to die
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Observational Studies}
-  When we look out into the world, people have different $X$s. Why can we not just compare $Y$s for people with different values of $X$? 
-  
-  \begin{itemize}
-    \item As economists, we know that people are optimizers. They chose their `optimal' $X$ for different reasons. 
-    
-    \item People's background characteristics and environment shape what is the optimal $X$ and these factors likely shape their value of $Y$ too.
-  \end{itemize}
-
-  \pause
-  \bigskip
-  So comparing people with different $X$s often involves comparing people with different lurking variables, $\bm{Z}$, too
-  \begin{itemize}
-    \item Is it $X$ causing the change in $Y$ or is it the multiude of lurking variables?
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Notions of Counterfactual}
-  Causal inference is looking for some notion of a \alert{counterfactual} world:
-  \begin{itemize}
-    \item What would have happened to home prices if the new apartments were not built? 
-    
-    \item What would have happened to employment if the minimum wage was not increased? 
-    
-    \item What would have happened to a patient had they taken a different medicine or no medicine at all?
-  \end{itemize}
-
-  \bigskip
-  To be clear, these counterfactual worlds are \alert{made up}. They do not exist. This notion is straight out of sci-fi parallel universe kind of thinking.
-\end{frame}
-
-\begin{frame}{Notions of Counterfactual}
-  The job of causal inference is to \emph{make assumptions} about the counterfactual world to take our best guess at that world
-  \begin{itemize}
-    \item Bad assumption in $\implies$ bad answer out
-  \end{itemize}
-
-  \bigskip
-  Causal effects are a hard thing to identify; researchers do their best. I think the best researchers:
-  \begin{enumerate}
-    \item Articulate the assumptions clearly
-    
-    \item Worry deeply about lurking variables (not sweep them under)
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}{The Fundamental Problem of Causal Inference}
-  We want to understand: what is the causal effect of some treatment $D$ on outcome $Y$?
-  
-  \bigskip
-  The \alert{fundamental problem} is that we can only observe one potential outcome for each unit:
-  \begin{itemize}
-    \item If a unit receives treatment ($D_i = 1$), we observe $Y_i(1)$ but not $Y_i(0)$
-    \item If a unit doesn't receive treatment ($D_i = 0$), we observe $Y_i(0)$ but not $Y_i(1)$
-  \end{itemize}
-  
-  \bigskip
-  To estimate causal effects, we need to predict the \emph{missing counterfactual outcome}
-\end{frame}
-
-\begin{frame}{Trying to determine the counterfactual}
-  At the end of the day, our job will be to find a way to `impute' the missing counterfactual. Finding a reasonable way to \emph{predict the missing counterfactual} is the hard part
-
-  \bigskip
-  \begin{itemize}
-    \item Look at similar neighborhoods that did not have new apartments  built? 
-    \begin{itemize}
-      \item Pennington (2023) look at San Francisco neighborhoods where a fire burns down a single family home
-    \end{itemize}
-    
-    \pause
-    \item What would have happened to employment if the minimum wage was not increased? 
-
-    \begin{itemize}
-      \item Dube et. al. (2010) use counties on the other side of a state border
-    \end{itemize}
-    
-    \pause
-    \item What would have happened to a patient had they taken a different medicine or no medicine at all?
-    \begin{itemize}
-      \item Health care industry runs thousands of randomized control trials every year
-    \end{itemize} 
   \end{itemize}
 \end{frame}
 
@@ -741,6 +690,37 @@ For any individual, we can only observe \emph{one} of these potential outcomes, 
 \end{frame}
 
 
+\begin{frame}{The Fundamental Problem of Causal Inference}
+  We want to understand: what is the causal effect of some treatment $D$ on outcome $Y$?
+  
+  \bigskip
+  The \alert{fundamental problem} is that we can only observe one potential outcome for each unit:
+  \begin{itemize}
+    \item If a unit receives treatment ($D_i = 1$), we observe $Y_i(1)$ but not $Y_i(0)$
+    \item If a unit doesn't receive treatment ($D_i = 0$), we observe $Y_i(0)$ but not $Y_i(1)$
+  \end{itemize}
+  
+  \bigskip
+  To estimate causal effects, we need to predict the \emph{missing counterfactual outcome}
+\end{frame}
+
+
+\begin{frame}{Notions of Counterfactual}
+  The job of causal inference is to \emph{make \alert{causal assumptions}} about the counterfactual world to take our best guess at the \emph{missing counterfactual outcome}
+  \begin{itemize}
+    \item Bad assumption in $\implies$ bad answer out
+  \end{itemize}
+
+  % \bigskip
+  % Causal effects are a hard thing to identify; researchers do their best. I think the best researchers:
+  % \begin{enumerate}
+  %   \item Articulate the assumptions clearly
+  %   
+  %   \item Worry deeply about lurking variables (not sweep them under)
+  % \end{enumerate}
+\end{frame}
+
+
 \begin{frame}{Using Observed Data to Impute the Counterfactual}
 \adjustbox{max width=0.9\textwidth, max height=0.8\textheight, center}{
   \begin{tikzpicture}[
@@ -789,6 +769,35 @@ For any individual, we can only observe \emph{one} of these potential outcomes, 
   \end{tikzpicture}
 }
 \end{frame}
+
+\begin{frame}{Trying to determine the counterfactual}
+  At the end of the day, our job will be to find a way to `impute' the missing counterfactual. Finding a reasonable way to \emph{predict the missing counterfactual} is the hard part
+
+  \bigskip
+  \begin{itemize}
+    \item Look at similar neighborhoods that did not have new apartments built? 
+    \begin{itemize}
+      \item Pennington (2023) look at San Francisco neighborhoods where a fire burns down a single family home
+    \end{itemize}
+    
+    \pause
+    \bigskip
+    \item What would have happened to employment if the minimum wage was not increased? 
+
+    \begin{itemize}
+      \item Dube et. al. (2010) use counties on the other side of a state border
+    \end{itemize}
+    
+    \pause
+    \bigskip
+    \item What would have happened to a patient had they taken a different medicine or no medicine at all?
+    \begin{itemize}
+      \item Health care industry runs thousands of randomized control trials every year
+    \end{itemize} 
+  \end{itemize}
+\end{frame}
+
+
 
 \begin{frame}{Causal Estimands}
   \begin{columns}[T]
@@ -904,7 +913,7 @@ For any individual, we can only observe \emph{one} of these potential outcomes, 
 \begin{frame}{Conditional ATE versus ATE}
   There is a strong relationship between the CATE and the ATE/ATT:
   $$
-    \tau_{\text{ATE}} = \expec{\tau_i} = \expec{\expec{\tau_i}{X_i}}
+    \tau_{\text{ATE}} = \expec{\tau_i} = \mathbb{E}\bigg[\  \expec{\tau_i}{X_i = x}\  \bigg]
   $$
   \begin{itemize}
     \item The latter averages over CATE with weights proportional to the distribution of $X_i$ in the population
@@ -915,9 +924,11 @@ For any individual, we can only observe \emph{one} of these potential outcomes, 
   \bigskip
   Likewise, we could average over the distribution of $X_i$ for the treated units
   $$
-    \tau_{\text{ATT}} = \expec{\tau_i} = \expec{\tau_{\text{CATE}}(x)} = \expec{\expec{\tau_i}{X_i}}{D_i = 1}
+    \tau_{\text{ATT}} = \expec{\tau_i}{D_i = 1} = \expec{\tau_{\text{CATE}}(x)}{D_i = 1} = \expec{\expec{\tau_i}{X_i = x}}{D_i = 1}
   $$
 \end{frame}
+
+\section{Difference-in-means Estimator}
 
 \begin{frame}{Problems with observational data}
   Our treatment effect parameter is given by 
@@ -1195,8 +1206,6 @@ For any individual, we can only observe \emph{one} of these potential outcomes, 
 	\bigskip
 	Robert Lalonde, Orley Ashenfelter, David Card, and others in the Princeton Industrial Relations Section in the 1980s were drivers of the `credibility revolution'
 \end{frame}
-
-
 
 
 \section{A/B Testing}
