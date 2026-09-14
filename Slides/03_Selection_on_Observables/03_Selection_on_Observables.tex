@@ -29,7 +29,7 @@
   \bigskip
   Readings to complement this lecture are:
   \begin{itemize}
-    \item Angrist & Pischke (2009), Ch. 4.1, 4.2, 4.4
+    \item Angrist \& Pischke (2009), Ch. 4.1, 4.2, 4.4
   \end{itemize}
 \end{frame}
 
@@ -148,13 +148,6 @@
   \end{itemize}
 \end{frame}
 
-% \begin{frame}{Example 3}{Charter Schools}
-%   Abdulkadiroğlu, Angrist, Dynarski, Kane, and Pathak (2011, QJE) use Boston charter school over-application and offer lotteries to estimate the impact of Charter Schools
-%   \begin{itemize}
-%     \item Which charter that a student applied
-%   \end{itemize}
-% \end{frame}
-
 \begin{frame}{Example 4}{College Athletic Success}
   Anderson (2017, RESTAT) estimates the effect of having a successful college athletics program help colleges (say recruit better students)
 
@@ -240,7 +233,7 @@
     \tau_{\text{ATE}} 
     &= \expec{\tau_i} \\
     &= \expec{\tau(F_i)} \\
-    &= \tau_{F_i = 1} * \prob{F_i = 1} + \tau_{F_i = 0} \prob{F_i = 0}
+    &= \tau_{F_i = 1} * \prob{F_i = 1} + \tau_{F_i = 0} * \prob{F_i = 0}
   \end{align*}
   \begin{itemize}
     \item Weighted average of the CATE with weights proportional to group size
@@ -287,6 +280,12 @@
 \end{frame}
 
 \begin{frame}{What drives treatment after conditioning on $\bm{X}_i$}
+  \bigskip
+  \begin{quote}
+    This says that for units with the same value of $\bm{X}_i = \bm{x}$, treatment is independent of the potential outcomes (i.e. ``randomly assigned'')
+  \end{quote}
+
+  \bigskip
   To be clear, \emph{something} must be causing some units to sign up for treatment and others not to
   \begin{itemize}
     \item Maybe some teacher encouraged person A to apply but person B was not 
@@ -306,8 +305,8 @@
   There is always going to be debate with this method on what variables are missing in $\bm{X}_i$
 \end{frame}
 
-\imageframe{figures/pt1.png}
-\imageframe{figures/pt2.png}
+% \imageframe{figures/pt1.png}
+% \imageframe{figures/pt2.png}
 
 \begin{frame}{Using this method}
   There is always going to be debate with this method on what variables are missing in $\bm{X}_i$
@@ -376,7 +375,236 @@
 % \end{frame}
 
 
-\section{Regression Adjustment}
+\section{Matching estimators}
+
+\begin{frame}{Curse of dimensionality strikes again!}
+  Given the conditional independence assumption (CIA), 
+  $$
+    (Y_{i}(0), Y_{i}(1)) \Perp D_i \ \vert \ \bm{X}_i
+  $$
+  we can theoretically perform a bunch of different difference-in-means estimators and then aggregate covariate-specific estimates
+  \begin{itemize}
+    \item This works well when $X_i$ is a single binary variable
+  \end{itemize}
+
+  \pause
+  \bigskip
+  But as we add more and more covariates, the fewer observations we have for $\bm{X}_i = \bm{x}$
+  \begin{itemize}
+    \item What do we do if there are no treated units or no control units for a given $\bm{x}$?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Finding comparable control units}
+  \begin{center}
+    What do we do if there are no treated units or no control units for a given $\bm{x}$?
+  \end{center}
+
+  \bigskip
+  One strategy we could take is to find a control unit for each treated unit that has an $\bm{X}_i$ that is ``close'' to a given treated unit's $\bm{x}$
+  \begin{itemize}
+    \item For each treated unit $i$, find a matching control unit (or units), $j$, that has $\bm{X}_i \approx \bm{X}_j$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Matching estimator}
+  Let $j(i)$ be the unit that is matched to treated unit $i$. Let $N_1 = \sum_i D_i$ be the number of treated units. 
+  
+  \bigskip 
+  Our treatment effect estimator is given by:
+  $$
+    \hat{\tau}_{\text{Matching}}
+    \underbrace{\frac{1}{N_1} \sum_{i = 1}^N D_i Y_i}_{\text{Treated group average}} -
+    \underbrace{\frac{1}{N_1} \sum_{i = 1}^N D_i Y_{j(i)}}_{\text{Matched control group average}}
+  $$
+\end{frame}
+
+\begin{frame}{Matching estimator}
+  $$
+    \expechat{Y_i(0)}{D_i = 1} = \frac{1}{N_1} \sum_{i = 1}^N D_i Y_{j(i)}
+  $$
+
+  \bigskip
+  Each control unit has (approximately) the same $\bm{X}$ as it's respective treated unit, so under conditional independence, their $Y(0)$ is a good estimate (on average) for the treated unit's $Y(0)$.
+\end{frame}
+    
+\begin{frame}{The `matched' control gropu}
+  We selected the matched control units $\{ j(i): D_i = 1 \}$ so that they have the same distribution of $\bm{X}$ as the treated units
+  
+  \bigskip
+  In this way, we have `created' a valid control group, i.e. removed selection on $\bm{X}$
+  \begin{itemize}
+    \item Once we match, we just go back to difference-in-means estimator
+    
+    \item Supposes there is no \emph{remaining} selection after matching on $\bm{X}$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Defining ``close''}
+  How do we decide which control units are close? We need some measure of ``distance''. 
+
+  \bigskip
+  The simplest measure is the \alert{euclidean distance}. For units $i$ and $j$, the distance between $\bm{X}_i$ and $\bm{X}_j$:
+  $$
+    \sqrt{\sum_{k = 1}^K (X_{i,k} - X_{j, k})^2}
+  $$
+
+  \pause 
+  \bigskip
+  In matrix notation this is 
+  $$
+    (\bm{X}_i - \bm{X}_j)' (\bm{X}_i - \bm{X}_j)
+  $$
+\end{frame}
+
+\begin{frame}{Distances}
+  $$
+    \sqrt{\sum_{k = 1}^K (X_{i,k} - X_{j, k})^2}
+  $$
+
+  \bigskip
+  Issues with this distance metric:
+  \begin{itemize}
+    \item Puts more weight on covariates with larger variances (not scale invariant)
+    
+    \item Each covariate is viewed as being ``equally important to match on''
+    
+    \item Highly collinear variables get ``counted twice'' in that their discrepencies get summed over twice 
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Mahalanobis Distance}
+  Can ``scale'' the distances using the variance-covariance matrix of $\bm{X}_i$:
+  $$
+    S_{\bm{X}\bm{X}'} \equiv \left[ 1/N \sum_{i=1}^N (\bm{X}_i - \bar{\bm{X}}) (\bm{X}_i - \bar{\bm{X}})' \right]
+  $$
+  \begin{itemize}
+    \item The $(k, \ell)$-th element is the sample covariance $\cov{X_{i, k}, X_{i, \ell}}$ and the diagonal being the variance of $X_{i, k}$
+    
+    \item If the covariance between two elements is high, then we don't want to give ``credit'' to both as ``distinct'' variables
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Mahalanobis Distance}
+  The \alert{Mahalanobis Distance} is the distance between unit $i$ and $j$'s covariate rescaled by the inverse variance-covariance matrix:
+  $$
+    (\bm{X}_i - \bm{X}_j)' S_{\bm{X}\bm{X}'}^{-1} (\bm{X}_i - \bm{X}_j)
+  $$
+  \begin{itemize}
+    \item All elements have variance 1 from the rescaling, so this measure is scale-invariant
+    
+    \item Covariates that are highly collinear do not get counted twice
+    
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Ensuring we have matches}
+  How do we know that there is going to be matchable control units?
+  \begin{itemize}
+    \item Perhaps units with a certain value (and nearby values) of $\bm{X}_i = x$ are all treated, so there are no (high-quality) controls to match to
+  \end{itemize}
+
+  \pause
+  \bigskip
+  Option 1: We require the \alert{overlap} condition. There is an $\epsilon > 0$ such that for all $x \in \mathbb{X}$
+  $$
+    1 - \epsilon > \prob{D = 1}{\bm{X} = x} > \epsilon
+  $$
+  \begin{itemize}
+    \item Guarantees that in large samples we will see some treated and control units for each value of $\bm{X}$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Ensuring we have matches}
+  Option 2: Subset to treated units that have matchable units
+  \begin{itemize}
+    \item Changes our definition of the ``population'' and hence our ATT
+    
+    \item A more subtle point is that if we determine the subsetting based by on our finite sample, then inference gets more complicated
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Ensure `balance'}
+  It is very common to assess `balance' between covariates after performing matching. 
+  \begin{itemize}
+    \item Let's the reader verify that the matching is of reasonably high-quality (balance on included $X$s)
+    \begin{itemize}
+      \item As a reader, don't give too much credit to this (they are trying to match them, so they should be close)
+    \end{itemize}
+    
+    \item Perhaps include other variables that were not included to suggest the treated and matched control group look similar
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Ensure `balance'}
+  You might be tempted to report a t-test on the difference in means of different $X$ variables between your treated and matched sample
+  \begin{itemize}
+    \item As your sample size gets larger, you will find significant differences even if they are not \emph{meaningful} differences
+  \end{itemize}
+  
+  \bigskip
+  Imbens and Wooldridge (2009, JEL) recommend (as is commonly done) standardized difference-in-means:
+  $$
+    \frac{\bar{X}_1 - \bar{X}_0}{\sqrt{S_1^2 + S_0^2}}
+  $$
+  \begin{itemize}
+    \item $S_1^2$ and $S_0^2$ are the sample variance of $X$ for the treated and control-group respectively 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Example: Balance Improvements in the Lalonde Data} 
+  \begin{table}   
+    \footnotesize
+    \begin{tabular}{l c c c c c}
+      \toprule
+      & \multicolumn{2}{c}{\textbf{CPS Controls}} & \multicolumn{2}{c}{\textbf{NSW Treated}} &  \multicolumn{1}{c}{\textbf{Mahalanobis Matched Controls}} \\
+      & \multicolumn{2}{c}{(15992)} & \multicolumn{2}{c}{(185)} & (370) \\
+      Covariate & mean & (s.d.) & mean & (s.d.) & normalized diff. \\
+
+      \midrule
+      Age & 33.23 & (11.05) & 25.82 & (7.16) & -0.16 \\
+      Education & 12.03 & (2.87) & 10.35 & (2.01) & -0.09 \\
+      Married & 0.71 & (0.45) & 0.19 & (0.39) & -0.20 \\
+      Nodegree & 0.30 & (0.46) & 0.71 & (0.46) & 0.18 \\
+      Black & 0.07 & (0.26) & 0.84 & (0.36) & 0.00 \\
+      Hispanic & 0.07 & (0.26) & 0.06 & (0.24) & 0.00 \\
+      Earn '74 & 14.02 & (9.57) & 2.10 & (4.89) & 0.00 \\
+      Earn '74 positive & 0.88 & (0.32) & 0.29 & (0.46) & 0.00 \\
+      Earn '75 & 13.65 & (9.27) & 1.53 & (3.22) & -0.01 \\
+      Earn '75 positive & 0.89 & (0.31) & 0.40 & (0.49) & 0.00 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Inference after Matching}
+  Note that matching takes on two steps:
+  \begin{enumerate}
+    \item Create a matched sample using information on $\bm{X}_i$
+    \item Estimate a difference-in-means (using regression)
+  \end{enumerate}
+
+  \bigskip
+  The standard errors on the regression estimate ignore the noise generated in step 1
+  \begin{itemize}
+    \item Incoporating uncertainty from step 1 is a very difficult problem (see Imbens and Abadie, Econometrica 2006)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Coding implementation}
+  In \texttt{R}, use the \texttt{MatchIt} package
+
+  \bigskip
+  In \texttt{Stata}, use the \texttt{teffects nnmatch} command 
+\end{frame}
+
+
+
+\section{Modelling $Y_i(0)$}
+  
+\subsection{Regression Adjustment}
 
 \begin{frame}{Reminder of Setup}
   We observe a sample of $n$ observations, $Y$ is outcome, $\bm{X}$ is a vector of control variables, $D$ is our treatment variable of interest. We assume the conditional independence assumption
@@ -543,223 +771,8 @@
   \end{itemize}
 \end{frame}
 
-\section{Matching estimators}
 
-\begin{frame}{Curse of dimensionality strikes again!}
-  Given the conditional independence assumption (CIA), 
-  $$
-    (Y_{i}(0), Y_{i}(1)) \Perp D_i \ \vert \ \bm{X}_i
-  $$
-  we can theoretically perform a bunch of different difference-in-means estimators and then aggregate covariate-specific estimates
-  \begin{itemize}
-    \item This works well when $X_i$ is a single binary variable
-  \end{itemize}
-
-  \pause
-  \bigskip
-  But as we add more and more covariates, the fewer observations we have for $\bm{X}_i = \bm{x}$
-  \begin{itemize}
-    \item What do we do if there are no treated units or no control units for a given $\bm{x}$?
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Finding comparable control units}
-  \begin{center}
-    What do we do if there are no treated units or no control units for a given $\bm{x}$?
-  \end{center}
-
-  \bigskip
-  One strategy we could take is to find a control unit for each treated unit that has an $\bm{X}_i$ that is ``close'' to a given treated unit's $\bm{x}$
-  \begin{itemize}
-    \item For each treated unit $i$, find a matching control unit (or units), $j$, that has $\bm{X}_i \approx \bm{X}_j$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Matching estimator}
-  Let $j(i)$ be the unit that is matched to treated unit $i$. Let $N_1 = \sum_i D_i$ be the number of treated units. 
-  
-  \bigskip 
-  Our treatment effect estimator is given by:
-  $$
-    \hat{\tau}_{\text{Matching}}
-    \underbrace{\frac{1}{N_1} \sum_{i = 1}^N D_i Y_i}_{\text{Treated group average}} -
-    \underbrace{\frac{1}{N_1} \sum_{i = 1}^N D_i Y_{j(i)}}_{\text{Matched control group average}}
-  $$
-\end{frame}
-
-\begin{frame}{Matching estimator}
-  $$
-    \expechat{Y_i(0)}{D_i = 1} = \frac{1}{N_1} \sum_{i = 1}^N D_i Y_{j(i)}
-  $$
-
-  \bigskip
-  Each control unit has (approximately) the same $\bm{X}$ as it's respective treated unit so their $Y(0)$ is a good estimate (on average) for the treated unit's $Y(0)$.
-    
-  \pause
-  \bigskip
-  The matched control units $\{ j(i): D_i = 1 \}$ have the same distribution of $\bm{X}$ as the treated units (by design), so in some sense you are removing selection on $\bm{X}$
-\end{frame}
-
-\begin{frame}{Defining ``close''}
-  How do we decide which control units are close? We need some measure of ``distance''. 
-
-  \bigskip
-  The simplest measure is the \alert{euclidean distance}. For units $i$ and $j$, the distance between $\bm{X}_i$ and $\bm{X}_j$:
-  $$
-    \sqrt{\sum_{k = 1}^K (X_{i,k} - X_{j, k})^2}
-  $$
-
-  \pause 
-  \bigskip
-  In matrix notation this is 
-  $$
-    (\bm{X}_i - \bm{X}_j)' (\bm{X}_i - \bm{X}_j)
-  $$
-\end{frame}
-
-\begin{frame}{Distances}
-  $$
-    \sqrt{\sum_{k = 1}^K (X_{i,k} - X_{j, k})^2}
-  $$
-
-  \bigskip
-  Issues with this distance metric:
-  \begin{itemize}
-    \item Puts more weight on covariates with larger variances (not scale invariant)
-    
-    \item Each covariate is viewed as being ``equally important to match on''
-    
-    \item Highly collinear variables get ``counted twice'' in that their discrepencies get summed over twice 
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Mahalanobis Distance}
-  Can ``scale'' the distances using the variance-covariance matrix of $\bm{X}_i$:
-  $$
-    S_{\bm{X}\bm{X}'} \equiv \left[ 1/N \sum_{i=1}^N (\bm{X}_i - \bar{\bm{X}}) (\bm{X}_i - \bar{\bm{X}})' \right]
-  $$
-  \begin{itemize}
-    \item The $(k, \ell)$-th element is the sample covariance $\cov{X_{i, k}, X_{i, \ell}}$ and the diagonal being the variance of $X_{i, k}$
-    
-    \item If the covariance between two elements is high, then we don't want to give ``credit'' to both as ``distinct'' variables
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Mahalanobis Distance}
-  The \alert{Mahalanobis Distance} is the distance between unit $i$ and $j$'s covariate rescaled by the inverse variance-covariance matrix:
-  $$
-    (\bm{X}_i - \bm{X}_j)' S_{\bm{X}\bm{X}'}^{-1} (\bm{X}_i - \bm{X}_j)
-  $$
-  \begin{itemize}
-    \item All elements have variance 1 from the rescaling, so this measure is scale-invariant
-    
-    \item Covariates that are highly collinear do not get counted twice
-    
-  \end{itemize}
-\end{frame}
-
-
-\begin{frame}{Ensuring we have matches}
-  How do we know that there is going to be matchable control units?
-  \begin{itemize}
-    \item Perhaps units with a certain value (and nearby values) of $\bm{X}_i = x$ are all treated, so there are no (high-quality) controls to match to
-  \end{itemize}
-
-  \pause
-  \bigskip
-  Option 1: We require the \alert{overlap} condition. There is an $\epsilon > 0$ such that for all $x \in \mathbb{X}$
-  $$
-    1 - \epsilon > \prob{D = 1}{\bm{X} = x} > \epsilon
-  $$
-  \begin{itemize}
-    \item Guarantees that in large samples we will see some treated and control units for each value of $\bm{X}$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Ensuring we have matches}
-  Option 2: Subset to treated units that have matchable units
-  \begin{itemize}
-    \item Changes our definition of the ``population'' and hence our ATT
-    
-    \item A more subtle point is that if we determine the subsetting based by on our finite sample, then inference gets more complicated
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Ensure `balance'}
-  It is very common to assess `balance' between covariates after performing matching. 
-  \begin{itemize}
-    \item Let's the reader verify that the matching is of reasonably high-quality (balance on included $X$s)
-    \begin{itemize}
-      \item As a reader, don't give too much credit to this (they are trying to match them, so they should be close)
-    \end{itemize}
-    
-    \item Perhaps include other variables that were not included to suggest the treated and matched control group look similar
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Ensure `balance'}
-  You might be tempted to report a t-test on the difference in means of different $X$ variables between your treated and matched sample
-  \begin{itemize}
-    \item As your sample size gets larger, you will find significant differences even if they are not \emph{meaningful} differences
-  \end{itemize}
-  
-  \bigskip
-  Imbens and Wooldridge (2009, JEL) recommend (as is commonly done) standardized difference-in-means:
-  $$
-    \frac{\bar{X}_1 - \bar{X}_0}{\sqrt{S_1^2 + S_0^2}}
-  $$
-  \begin{itemize}
-    \item $S_1^2$ and $S_0^2$ are the sample variance of $X$ for the treated and control-group respectively 
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Example: Balance Improvements in the Lalonde Data} 
-  \begin{table}   
-    \footnotesize
-    \begin{tabular}{l c c c c c}
-      \toprule
-      & \multicolumn{2}{c}{\textbf{CPS Controls}} & \multicolumn{2}{c}{\textbf{NSW Treated}} &  \multicolumn{1}{c}{\textbf{Mahalanobis Matched Controls}} \\
-      & \multicolumn{2}{c}{(15992)} & \multicolumn{2}{c}{(185)} & (370) \\
-      Covariate & mean & (s.d.) & mean & (s.d.) & normalized diff. \\
-
-      \midrule
-      Age & 33.23 & (11.05) & 25.82 & (7.16) & -0.16 \\
-      Education & 12.03 & (2.87) & 10.35 & (2.01) & -0.09 \\
-      Married & 0.71 & (0.45) & 0.19 & (0.39) & -0.20 \\
-      Nodegree & 0.30 & (0.46) & 0.71 & (0.46) & 0.18 \\
-      Black & 0.07 & (0.26) & 0.84 & (0.36) & 0.00 \\
-      Hispanic & 0.07 & (0.26) & 0.06 & (0.24) & 0.00 \\
-      Earn '74 & 14.02 & (9.57) & 2.10 & (4.89) & 0.00 \\
-      Earn '74 positive & 0.88 & (0.32) & 0.29 & (0.46) & 0.00 \\
-      Earn '75 & 13.65 & (9.27) & 1.53 & (3.22) & -0.01 \\
-      Earn '75 positive & 0.89 & (0.31) & 0.40 & (0.49) & 0.00 \\
-      \bottomrule
-    \end{tabular}
-  \end{table}
-\end{frame}
-
-\begin{frame}{Inference after Matching}
-  Note that matching takes on two steps:
-  \begin{enumerate}
-    \item Create a matched sample using information on $\bm{X}_i$
-    \item Estimate a difference-in-means (using regression)
-  \end{enumerate}
-
-  The standard errors on the regression estimate ignore the noise generated in step 1
-  \begin{itemize}
-    \item Incoporating uncertainty from step 1 is a very difficult problem (Guido Imbens and Alberto Abadie, Econometrica 2006)
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Coding implementation}
-  In \texttt{R}, use the \texttt{MatchIt} package
-
-  \bigskip
-  In \texttt{Stata}, use the \texttt{teffects nnmatch} command 
-\end{frame}
-
-\section{Propensity-score matching}
+\section{Modelling $\prob{D_i = 1}{X_i}$}
 
 \begin{frame}{Reminder of Setup}
   We observe a sample of $n$ observations, $Y$ is outcome, $\bm{X}$ is a vector of control variables, $D$ is our treatment variable of interest. We assume the conditional independence assumption
@@ -832,6 +845,8 @@
   Can estimate using \texttt{feglm} with \texttt{family = binomial(link = "logit")} \texttt{logit} in \texttt{Stata}
 \end{frame}
 
+\subsection{Approach 1: Propensity-score matching}
+
 \begin{frame}{Matching on propensity-score method}
   We can proceed as before with our matching method using the propensity-score as the only covariate. This means we match each treated unit to the control unit(s) with the closest estimated propensity score $\hat{\pi}_i$
 
@@ -849,7 +864,7 @@
   \end{itemize}
 \end{frame}
 
-\section{Inverse probability of treatment weighting}
+\subsection{Approach 2: Inverse probability of treatment weighting}
 
 \begin{frame}{Reminder of Setup}
   We assume the conditional independence assumption
@@ -972,19 +987,6 @@
   $$
 \end{frame}
 
-\begin{frame}{Estimation of propensity score}
-  Since $D_i$ is an indicator variable, we (may) want to avoid a linear regression
-  \begin{itemize}
-    \item Can produce estimates that are outside of $(0, 1)$ creating problems for our estimator
-  \end{itemize}
-
-  \pause
-  \bigskip
-  Instead, use a logistic regression via \texttt{fixest} package and \texttt{feglm(family = "logit")}:
-  $$
-    \text{logit}(Y_i) = X_i \beta + u_i
-  $$
-\end{frame}
 
 \begin{frame}{Coding implementation}
   In \texttt{R}, use the \texttt{WeightIt} package to estimate the propensity score weights and the IPTW estimators
