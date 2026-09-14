@@ -1,0 +1,83 @@
+---
+title: "Assignment #1"
+author: "YOUR NAME"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+format: pdf
+---
+
+# Theoretical Questions
+
+1. For the following examples, we observed treatment `D_i` and outcomes `y_i`. Think about the untreated potential outcomes (what the outcome would be for units in the absence of treatment) for the treated and control groups. Do we think the average for one group is higher than the other, and why? If so, which way do you think the bias would move your difference-in-means estimate of the `ATT` (positively or negatively)?
+
+   a. `D_i` is an indicator variable that equals 1 if a worker went to college; `y_i` is a variable measuring the worker's health.
+
+      *Answer:* 
+
+   b. `D_i` is an indicator variable that equals 1 if an Amazon user was experimentally shown a banner of type "A"; `y_i` is whether the user purchased the product.
+
+      *Answer:* 
+
+   c. `D_i` is a variable indicating whether a school district contains an arts program; `y_i` is the school district's average ELA score.
+
+      *Answer:* 
+
+   d. `D_i` is a variable that equals 1 if a census tract has a Dollar General in it; `y_i` measures the census tract's rate of obesity.
+
+      *Answer:* 
+
+   e. `D_i` is a variable that equals 1 if a driver has tinted windows; `y_i` is a measure of "response time" that measures visual performance.
+
+      *Answer:* 
+
+
+2. In your own words, describe why A/B testing with a large number of arms and few trials per arm can lead to problems with inference. If you were to recommend to a tech firm how to fix this, what might you suggest?
+
+   *Answer:* 
+
+
+# Coding Exercise
+
+This exercise involves a randomized control trial done by the US Government.\footnote{See \url{https://www.upjohn.org/data-tools/employment-research-data-center/national-jtpa-study} for details.} 
+The National JPTA Study was a large scale experiment done by the U.S. Department of Labor to evaluate the effectiveness of employment and training programs under the Job Training Partnership Act of 1982. 
+The RCT randomly assigned economically disadvantaged adults and youths to a treatment and control arm where the treated group received JTPA training and services and the control group did not.
+
+A cleaned version of the dataset appears in this folder \texttt{data/national\_jtpa\_study.csv}. 
+Here is a codebook of the varaibles:
+
+| Variable     | Description                             |
+| ------------ | --------------------------------------- |
+| `foundjob`   | Indicator for finding a job             |
+| `treat`      | Treatment indicator                     |
+| `age`        | Age of worker                           |
+| `priorearn`  | Earnings prior to the program           |
+| `educ`       | Years of education                      |
+| `female`     | Indicator for being a female worker     |
+| `nonwhite`   | Indicator for being a non-White worker  |
+| `married`    | Indicator for being a married worker    |
+
+
+```{r}
+jpta <- read.csv("data/national_jtpa_study.csv")
+```
+
+1. First, let's see if we think randomization was done correctly. Assess whether `age`, `priorearn`, `educ`, `female`, and `nonwhite` are balanced between the treated and control groups. (Hint: use a regression estimator.) Discuss whether you think the treated and control groups "look the same."
+
+```{r}
+
+```
+
+*Answer:* 
+
+2. Calculate the difference-in-means estimator for the effect of JTPA training and services on the probability that a worker finds a job "by hand."
+
+```{r}
+
+```
+
+3. Calculate the difference-in-means estimator via regression and report robust (`HC1`) standard errors. Is the estimate statistically significant?
+
+```{r}
+
+```
+
+*Answer:* 
