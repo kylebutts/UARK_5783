@@ -1046,6 +1046,46 @@ For any individual, we can only observe \emph{one} of these potential outcomes, 
   This is often done with a \alert{balance table} that shows means of $X_i$ by treatment status
 \end{frame}
 
+\begin{frame}{`Balance Tables'}
+  Typically, regress pre-determined characteristics on the treatment dummy
+  \begin{itemize}
+    \item This allows us to ask if the average $X_i$ is the same for the treated and control groups
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Balance Table example (NSW Experiment)}
+  \begin{adjustbox}{max width = 0.8\textwidth, center}
+    \begin{tabular}{lccc}
+    \toprule
+    & Treated & Control & Difference \\
+    
+    \midrule
+    Age & 24.63 & 24.45 & 0.18 \\
+    % & (6.69) & (6.59) & (11.05) \\
+    Years of School & 10.38 & 10.19 & 0.19 \\
+    % & (1.82) & (1.62) & (2.87) \\
+    Proportion High School Dropouts & 0.73 & 0.81 & -0.08 \\
+    % & (0.44) & (0.39) & (0.46) \\
+    Proportion Married & 0.17 & 0.16 & 0.01 \\
+    % & (0.37) & (0.36) & (0.45) \\
+    Proportion Black & 0.80 & 0.80 & 0.00 \\
+    % & (0.40) & (0.40) & (0.26) \\
+    Proportion Hispanic & 0.09 & 0.11 & -0.02 \\
+    % & (0.29) & (0.32) & (0.26) \\
+    Real Earnings in 1975 (thousand) & 3.07 & 3.03 & 0.04 \\
+    % & (4.87) & (5.20) & (9.27) \\
+    Proportion Unemployed in 1975 & 0.37 & 0.42 & -0.05 \\
+    % & (0.48) & (0.49) & (0.31) \\
+    \midrule
+
+    \textbf{\#\ Observations} & \textbf{297} & \textbf{425} & \textbf{-128} \\
+    \bottomrule
+    \end{tabular}
+  \end{adjustbox}
+\end{frame}
+
+
 
 
 \begin{frame}{Quasi- and Natural Experiments}{Writing about Empirical Work}
@@ -1194,6 +1234,39 @@ For any individual, we can only observe \emph{one} of these potential outcomes, 
 
 	\pause \bigskip
 	The estimates from this regression using the nonexperimental sample yielded significantly different results with many estimates coming out as negative!
+\end{frame}
+
+\begin{frame}{LaLonde Example (Imbens and Xu)}
+  \begin{adjustbox}{max width = 0.8\textwidth, center}
+    \begin{tabular}{lccc}
+    \toprule
+    & \multicolumn{2}{c}{\textbf{Experimental}} & \textbf{LaLonde Comparison Group} \\
+    \cmidrule(lr){2-3} \cmidrule(lr){4-4}
+    & Treated & Control & CPS-SSA-1 \\
+    
+    \midrule
+    Age & 24.63 & 24.45 & 33.23 \\
+    % & (6.69) & (6.59) & (11.05) \\
+    Years of School & 10.38 & 10.19 & 12.03 \\
+    % & (1.82) & (1.62) & (2.87) \\
+    Proportion High School Dropouts & 0.73 & 0.81 & 0.30 \\
+    % & (0.44) & (0.39) & (0.46) \\
+    Proportion Married & 0.17 & 0.16 & 0.71 \\
+    % & (0.37) & (0.36) & (0.45) \\
+    Proportion Black & 0.80 & 0.80 & 0.07 \\
+    % & (0.40) & (0.40) & (0.26) \\
+    Proportion Hispanic & 0.09 & 0.11 & 0.07 \\
+    % & (0.29) & (0.32) & (0.26) \\
+    Real Earnings in 1975 (thousand) & 3.07 & 3.03 & 13.65 \\
+    % & (4.87) & (5.20) & (9.27) \\
+    Proportion Unemployed in 1975 & 0.37 & 0.42 & 0.11 \\
+    % & (0.48) & (0.49) & (0.31) \\
+    \midrule
+
+    \textbf{\#\ Observations} & \textbf{297} & \textbf{425} & \textbf{15,922} \\
+    \bottomrule
+    \end{tabular}
+  \end{adjustbox}
 \end{frame}
 
 \begin{frame}{LaLonde's test}
