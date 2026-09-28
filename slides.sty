@@ -5,7 +5,7 @@
 \usepackage{xparse}
 
 % Remove annoying over-full box warnings
-\vfuzz=16pt 
+\vfuzz=16pt
 \hfuzz=2pt
 
 % Define colors ----------------------------------------------------------------
@@ -34,7 +34,7 @@
 % \usepackage[sfdefault]{roboto}
 % Source Code Pro for monospace font
 % \usepackage[scale=0.95]{plex-mono}
-% 
+%
 
 % Small adjustments to text kerning
 \usepackage{microtype}
@@ -44,7 +44,7 @@
 \setbeamercolor{background canvas}{bg = white}
 
 % Change text margins
-\setbeamersize{text margin left = 2.5em, text margin right = 2.5em}  
+\setbeamersize{text margin left = 2.5em, text margin right = 2.5em}
 
 % \alert
 \setbeamercolor{alerted text}{fg = accent2}
@@ -54,25 +54,25 @@
 \setbeamercolor{frametitle}{fg=zinc900,bg=zinc50}
 \makeatletter
 \setbeamertemplate{frametitle}{
-    \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
-    \@tempdima=\textwidth%
-    \advance\@tempdima by\beamer@leftmargin%
-    \advance\@tempdima by\beamer@rightmargin%
+  \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+  \@tempdima=\textwidth%
+  \advance\@tempdima by\beamer@leftmargin%
+  \advance\@tempdima by\beamer@rightmargin%
 
-    \begin{beamercolorbox}[sep=0.3cm,center,wd=\the\@tempdima]{frametitle}
-        \usebeamerfont{frametitle}%
-        \vbox{}\vskip-1.75ex%
-        \if@tempswa\else\csname beamer@ftecenter\endcsname\fi%
-        \strut\insertframetitle\strut\par%
-        {%
-            \ifx\insertframesubtitle\@empty%
-            \else%
-            {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
-            \fi
-        }%
-        \vskip-0.5ex%
-        \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
-    \end{beamercolorbox}%
+  \begin{beamercolorbox}[sep=0.3cm,center,wd=\the\@tempdima]{frametitle}
+    \usebeamerfont{frametitle}%
+    \vbox{}\vskip-1.75ex%
+    \if@tempswa\else\csname beamer@ftecenter\endcsname\fi%
+    \strut\insertframetitle\strut\par%
+    {%
+      \ifx\insertframesubtitle\@empty%
+      \else%
+      {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
+      \fi
+    }%
+    \vskip-0.5ex%
+    \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+  \end{beamercolorbox}%
 }
 \makeatother
 
@@ -103,7 +103,7 @@
 \usepackage{appendixnumberbeamer}
 \renewcommand\appendixname{Appendix}
 
-% Button 
+% Button
 \setbeamercolor{button}{bg = white, fg = accent}
 \setbeamerfont{button}{family = \ttfamily, size = \footnotesize}
 % \setbeamercolor{button border}{fg = black}
@@ -142,8 +142,6 @@
 % Spacing between equations in \begin{align*} \\ \end{align*}
 \setlength{\jot}{0.5em}
 
-
-
 % Title page -------------------------------------------------------------------
 \setbeamercolor{title}{fg = zinc900}
 \setbeamercolor{subtitle}{fg = accent}
@@ -159,37 +157,100 @@
   {\Large \usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle}\\ \vskip0.25em%
   \ifx\insertsubtitle\@empty%
   \else%
-    {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
-  \fi% 
+  {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+  \fi%
   {\vspace{10mm}\insertauthor}\\
   {\color{zinc500}\small{\today}}\\
   %\end{centering}
 }
 
 % Table of Contents with Sections ----------------------------------------------
-\setbeamerfont{section in toc}{size = \large, series = \bfseries}
-\setbeamerfont{section in toc shaded}{size = \large}
-\setbeamercolor{section in toc}{fg = zinc800}
-\setbeamertemplate{section in toc shaded}[default][60] % opacity
-\setbeamercolor{subsection in toc}{fg = zinc800}
-\setbeamertemplate{subsection in toc shaded}[default][60] % opacity
+% A compact outline. Typography marks the active section while the remaining
+% sections recede without disappearing.
+\setbeamerfont{outline title}{size = \Large, series = \bfseries}
+\setbeamerfont{section in toc}{size = \small, series = \bfseries}
+\setbeamerfont{section in toc shaded}{size = \small, series = \mdseries}
+\setbeamercolor{section in toc}{fg = accent}
+\setbeamercolor{section in toc shaded}{fg = zinc400}
+
+% The subsection hierarchy currently in progress. Both are empty on
+% section-level outlines; the subsubsection is empty on subsection outlines.
+\newcommand{\outlinesubsection}{}
+\newcommand{\outlinesubsubsection}{}
+
+% `section in toc` is the current section; `section in toc shaded` is the rest.
+\defbeamertemplate{section in toc}{modern}{%
+  \leavevmode%
+  {\usebeamerfont{section in toc}\usebeamercolor[fg]{section in toc}%
+  \inserttocsection\par}%
+  \ifdefempty{\outlinesubsection}{}{%
+    \vspace{0.22em}
+    { \color{zinc700}\footnotesize\mdseries\itshape%
+      \outlinesubsection%
+      \ifdefempty{\outlinesubsubsection}{}{%
+        \enspace--\enspace\outlinesubsubsection%
+      }%
+    \par}%
+  }%
+}
+\defbeamertemplate{section in toc shaded}{modern}{%
+  \leavevmode%
+  {\usebeamerfont{section in toc shaded}\color{zinc500}%
+  \inserttocsection\par}%
+}
+\setbeamertemplate{section in toc}[modern]
+\setbeamertemplate{section in toc shaded}[modern]
+
+% Outline frame shown at the start of every section / subsection
+\newcommand{\outlineframe}{%
+  \begin{frame}[noframenumbering,plain]
+    \vspace*{0.2em}%
+    {\color{accent}\rule{1.15cm}{2.2pt}\par}%
+    {\usebeamerfont{outline title}\color{zinc900}Outline\par}%
+
+    \vspace{1.05em}%
+    \begin{minipage}{0.92\textwidth}
+      \setstretch{0.8}%
+      \tableofcontents[currentsection,hideallsubsections]
+    \end{minipage}%
+  \end{frame}
+}
+
+% Use \skipnextsectionoutline immediately before a section when its opening
+% subsection outline should be the only outline displayed.
+\newif\ifshowsectionoutline
+\showsectionoutlinetrue
+\newcommand{\skipnextsectionoutline}{\global\showsectionoutlinefalse}
 
 \AtBeginSection[]{
+  \ifshowsectionoutline
   {
     \hypersetup{hidelinks}
     \setbeamercolor{frametitle}{bg=white}
-    \begin{frame}[noframenumbering,plain,c]{}
-      \tableofcontents[currentsection,currentsubsection]
-    \end{frame}
+    \renewcommand{\outlinesubsection}{}
+    \renewcommand{\outlinesubsubsection}{}
+    \outlineframe
   }
+  \else
+  \global\showsectionoutlinetrue
+  \fi
 }
 \AtBeginSubsection[]{
   {
     \hypersetup{hidelinks}
     \setbeamercolor{frametitle}{bg=white}
-    \begin{frame}[noframenumbering,plain,c]{}
-      \tableofcontents[currentsection,currentsubsection]
-    \end{frame}
+    \renewcommand{\outlinesubsection}{\insertsubsection}
+    \renewcommand{\outlinesubsubsection}{}
+    \outlineframe
+  }
+}
+\AtBeginSubsubsection[]{
+  {
+    \hypersetup{hidelinks}
+    \setbeamercolor{frametitle}{bg=white}
+    \renewcommand{\outlinesubsection}{\insertsubsection}
+    \renewcommand{\outlinesubsubsection}{\insertsubsubsection}
+    \outlineframe
   }
 }
 
@@ -221,12 +282,11 @@
 \setbeamerfont{itemize subitem}{size = \small}
 \setbeamerfont{itemize subsubitem}{size = \small}
 
-
 % References -------------------------------------------------------------------
 
-% biblatex 
+% biblatex
 \usepackage[
-  natbib = true, 
+  natbib = true,
   backend = biber,
   citestyle= authoryear,
   style = ext-authoryear-ecomp,
@@ -241,8 +301,9 @@
 
 % Color citations for slides \citecolor{}
 \newcommand{\citecolor}[1]{%
-  {\footnotesize\begin{color}{zinc500}%
-    #1%
+  {\footnotesize
+    \begin{color}{zinc500}%
+      #1%
   \end{color}}%
 }
 
@@ -358,7 +419,6 @@
 % \newcommand\bgDaisy[1]{{\colorbox{daisy!80!white}{#1}}}
 % \newcommand\bgCoral[1]{{\colorbox{coral!80!white}{#1}}}
 
-
 % Math stuff -------------------------------------------------------------------
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -373,7 +433,7 @@
 \tcbuselibrary{breakable}
 \tcbset{
   highlight math/.style={
-    notitle, enhanced, 
+    notitle, enhanced,
     on line, boxsep=2pt, left=0pt, right=0pt, top=0pt, bottom=0pt,
     colback = bgRaspberry, colframe = white,
   }
@@ -383,35 +443,37 @@
 % TODO: Update default blocks
 \defbeamertemplate{block begin}{framed}[1][] {
   \begin{tcolorbox}[colback=zinc50, colframe=zinc200, arc=0mm]
-  {
-    \vskip\smallskipamount%
-    \ifthenelse{\equal{\insertblocktitle}{}}{}{%
-      \raggedright\usebeamerfont*{block title}\usebeamercolor[fg]{title}%
-      \textbf{\insertblocktitle}%
-      \vskip\medskipamount%
-    }
-  }%
-  \raggedright%
-  \usebeamerfont{block body}%
-}
-\defbeamertemplate{block end}{framed}[1][] {
-  \vskip\smallskipamount\end{tcolorbox}
+    {
+      \vskip\smallskipamount%
+      \ifthenelse{\equal{\insertblocktitle}{}}{}{%
+        \raggedright\usebeamerfont*{block title}\usebeamercolor[fg]{title}%
+        \textbf{\insertblocktitle}%
+        \vskip\medskipamount%
+      }
+    }%
+    \raggedright%
+    \usebeamerfont{block body}%
+  }
+  \defbeamertemplate{block end}{framed}[1][] {
+    \vskip\smallskipamount
+  \end{tcolorbox}
 }
 \setbeamertemplate{blocks}[framed]
 
 \newenvironment*{zincBlock}[1]{%
   \begin{tcolorbox}[colback=zinc50, colframe=zinc200, arc=0mm]{
-    \vskip\smallskipamount%
-    \ifthenelse{\equal{#1}{}}{}{%
-      \raggedright\usebeamerfont*{block title}\usebeamercolor[fg]{title}%
-      \textbf{#1}%
-      \vskip\medskipamount%
+      \vskip\smallskipamount%
+      \ifthenelse{\equal{#1}{}}{}{%
+        \raggedright\usebeamerfont*{block title}\usebeamercolor[fg]{title}%
+        \textbf{#1}%
+        \vskip\medskipamount%
+      }%
     }%
-  }%
-  \raggedright%
-  \usebeamerfont{block body}%
-}{%
-  \vskip\smallskipamount\end{tcolorbox}
+    \raggedright%
+    \usebeamerfont{block body}%
+  }{%
+    \vskip\smallskipamount
+  \end{tcolorbox}
 }
 
 % Colors from plugging base color into https://uicolors.app/create
@@ -420,17 +482,18 @@
 \definecolor{purple200}{HTML}{e6e2f2}
 \newenvironment*{purpleBlock}[1]{%
   \begin{tcolorbox}[colback=purple50, colframe=purple200, arc=0mm]{
-    \vskip\smallskipamount%
-    \ifthenelse{\equal{#1}{}}{}{%
-      \raggedright\usebeamerfont*{block title}\usebeamercolor[fg]{title}%
-      \textbf{#1}%
-      \vskip\medskipamount%
+      \vskip\smallskipamount%
+      \ifthenelse{\equal{#1}{}}{}{%
+        \raggedright\usebeamerfont*{block title}\usebeamercolor[fg]{title}%
+        \textbf{#1}%
+        \vskip\medskipamount%
+      }%
     }%
-  }%
-  \raggedright%
-  \usebeamerfont{block body}%
-}{%
-  \vskip\smallskipamount\end{tcolorbox}
+    \raggedright%
+    \usebeamerfont{block body}%
+  }{%
+    \vskip\smallskipamount
+  \end{tcolorbox}
 }
 
 \definecolor{cranberry50}{HTML}{fdf2f6}
@@ -438,17 +501,17 @@
 \definecolor{cranberry200}{HTML}{fad0e0}
 \newenvironment*{cranberryBlock}[1]{%
   \begin{tcolorbox}[colback=cranberry50, colframe=cranberry200, arc=0mm]{
-    \vskip\smallskipamount%
-    \raggedright\usebeamerfont*{block title}\usebeamercolor[fg]{title}%
-    \textbf{#1}%
-  }%
-  \vskip\medskipamount%
-  \raggedright%
-  \usebeamerfont{block body}%
-}{%
-  \vskip\smallskipamount\end{tcolorbox}
+      \vskip\smallskipamount%
+      \raggedright\usebeamerfont*{block title}\usebeamercolor[fg]{title}%
+      \textbf{#1}%
+    }%
+    \vskip\medskipamount%
+    \raggedright%
+    \usebeamerfont{block body}%
+  }{%
+    \vskip\smallskipamount
+  \end{tcolorbox}
 }
-
 
 % Code listings ----------------------------------------------------------------
 \usepackage{listings}
@@ -460,14 +523,14 @@
 \DeclareTCBListing{codeblock}{ !O{R} }{
   listing only,
   interior hidden,
-  top = -6pt, 
+  top = -6pt,
   bottom = -6pt,
-  left = 4pt, 
+  left = 4pt,
   right = 0pt,
-  boxrule = 0pt, 
-  frame hidden, 
-  sharp corners, 
-  borderline west = {2pt}{0pt}{zinc400}, 
+  boxrule = 0pt,
+  frame hidden,
+  sharp corners,
+  borderline west = {2pt}{0pt}{zinc400},
   enhanced,
   breakable,
   listing options={
@@ -477,7 +540,6 @@
     language = #1
   }
 }
-
 
 % \begin{columns} --------------------------------------------------------------
 \usepackage{multicol}
@@ -519,7 +581,7 @@
   \IfNoValueTF{#3}{%
     \footnotesize\vspace*{\medskipamount}%
     \noindent\emph{#1} #2
-  }{%  
+  }{%
     \parbox{#2}{\footnotesize\vspace*{\medskipamount}%
       \noindent\emph{#1} #3
     }%
@@ -551,14 +613,14 @@
 
 % To set the hypothesis highlighting boxes red.
 \newcommand\marktopleft[1]{%
-  \tikz[overlay,remember picture] 
-      \node (marker-#1-a) at (0,1.5ex) {};%
+  \tikz[overlay,remember picture]
+  \node (marker-#1-a) at (0,1.5ex) {};%
 }
 \newcommand\markbottomright[1]{%
-  \tikz[overlay,remember picture] 
-    \node (marker-#1-b) at (0,0) {};%
+  \tikz[overlay,remember picture]
+  \node (marker-#1-b) at (0,0) {};%
   \tikz[accent!80!zinc900, ultra thick, overlay, remember picture, inner sep=4pt]
-    \node[draw, rectangle, fit=(marker-#1-a.center) (marker-#1-b.center)] {};%
+  \node[draw, rectangle, fit=(marker-#1-a.center) (marker-#1-b.center)] {};%
 }
 
 % \cellcolor<#>{color}
@@ -571,67 +633,66 @@
 % Open `\noalign` and check for overlay specification:
 \def\rowcolor{\noalign{\ifnum0=`}\fi\bmr@rowcolor}
 \newcommand<>{\bmr@rowcolor}{%
-    \alt#1%
-        {\global\let\CT@do@color\CT@@do@color\@ifnextchar[\CT@rowa\CT@rowb}% Rest of original `\rowcolor`
-        {\ifnum0=`{\fi}\@gooble@rowcolor}% End `\noalign` and gobble all arguments of `\rowcolor`.
-}
-% Gobble all normal arguments of `\rowcolor`:
-\newcommand{\@gooble@rowcolor}[2][]{\@gooble@rowcolor@}
-\newcommand{\@gooble@rowcolor@}[1][]{\@gooble@rowcolor@@}
-\newcommand{\@gooble@rowcolor@@}[1][]{\ignorespaces}
-\makeatother
+  \alt#1%
+  {\global\let\CT@do@color\CT@@do@color\@ifnextchar[\CT@rowa\CT@rowb}% Rest of original `\rowcolor`
+    {\ifnum0=`{\fi}\@gooble@rowcolor}% End `\noalign` and gobble all arguments of `\rowcolor`.
+  }
+  % Gobble all normal arguments of `\rowcolor`:
+  \newcommand{\@gooble@rowcolor}[2][]{\@gooble@rowcolor@}
+  \newcommand{\@gooble@rowcolor@}[1][]{\@gooble@rowcolor@@}
+  \newcommand{\@gooble@rowcolor@@}[1][]{\ignorespaces}
+  \makeatother
 
-% Test
-\usepackage{dcolumn}
-\newcolumntype{d}[0]{D{.}{.}{-1}}
+  % Test
+  \usepackage{dcolumn}
+  \newcolumntype{d}[0]{D{.}{.}{-1}}
 
+  % Figures ----------------------------------------------------------------------
 
-% Figures ----------------------------------------------------------------------
-
-% \imageframe{img_name}
-% from https://github.com/mattzinc900well/cousteau
-\newcommand{\imageframe}[1]{%
+  % \imageframe{img_name}
+  % from https://github.com/mattzinc900well/cousteau
+  \newcommand{\imageframe}[1]{%
     \begin{frame}[plain]
-        \begin{tikzpicture}[remember picture, overlay]
-            \node[at = (current page.center), xshift = 0cm] (cover) {%
-                \includegraphics[keepaspectratio, width=\paperwidth, height=\paperheight]{#1}
-            };
-        \end{tikzpicture}
+      \begin{tikzpicture}[remember picture, overlay]
+        \node[at = (current page.center), xshift = 0cm] (cover) {%
+          \includegraphics[keepaspectratio, width=\paperwidth, height=\paperheight]{#1}
+        };
+      \end{tikzpicture}
     \end{frame}%
-}
+  }
 
-% subfigures
-\usepackage{subfigure}
+  % subfigures
+  \usepackage{subfigure}
 
-% Highlight slide --------------------------------------------------------------
-% \begin{transitionframe} Text \end{transitionframe}
-% from paulgp's beamer tips
-\newenvironment{transitionframe}{
+  % Highlight slide --------------------------------------------------------------
+  % \begin{transitionframe} Text \end{transitionframe}
+  % from paulgp's beamer tips
+  \newenvironment{transitionframe}{
     \setbeamercolor{background canvas}{bg=accent!60!black}
     \begin{frame}[noframenumbering,plain,c]\color{white}\LARGE\centering
-}{
+    }{
     \end{frame}
-}
+  }
 
-% Define custom slide coordinate system ----------------------------------------
-% https://tex.stackexchange.com/questions/89588/positioning-relative-to-page-in-tikz
-% Defining a new coordinate system for the page:
-%
-% ┌──────────────────────────────────────────────┐
-% │ (0, 0)                                (1, 0) │
-% │                                              │
-% │                                              │
-% │                                              │
-% │                                              │
-% │                                              │
-% │ (0, 1)                                (1, 1) │
-% └──────────────────────────────────────────────┘
-% 
-% source: https://tex.stackexchange.com/questions/89588/positioning-relative-to-page-in-tikz
-% 
-\makeatletter
-\def\parsecomma#1,#2\endparsecomma{\def\page@x{#1}\def\page@y{#2}}
-\tikzdeclarecoordinatesystem{page}{
+  % Define custom slide coordinate system ----------------------------------------
+  % https://tex.stackexchange.com/questions/89588/positioning-relative-to-page-in-tikz
+  % Defining a new coordinate system for the page:
+  %
+  % ┌──────────────────────────────────────────────┐
+  % │ (0, 0)                                (1, 0) │
+  % │                                              │
+  % │                                              │
+  % │                                              │
+  % │                                              │
+  % │                                              │
+  % │ (0, 1)                                (1, 1) │
+  % └──────────────────────────────────────────────┘
+  %
+  % source: https://tex.stackexchange.com/questions/89588/positioning-relative-to-page-in-tikz
+  %
+  \makeatletter
+  \def\parsecomma#1,#2\endparsecomma{\def\page@x{#1}\def\page@y{#2}}
+  \tikzdeclarecoordinatesystem{page}{
     \parsecomma#1\endparsecomma
     \pgfpointanchor{current page}{north west}
     % Save the upper left corner
@@ -646,45 +707,42 @@
     \expandafter\pgf@x\expandafter=\pgfmathresult pt
     \pgfmathparse{(\pgf@yb-\pgf@ya)*\page@y+\pgf@ya}
     \expandafter\pgf@y\expandafter=\pgfmathresult pt
-}
-\makeatother
+  }
+  \makeatother
 
-% To overlay on beamer slides, use the following:
-% 
-% \begin{tikzpicture}[remember picture, overlay]
-%   \node[anchor = north west] (anchor_name) at (page cs:0.0, 0.0) {   
-%     CONTENT HERE  
-%   };
-% \end{tikzpicture}
-% 
-% Note page cs is the coordinate system from above
+  % To overlay on beamer slides, use the following:
+  %
+  % \begin{tikzpicture}[remember picture, overlay]
+  %   \node[anchor = north west] (anchor_name) at (page cs:0.0, 0.0) {
+  %     CONTENT HERE
+  %   };
+  % \end{tikzpicture}
+  %
+  % Note page cs is the coordinate system from above
 
-% To help with placement, I will use `\devgrid` on a slide to figure out the coordinates of `page cs` to the 0.1
-\newcommand{\devgrid}{
-  \begin{tikzpicture}[remember picture, overlay]
-    % vertical lines
-    \draw (page cs: 0.1, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.1, 1.0);
-    \draw (page cs: 0.2, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.2, 1.0);
-    \draw (page cs: 0.3, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.3, 1.0);
-    \draw (page cs: 0.4, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.4, 1.0);
-    \draw (page cs: 0.5, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.5, 1.0);
-    \draw (page cs: 0.6, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.6, 1.0);
-    \draw (page cs: 0.7, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.7, 1.0);
-    \draw (page cs: 0.8, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.8, 1.0);
-    \draw (page cs: 0.9, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.9, 1.0);
+  % To help with placement, I will use `\devgrid` on a slide to figure out the coordinates of `page cs` to the 0.1
+  \newcommand{\devgrid}{
+    \begin{tikzpicture}[remember picture, overlay]
+      % vertical lines
+      \draw (page cs: 0.1, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.1, 1.0);
+      \draw (page cs: 0.2, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.2, 1.0);
+      \draw (page cs: 0.3, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.3, 1.0);
+      \draw (page cs: 0.4, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.4, 1.0);
+      \draw (page cs: 0.5, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.5, 1.0);
+      \draw (page cs: 0.6, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.6, 1.0);
+      \draw (page cs: 0.7, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.7, 1.0);
+      \draw (page cs: 0.8, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.8, 1.0);
+      \draw (page cs: 0.9, 0.0) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 0.9, 1.0);
 
-    % horizontal lines
-    \draw (page cs: 0.0, 0.1) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.1);
-    \draw (page cs: 0.0, 0.2) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.2);
-    \draw (page cs: 0.0, 0.3) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.3);
-    \draw (page cs: 0.0, 0.4) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.4);
-    \draw (page cs: 0.0, 0.5) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.5);
-    \draw (page cs: 0.0, 0.6) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.6);
-    \draw (page cs: 0.0, 0.7) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.7);
-    \draw (page cs: 0.0, 0.8) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.8);
-    \draw (page cs: 0.0, 0.9) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.9);
-  \end{tikzpicture}  
-}
-
-
-
+      % horizontal lines
+      \draw (page cs: 0.0, 0.1) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.1);
+      \draw (page cs: 0.0, 0.2) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.2);
+      \draw (page cs: 0.0, 0.3) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.3);
+      \draw (page cs: 0.0, 0.4) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.4);
+      \draw (page cs: 0.0, 0.5) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.5);
+      \draw (page cs: 0.0, 0.6) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.6);
+      \draw (page cs: 0.0, 0.7) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.7);
+      \draw (page cs: 0.0, 0.8) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.8);
+      \draw (page cs: 0.0, 0.9) edge[black!20!white, line width = 0.3mm, dotted] (page cs: 1.0, 0.9);
+    \end{tikzpicture}
+  }

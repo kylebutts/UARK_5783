@@ -33,6 +33,132 @@
   \end{itemize}
 \end{frame}
 
+\section{Selecting Controls}
+
+\begin{frame}{Confounders and Lurking Variables}
+  The biggest thing to consider when picking controls is identifying \alert{confounders}, or \alert{lurking variables}.
+
+  \bigskip
+  Omitted-variable bias requires the confounder to be related to treatment and to affect the outcome.
+
+  \bigskip
+  \begin{center}
+    \begin{tikzpicture}[>=stealth]
+      \node (D) at (0,0) {$D$};
+      \node (U) at (2,1) {$U$};
+      \node (Y) at (4,0) {$Y$};
+      \draw[->, thick] (U) -- (D);
+      \draw[->, thick] (U) -- (Y);
+      \draw[->, thick] (D) to (Y);
+      \draw[purple, ultra thick] (U) circle (0.35);
+    \end{tikzpicture}
+
+    \tcbhighmath[colback = bgPurple]{\text{Control for lurking variables to remove selection bias}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Controls to Improve Precision}
+  We might want to control for variables that affect $Y$ even if they are not related to treatment.
+  \begin{itemize}
+    \item These variables remove residual variation and can decrease our standard errors.
+    \item Unlike confounders, we do not have to control for them to identify the effect.
+  \end{itemize}
+
+  \bigskip
+  \begin{center}
+    \begin{tikzpicture}[>=stealth]
+      \node (D) at (0,0) {$D$};
+      \node (V) at (2,1) {$V$};
+      \node (Y) at (4,0) {$Y$};
+      \draw[->, thick] (V) -- (Y);
+      \draw[->, thick] (D) -- (Y);
+      \draw[purple, ultra thick] (V) circle (0.35);
+    \end{tikzpicture}
+
+    \tcbhighmath[colback = bgPurple]{\text{Extra controls can increase our estimate's precision}}
+  \end{center}
+\end{frame}
+
+\subsection{What Not to Control For}
+
+\begin{frame}{Mediators}{Job training and earnings}
+  Suppose $D$ is assignment to job training and $Y$ is later earnings.
+
+  \bigskip
+  \begin{center}
+    \begin{tikzpicture}[>=stealth]
+      \node (D) at (0,0) {Job training};
+      \node (M) at (3.6,0) {Employment};
+      \node (Y) at (7.2,0) {Earnings};
+      \draw[->, thick] (D) -- (M);
+      \draw[->, thick] (M) -- (Y);
+      \draw[->, thick, bend left=30] (D) to (Y);
+    \end{tikzpicture}
+  \end{center}
+
+  \pause
+  \bigskip
+  Employment measured after training is part of the mechanism.
+  \begin{itemize}
+    \item Controlling for employment removes any earnings gain that occurs because training helps people find work.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Collider Bias}{GPA, the SAT, and college admission}
+  Admission to a selective college depends on both high-school GPA and SAT score.
+  \begin{itemize}
+    \item Admission is a collider because both variables cause admission.
+  \end{itemize}
+
+  \pause
+  \bigskip
+  Among admitted students, GPA and SAT are \alert{negatively} correlated: a lower GPA must be offset by a higher SAT score, and vice versa.
+
+  \pause
+  \bigskip
+  In the full applicant population, the variables are likely positively correlated. The negative relationship is an artifact of conditioning on admission.
+\end{frame}
+
+\begin{frame}{Indicators Are Common Colliders}
+  In practice, a collider is often an indicator variable, such as being employed, admitted, surviving, or included in the sample.
+
+  \pause
+  \bigskip
+  When $U$ is an indicator, \alert{analyzing only units with $U = 1$} is a form of controlling for $U$.
+
+  \pause
+  \bigskip
+  \begin{center}
+    \emph{Restricting the sample is a way of controlling for a variable.}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Subgroup Data Implicitly Conditions on Selection}
+  A dataset on a subgroup of the population is already conditioned on subgroup membership.
+  \begin{itemize}
+    \item Examples include analyses of employed workers, admitted students, surviving firms, or emergency-room patients.
+    \item Analyzing that dataset is an analysis among units with subgroup membership $U=1$.
+  \end{itemize}
+
+  \pause
+  \bigskip
+  If $D$ and $Y$ both determine who enters the subgroup, the subgroup estimate is \alert{not} the causal effect for that subgroup.
+\end{frame}
+
+\begin{frame}{Choosing Controls}
+  Before controlling for a variable, ask which type it is:
+  \begin{itemize}
+    \item \textbf{Confounder:} causes both $D$ and $Y$ $\implies$ \alert{control for it}
+    \item \textbf{Precision variable:} causes only $Y$ $\implies$ \alert{control to improve precision}
+    \item \textbf{Mediator:} is caused by $D$ and lies on the path to $Y$ $\implies$ \alert{do not control for it}
+    \item \textbf{Collider:} is caused by both $D$ and $Y$ $\implies$ \alert{do not control for it}
+  \end{itemize}
+
+  \bigskip
+  Subsetting on a variable also counts as conditioning on it.
+\end{frame}
+
+
 \section{Conditional Independence Assumption}
 
 \begin{frame}{Selection into Treatment}
@@ -97,7 +223,7 @@
 \end{frame}
 
 \begin{frame}{Conditional Independence Assumption}
-  The \alert{Conditional Independence Assumption} is given by
+  The \alert{Conditional Independence Assumption}, also called the \alert{Selection on Observables Assumption}, is given by
   $$
     (Y_{i}(0), Y_{i}(1)) \Perp D_i \ \vert \ \bm{X}_i = \bm{x}
   $$
@@ -110,7 +236,7 @@
   This is like a randomized control trial except you can only compare treated and control units with the same $\bm{X}_i$
 \end{frame}
 
-\begin{frame}{Example 1}{Effect of attending a prestiguous school}
+\begin{frame}{Example 1}{Effect of attending a prestigious school}
   Dale and Krueger (2002, QJE) estimate the effect of attending a more selective college on future earnings
   \begin{itemize}
     \item Whether or not you get accepted into a more selective college is not randomly assigned
@@ -124,7 +250,7 @@
 \begin{frame}{Example 2}{Winning the Lottery}
   Imbens, Rubin, and Sacerdote (2001, AER) estimate the impact of unearned income on labor supply using the lottery
   \begin{itemize}
-    \item Playing the lottery is not randomly assigned. Even among players, some play more frequently (and have a higher probabilty of winning)
+    \item Playing the lottery is not randomly assigned. Even among players, some play more frequently (and have a higher probability of winning)
     
     \item Comparing lottery winners labor supply to the population would be biased since lottery \emph{players look different}
   \end{itemize}
@@ -164,7 +290,7 @@
 \end{frame}
 
 \begin{frame}{Example 5}{Macroeconomic Policy Shocks}
-  Angrist, Jordà, and Kuersteiner (2016, JASA) estimate the impact of unexpected changes to intereste rates on the economy
+  Angrist, Jordà, and Kuersteiner (2016, JASA) estimate the impact of unexpected changes to interest rates on the economy
 
   \begin{itemize}
     \item The Fed makes decisions on interest rates based on economic conditions (reverse causality)
@@ -172,7 +298,7 @@
 
   \pause
   \bigskip
-  The prices of conracts in the futures markets reflect the \emph{expected} change in interest rates, so they compare interest rate changes with the same expected change but different unexpected changes
+  The prices of contracts in the futures markets reflect the \emph{expected} change in interest rates, so they compare interest rate changes with the same expected change but different unexpected changes
 \end{frame}
 
 
@@ -377,6 +503,17 @@
 
 \section{Matching estimators}
 
+\begin{frame}{Estimating the Missing Counterfactual}
+  For each treated unit, $Y_i(0)$ is missing. Under conditional independence, comparable untreated outcomes can fill that gap.
+
+  \bigskip
+  \begin{itemize}
+    \item \alert{Matching:} borrow outcomes from comparable control units
+    \item \alert{Regression adjustment:} predict missing outcomes from covariates
+    \item \alert{Weighting:} create a comparable control population
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Curse of dimensionality strikes again!}
   Given the conditional independence assumption (CIA), 
   $$
@@ -413,9 +550,9 @@
   \bigskip 
   Our treatment effect estimator is given by:
   $$
-    \hat{\tau}_{\text{Matching}}
+    \hat{\tau}_{\text{Matching}, ATT} =
     \underbrace{\frac{1}{N_1} \sum_{i = 1}^N D_i Y_i}_{\text{Treated group average}} -
-    \underbrace{\frac{1}{N_1} \sum_{i = 1}^N D_i Y_{j(i)}}_{\text{Matched control group average}}
+    \underbrace{\frac{1}{N_1} \sum_{i = 1}^N D_i Y_{j(i)}}_{\text{Imputed untreated outcome for treated units}}
   $$
 \end{frame}
 
@@ -428,7 +565,7 @@
   Each control unit has (approximately) the same $\bm{X}$ as it's respective treated unit, so under conditional independence, their $Y(0)$ is a good estimate (on average) for the treated unit's $Y(0)$.
 \end{frame}
     
-\begin{frame}{The `matched' control gropu}
+\begin{frame}{The `matched' control group}
   We selected the matched control units $\{ j(i): D_i = 1 \}$ so that they have the same distribution of $\bm{X}$ as the treated units
   
   \bigskip
@@ -589,7 +726,7 @@
   \bigskip
   The standard errors on the regression estimate ignore the noise generated in step 1
   \begin{itemize}
-    \item Incoporating uncertainty from step 1 is a very difficult problem (see Imbens and Abadie, Econometrica 2006)
+    \item Incorporating uncertainty from step 1 is a very difficult problem (see Imbens and Abadie, Econometrica 2006)
   \end{itemize}
 \end{frame}
 
@@ -598,6 +735,19 @@
 
   \bigskip
   In \texttt{Stata}, use the \texttt{teffects nnmatch} command 
+\end{frame}
+
+\begin{frame}{Matching Considerations}
+  Matching is full of choices
+  \begin{itemize}
+    \item \textbf{Replacement:} Reusing controls can improve match quality, but a few controls may receive substantial weight.
+    \item \textbf{Ties:} Keep all equally good matches or use a reproducible tie-breaking rule.
+    \item \textbf{Multiple matches:} More controls per treated unit can reduce variance, but later matches are often less similar.
+    \item \textbf{Exact matching:} Require exact agreement on especially important discrete covariates when feasible.
+  \end{itemize}
+
+  \bigskip
+  Always check covariate balance and common support after matching.
 \end{frame}
 
 
@@ -893,6 +1043,23 @@
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Matching as a Weighting Estimator}
+  Let $K_j$ be the number of treated units for which control unit $j$ is selected as the match:
+  $$
+    K_j = \sum_{i=1}^N D_i\,\mathbf{1}\{j(i) = j\}.
+  $$
+
+  \bigskip
+  With one match per treated unit, the matching estimator is
+  $$
+    \hat{\tau}_{\texttt{Matching}}
+    =
+    \underbrace{\sum_{i=1}^N \tcbhighmath[colback = bgPurple]{ \frac{D_i}{N_1} } Y_i}_{\text{Treated mean}}
+    -
+    \underbrace{\sum_{i=1}^N \tcbhighmath[colback = bgPurple]{\frac{(1 - D_i) K_i}{N_1}} Y_i}_{\text{Weighted matched-control mean}}.
+  $$
+\end{frame}
+
 \begin{frame}{Inverse Probability of Treatment}
   Instead, consider weighing by the inverse probability of treatment:
   \begin{align*}
@@ -1047,7 +1214,7 @@
   $$
   \pause
   \begin{itemize}
-    \item Homogeneous effects are unlikely to hold in many settings where the effects of treatment may vary based on charactersitics of the individual $\bm{X}_i$  
+    \item Homogeneous effects are unlikely to hold in many settings where the effects of treatment may vary based on characteristics of the individual $\bm{X}_i$  
   \end{itemize}
 \end{frame}
 
@@ -1136,7 +1303,7 @@
 \begin{frame}{Doubly-robust treatment effect estimator}
   The augmented IPW (AIPW) estimator of Robins, Rotnitzky, and Zhao (1994):
   \begin{align*}
-    \hat{\tau}_{\texttt{DR}} &= \frac{1}{n} \sum_{i=1}^N \left( \hat{\mu}_{1}(\bm{X}_i) - \hat{\mu}_{1}(\bm{X}_i) \right) \\
+    \hat{\tau}_{\texttt{DR}} &= \frac{1}{n} \sum_{i=1}^N \left( \hat{\mu}_{1}(\bm{X}_i) - \hat{\mu}_{0}(\bm{X}_i) \right) \\
     &\quad+ \frac{1}{n} \sum_{i=1}^N \left( 
        \frac{D_i}{\hat{\pi}(\bm{X}_i)} (Y_i - \hat{\mu}_{1}(\bm{X}_i)) -
        \frac{(1 - D_i)}{1 - \hat{\pi}(\bm{X}_i)} (Y_i - \hat{\mu}_{0}(\bm{X}_i)) 
@@ -1179,6 +1346,25 @@
   \begin{itemize}
     \item In smaller finite samples, these estimators can be noisy
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Three Approaches to Selection on Observables}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.35}
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{3.55cm}@{}}
+    \toprule
+    \textbf{Method} & \textbf{How the counterfactual is estimated} & \textbf{Main diagnostic} & \textbf{Main vulnerability} \\
+    \midrule
+    Matching & Outcomes from comparable observations & Covariate balance and overlap & Poor matches \\
+    Regression adjustment & Predicted outcomes & Outcome-model diagnostics & Sensitive to outcome modelling \\
+    IPW & Reweighted treated and control groups & Overlap and weight distribution & Sensitive to propensity-score modelling and extreme weights \\
+    \bottomrule
+  \end{tabularx}
+
+  \bigskip
+  \begin{center}
+    All three approaches rely on conditional independence and adequate overlap.
+  \end{center}
 \end{frame}
 
 \end{document}
