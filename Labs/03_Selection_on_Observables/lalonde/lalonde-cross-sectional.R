@@ -6,8 +6,6 @@ library(haven)
 library(MatchIt)
 library(WeightIt)
 library(cobalt)
-library(teffects2) # remotes::install_github("deryauysal/teffects2", subdir = "R")
-library(teffects) # remotes::install_github("kylebutts/teffects-r")
 library(DoubleML)
 library(mlr3)
 library(mlr3learners)
@@ -28,13 +26,12 @@ df_exp <- read_csv(
     D = as.numeric(treat)
   )
 
-
 ### Balance Table --------------------------------------------------------------
 # fmt: skip
-(balance_exp <- df_exp |>
+(balance_exp <-
   cobalt::bal.tab(
-    treat ~ age + education + nodegree + married + black + hispanic + income_75 + unemployed_75,
-    data = _,
+    D ~ age + education + nodegree + married + black + hispanic + income_75 + unemployed_75,
+    data = df_exp,
     disp = "means",
     stats = "mean.diffs",
     var.names = c(
@@ -80,7 +77,6 @@ df_nonexp <- bind_rows(df_exp |> filter(D == 1), cps)
 
 
 ### Difference in means --------------------------------------------------------
-
 ## By hand
 (with(df_nonexp, mean(Y[D == 1]) - mean(Y[D == 0])))
 
@@ -96,6 +92,8 @@ feols(
 fixest::setFixest_fml(
   ..x = ~ age + education + i(married) + i(nodegree) + i(black) + i(hispanic) + income_75 +  i(unemployed_75)
 )
+
+## Bad OLS estimator
 feols(
   Y ~ i(D) + ..x,
   data = df_nonexp,
@@ -109,13 +107,13 @@ feols(
 
 # fmt: skip
 match_covariates <- matchit(
-  treat ~ age + education + nodegree + married + black + hispanic + income_75 + unemployed_75,
+  xpd(D ~ ..x),
   data = df_nonexp,
   method = "nearest",
   distance = "mahalanobis",
   estimand = "ATT",
   exact = ~ nodegree + married,
-  ratio = 4,
+  ratio = 1,
   replace = FALSE
 )
 
@@ -130,6 +128,8 @@ feols(
 # Inspect balance before interpreting the estimate.
 balance_covariates <- summary(match_covariates, standardize = TRUE)
 print(balance_covariates)
+
+bal.tab(match_covariates, disp = "means", stats = "mean.diffs")
 love.plot(match_covariates)
 
 
@@ -137,6 +137,10 @@ love.plot(match_covariates)
 # Fit separate outcome models for treated and control units.
 outcome_0 <- feols(Y ~ ..x, data = df_nonexp |> filter(D == 0))
 df_nonexp$Y0_hat <- predict(outcome_0, newdata = df_nonexp)
+
+# Estimated unit-level treatment effects for the treated units
+# Very noisy, don't interprate literally!!!
+df_nonexp$te_hat <- df_nonexp$Y - df_nonexp$Y0_hat
 
 ## With regression
 feols(
@@ -155,16 +159,13 @@ ra_att <- teffects2::teffect(
 )
 print(ra_att)
 
+## Kyle's package
+teffects::ra(xpd(Y ~ treat(D) + ..x), data = df_nonexp, stat = "att")
+
 ### Propensity-score matching --------------------------------------------------
+# fmt: skip
 match_propensity <- matchit(
-  D ~ age +
-    education +
-    nodegree +
-    married +
-    black +
-    hispanic +
-    income_75 +
-    unemployed_75,
+  xpd(D ~ ..x),
   data = df_nonexp,
   method = "nearest",
   distance = "glm",
@@ -179,18 +180,6 @@ feols(
   data = df_ps_matched,
   weights = ~weights,
   vcov = "HC1"
-)
-
-## With teffects2. This targets the same one-to-one ATT, but teffects2 uses
-## Matching::Match, so its tie handling can select a different matched sample.
-teffects2::teffect(
-  exposure.formula = xpd(D ~ ..x),
-  outcome.formula = Y ~ 1,
-  treatment.effect = "ATT",
-  data = df_nonexp,
-  method = "PSMatch",
-  M = 1,
-  replace = TRUE
 )
 
 ### Propensity score and inverse-probability weighting -------------------------
@@ -211,8 +200,9 @@ ipw_att <- weighted.mean(df_nonexp$Y, w1_att) -
   weighted.mean(df_nonexp$Y, w0_att)
 print(ipw_att)
 
-## teffects2::teffect(method = "IPW") only implements the ATE, so it cannot
-## reproduce this ATT specification.
+teffects::ipw(xpd(Y ~ treat(D) + ..x), df_nonexp, stat = "att")
+
+teffects::aipw(xpd(Y ~ treat(D) + ..x), df_nonexp, stat = "att")
 
 ### Double ML ------------------------------------------------------------------
 dml_x_cols <- c(

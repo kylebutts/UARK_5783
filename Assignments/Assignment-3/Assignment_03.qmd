@@ -1,0 +1,134 @@
+---
+title: "Assignment #3"
+author: "YOUR NAME"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+format: pdf
+---
+
+These assignments should be completed in groups of 1 or 2 but submitted individually. My preference is for you to use Quarto files so that your code, results, and answers are intermixed. Since coding in R is not required for these assignments, you may alternatively use LaTeX or Microsoft Word for written answers; in that case, upload your code separately.
+
+# Theoretical Questions
+
+1. Suppose that, conditional on age, treatment is randomly assigned:
+
+   $$ (Y_i(1),Y_i(0)) \perp D_i \mid \text{Age}_i $$
+
+   a. How would you estimate the conditional average treatment effect for 30-year-olds?
+
+   b. Suppose you repeat this for every age in your sample (say, ages 25–55). How would you aggregate these estimates to obtain the overall average treatment effect?
+
+2. For each example below, state whether you believe the conditional independence assumption. If not, tell a story about selection bias by giving an example of an unobservable confounder.
+
+   a. A researcher estimates the returns to taking an online coding class and conditions on having a college degree as a proxy for motivation.
+
+   b. A researcher estimates the effect of new apartment construction on home prices and assumes that, conditional on neighborhood average income, apartment construction is randomly assigned.
+
+   c. A researcher estimates the impact of smoking on later-life health outcomes and matches individuals on their average weekly alcohol consumption because smoking is correlated with other risky behavior.
+
+
+
+# Coding Exercise
+
+We will use the Almond, Chay, and Lee (2005, QJE) dataset to study the effect of maternal smoking on child birthweight. 
+See the class coding lab example for help if needed.
+
+First, load `data/almond_chay_lee.dta` with `haven::read_dta()`. 
+The outcome is `bweight` and treatment is `mbsmoke`.
+Here is a complete codebook:
+
+| Variable | Description |
+| --- | --- |
+| `bweight` | Infant birthweight (grams) |
+| `mmarried` | 1 if mother married |
+| `mhisp` | 1 if mother Hispanic |
+| `fhisp` | 1 if father Hispanic |
+| `foreign` | 1 if mother born abroad |
+| `alcohol` | 1 if alcohol consumed during pregnancy |
+| `deadkids` | Previous births where newborn died |
+| `mage` | Mother's age |
+| `medu` | Mother's education attainment |
+| `fage` | Father's age |
+| `fedu` | Father's education attainment |
+| `nprenatal` | Number of prenatal care visits |
+| `monthslb` | Months since last birth |
+| `order` | Order of birth of the infant |
+| `msmoke` | Cigarettes smoked during pregnancy |
+| `mbsmoke` | 1 if mother smoked |
+| `mrace` | 1 if mother is White |
+| `frace` | 1 if father is White |
+| `prenatal` | Trimester of first prenatal care visit |
+| `birthmonth` | Month of birth |
+| `lbweight` | 1 if low birthweight baby |
+| `fbaby` | 1 if first baby |
+| `prenatal1` | 1 if first prenatal visit in first trimester |
+
+
+```{r}
+library(haven)
+library(fixest)
+library(cobalt)
+library(MatchIt)
+library(devtools)
+library(teffects) # devtools::install_github("kylebutts/teffects-r")
+
+acl <- read_dta("data/almond_chay_lee.dta")
+```
+
+## 1. Initial imbalance
+
+Make an argument that the unconditional independence assumption is not valid. 
+Use the `cobalt` package and `bal.tab` function to conduct a balance check using several important covariates. 
+Report your findings.
+
+```{r}
+
+```
+
+## 2. Matching estimator
+
+Use `MatchIt::matchit()` to perform nearest-neighbor matching. 
+Match exactly on `mmaried`, `mhisp`, and `alcohol`, and nearest-neighbor match on `mage` and `medu` using the mahalanobis distance. 
+
+### Assessing balance after matching 
+
+Pass the result of the `matchit` call to `bal.tab`.
+Comment on the quality of your matches in terms of imbalance. 
+
+```{r}
+
+```
+
+**REPLACE THIS WITH YOUR ANSWER**
+
+
+
+### Estimate effects using matched control group
+
+Use `match.data()` to obtain the matched dataset, then estimate the difference-in-means effect using `feols`. 
+Interpret your estimate in words.
+
+```{r}
+
+```
+
+## 3. Regression adjustment
+
+Estimate a regression-adjustment estimator by hand using `mmaried`, `mhisp`, `alcohol`, `mage`, and `medu`.
+
+```{r}
+
+```
+
+Now use `teffects::ra` to estimate this with correct standard errors. 
+Target the ATT parameter.
+
+## 4. IPTW estimator
+
+Use `teffects::ipw` to estiamte the inverse-probability of treatment weighting estimator. 
+Target the ATT parameter.
+
+```{r}
+
+```
+
+
