@@ -1,17 +1,16 @@
-% Page setup -------------------------------------------------------------------
-\usepackage[
-  left = 0.6in, right = 0.6in,
-  top = 1in, bottom = 1in
-]{geometry}
-\usepackage{setspace}
-\renewcommand{\baselinestretch}{1.15} % Slightly tighter spacing for academic look
+% Package options --------------------------------------------------------------
+% Use \usepackage[hide-page-numbers]{lecture_notes} to suppress page numbers.
+\newif\iflecturehidepagenumbers
+\DeclareOption{hide-page-numbers}{\lecturehidepagenumberstrue}
+\ProcessOptions\relax
 
-% \begin{multicols}{2} \end{multicols}
-\usepackage{multicol} 
-\setlength{\columnsep}{2em}
+% Page setup -------------------------------------------------------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\renewcommand{\baselinestretch}{1.5}
 
 % Remove annoying over-full box warnings
-\vfuzz=2pt 
+\vfuzz=2pt
 \hfuzz=2pt
 
 % Latex Programming tools ------------------------------------------------------
@@ -33,7 +32,7 @@
 % \usepackage[default]{lato}
 % % Source Code Pro for monospace font
 % \usepackage[scale=0.95]{plex-mono}
-%  
+%
 
 % Small adjustments to text kerning
 \usepackage{microtype}
@@ -43,7 +42,7 @@
 \usepackage{bm}
 
 % Define Theorems --------------------------------------------------------------
-% Put proper spacing after Theorem #. 
+% Put proper spacing after Theorem #.
 \newtheoremstyle{spacing}
 {}%           Space above, empty = `usual value'
 {}%           Space below
@@ -55,61 +54,39 @@
 {}%           Thm head spec
 
 % Create different theorem environments and setup \autoref for them
-% \label{X:label_name} should match \Xautorefname 
+% \label{X:label_name} should match \Xautorefname
 \theoremstyle{spacing}
-\newtheorem{theorem}{Theorem}
+\newtheorem{theorem}{Theorem}[section]
 \newcommand{\theoremautorefname}{Theorem}
-\newtheorem{proposition}{Proposition}
+\newtheorem{proposition}{Proposition}[section]
 \newcommand{\propositionautorefname}{Proposition}
-\newtheorem{assumption}{Assumption}
+\newtheorem{assumption}{Assumption}[section]
 \newcommand{\assumptionautorefname}{Assumption}
-\newtheorem{example}{Example}
+\newtheorem{example}{Example}[section]
 \newcommand{\exampleautorefname}{Example}
-\newtheorem{lemma}{Lemma}
+\newtheorem{lemma}{Lemma}[section]
 \newcommand{\lemmaautorefname}{Lemma}
-\newtheorem{corollary}{Corollary}
+\newtheorem{corollary}{Corollary}[section]
 \newcommand{\corollaryautorefname}{Corollary}
-\newtheorem{definition}{Definition}
+\newtheorem{definition}{Definition}[section]
 \newcommand{\definitionautorefname}{Definition}
-\newtheorem{remark}{Remark}
+\newtheorem{remark}{Remark}[section]
 \newcommand{\remarkautorefname}{Remark}
 
-% Appendix ---------------------------------------------------------------------
-\apptocmd{\appendix}{
-  % Section numbering (A.1)
-  \renewcommand{\thesection}{\Alph{section}}
-  \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
-  
-  % Figures and tables
-  \numberwithin{figure}{section}
-  \numberwithin{table}{section}
-  \setcounter{table}{0}
-  \setcounter{figure}{0}
-  \renewcommand{\thetable}{\thesection\arabic{table}}
-  \renewcommand{\thefigure}{\thesection\arabic{figure}}
-  
-  % Equations
-  \numberwithin{equation}{section}
-  \setcounter{equation}{0}
+% Theorems
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\renewcommand{\thetheorem}{\thesection.\arabic{theorem}}
+\renewcommand{\theproposition}{\thesection.\arabic{proposition}}
+\renewcommand{\thelemma}{\thesection.\arabic{lemma}}
+\renewcommand{\thecorollary}{\thesection.\arabic{corollary}}
+\renewcommand{\thedefinition}{\thesection.\arabic{definition}}
+\renewcommand{\theassumption}{\thesection.\arabic{assumption}}
+\renewcommand{\theremark}{\thesection.\arabic{remark}}
 
-  % Theorems
-  \setcounter{theorem}{0}
-  \setcounter{proposition}{0} 
-  \setcounter{lemma}{0}
-  \setcounter{corollary}{0}
-  \setcounter{definition}{0}
-  \setcounter{assumption}{0}
-  \setcounter{remark}{0}
-  \renewcommand{\theequation}{\thesection.\arabic{equation}}
-  \renewcommand{\thetheorem}{\thesection.\arabic{theorem}}
-  \renewcommand{\theproposition}{\thesection.\arabic{proposition}}
-  \renewcommand{\thelemma}{\thesection.\arabic{lemma}}
-  \renewcommand{\thecorollary}{\thesection.\arabic{corollary}}
-  \renewcommand{\thedefinition}{\thesection.\arabic{definition}}
-  \renewcommand{\theassumption}{\thesection.\arabic{assumption}}
-  \renewcommand{\theremark}{\thesection.\arabic{remark}}
-}{}{}
+% TODO:
+% Example left-border box
 
+\renewcommand{\qedsymbol}{$\blacksquare$}
 
 % Colors -----------------------------------------------------------------------
 
@@ -170,25 +147,17 @@
 % Section and Subsection Styling -----------------------------------------------
 \usepackage[explicit]{titlesec}
 
-% More academic section styling (similar to the PDF)
 \titleformat{\section}
-  {\normalfont\large\bfseries\color{zinc700}}
-  {\thesection.}
-  {0.5em}
-  {#1}
-  
-\titleformat{\subsection}
-  {\normalfont\normalsize\bfseries\color{zinc700}}
-  {\thesubsection.}
-  {0.5em}
-  {#1}
-  
-\titleformat{\subsubsection}
-  {\normalfont\normalsize\itshape\color{zinc700}}
-  {\thesubsubsection.}
-  {0.5em}
-  {#1}
+{\large \bf}
+{\thesection \,---}
+{0.25em}
+{#1}
 
+\titleformat{\subsection}
+{\fontsize{12}{10}\it}
+{\thesubsection.}
+{0.5em}
+{#1}
 
 % Titlepage --------------------------------------------------------------------
 \usepackage{titling}
@@ -196,69 +165,53 @@
 % \today => Month Year
 \renewcommand{\today}{\ifcase \month \or January\or February\or March\or April\or May \or June\or July\or August\or September\or October\or November\or December\fi\ \number \year}
 
-% Commands for additional title page elements
-\newcommand{\subtitle}[1]{\gdef\@subtitle{#1}}
-\newcommand{\@subtitle}{}
-\newcommand{\attribution}[1]{\gdef\@attribution{#1}}
-\newcommand{\@attribution}{}
+% Title
+\pretitle{
+\begin{center}\huge}
+  \posttitle{\par
+\end{center}}
 
-% Custom title page similar to the academic PDF style
-\def\@maketitle{%
-  \vspace*{-1in}% Move title closer to top
-  \begin{center}%
-    \let \footnote \thanks
-    % Main title - centeteal and prominent
-    \emph{\color{zinc500}\large Lecture Notes on} \\[-0.5em] 
-    {\Large\scshape \@title \par}%
-    
-    % Subtitle if provided
-    \ifx\@subtitle\empty\else
-      \vspace{0.25em}
-      {\large\itshape \@subtitle \par}%
-    \fi
-    
-    % Author in summer_sky color
-    \vspace{0.25em}
-    {\large\color{teal} \@author \par}
-    \vspace{3em}
+% Author
+\preauthor{
+  \begin{center}\large\renewcommand{\arraystretch}{0.75}
+    \begin{tabular}[t]{c}
+    }
+    \postauthor{
+    \end{tabular}
   \end{center}
 }
 
-% Custom header and footer -----------------------------------------------------
-% For getting total number of pages
-\usepackage{lastpage}
-\usepackage{fancyhdr}
+% Date
+\predate{
+\begin{center}\normalsize\scshape\color{zinc700}}
+  \postdate{
+\end{center}}
 
-% Create a command to store the title for use in headers
-\makeatletter
-\newcommand{\lecturetitle}{\@title}
-\makeatother
+% Abstract
+\renewenvironment{abstract}
+{\noindent\rule{\linewidth}{.5pt}\noindent}
+{\noindent\rule{\linewidth}{.5pt}}
 
-% % Define custom page style for lecture notes
-\fancypagestyle{lecturenotes}{%
-    \fancyhf{} % Clear all header and footer fields
-    \setlength{\headheight}{18pt}
-    \renewcommand{\headrulewidth}{0.4pt}
-    \renewcommand{\headrule}{\color{zinc500}\hrule width\headwidth height\headrulewidth \vskip-\headrulewidth}
-    \renewcommand{\footrulewidth}{0pt} % No footer line
-    
-    % Header left: "Lecture Notes on [Title]"
-    \fancyhead[L]{\small\color{zinc500} \emph{Lecture Notes on} {\color{zinc700}\scshape \lecturetitle}}
-    
-    % Header right: "page X / Y"
-    \fancyhead[R]{\small\color{zinc500} \thepage}
-}
-
-\fancypagestyle{firstpage}{%
-    \fancyhf{} % Clear all header and footer fields
-    \renewcommand{\headrulewidth}{0pt} % No header line
-    \renewcommand{\footrulewidth}{0pt} % No footer line
-}
-\pagestyle{lecturenotes}
-\AtBeginDocument{%
-  \thispagestyle{firstpage}%
-}
-
+% % Update \maketitle command
+% \def\@maketitle{%
+%   % \vspace*{\bigskipamount}
+%
+%   \begin{flushleft}%
+%   \let \footnote \thanks
+%     {\huge \@title \par}%
+%
+%     \medskip
+%     {\large \@author \par}%
+%
+%     \smallskip
+%     {\color{asher} \@date}%
+%   \end{flushleft}%
+% }
+%
+% % Abstract
+% \renewenvironment{abstract}
+%  {\noindent\rule{\linewidth}{.5pt}\noindent}
+%  {\noindent\rule{\linewidth}{.5pt}}
 
 % Footnote ---------------------------------------------------------------------
 % Spacing between footnotes on same page
@@ -274,9 +227,9 @@
 % No supsercript in footer
 \makeatletter
 \renewcommand\@makefntext[1]{%
-    \parindent 1em \noindent
-    \hb@xt@1.8em{\hss\normalfont\@thefnmark.\hfill}#1
-  }
+  \parindent 1em \noindent
+  \hb@xt@1.8em{\hss\normalfont\@thefnmark.\hfill}#1
+}
 \makeatother
 
 % Table and Figure labelling ---------------------------------------------------
@@ -296,7 +249,6 @@
 % \begin{subfigure}\caption{} \end{subfigure}
 \usepackage{subcaption}
 \captionsetup*[subfigure]{format=plain, font={jet, footnotesize, bf}}
-
 
 % Tables -----------------------------------------------------------------------
 % Fix \input with tables
@@ -334,14 +286,14 @@
 % If tables are too narrow, fill columns using:
 % \begin{tabularx}{\linewidth}{cols}
 % col-types: X - center, L - left, R -right
-% If you want relative scale for columns: 
+% If you want relative scale for columns:
 % >{\hsize=.8\hsize}X/L/R
 \usepackage{tabularx}
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
 \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
 \newcolumntype{C}{>{\centering\arraybackslash}X}
 
-% Landscape table 
+% Landscape table
 % \begin{landscape} \pagestyle{lscaped} table... \end{landscsape}
 % \usepackage{pdflscape} - rotates page left-side up in pdf
 % \usepackage{lscape} - does not rotate page, only figure/table
@@ -350,26 +302,21 @@
 % For landscape, fix page number location
 \usepackage{fancyhdr}
 \fancypagestyle{lscaped}{%
-    \fancyhf{}
-    \renewcommand{\headrulewidth}{0pt}
-    \textnormal
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \textnormal
+  \iflecturehidepagenumbers
+  \else
     \fancyfoot{%
-        \tikz[remember picture,overlay]
-        \node[outer sep=2.5cm,above,rotate=90] at (current page.east) {\thepage};
+      \tikz[remember picture,overlay]
+      \node[outer sep=2.5cm,above,rotate=90] at (current page.east) {\thepage};
     }
+  \fi
 }
 
-% tinytable
-\usepackage{tabularray}
-\usepackage{float}
-\usepackage{graphicx}
-\usepackage[normalem]{ulem}
-\UseTblrLibrary{booktabs}
-\UseTblrLibrary{siunitx}
-\newcommand{\tinytableTabularrayUnderline}[1]{\underline{#1}}
-\newcommand{\tinytableTabularrayStrikeout}[1]{\sout{#1}}
-\NewTableCommand{\tinytableDefineColor}[3]{\definecolor{#1}{#2}{#3}}
-
+\iflecturehidepagenumbers
+  \AtBeginDocument{\pagestyle{empty}}
+\fi
 
 % Bibliography -----------------------------------------------------------------
 % You can use either biblatex or natbib, see https://tex.stackexchange.com/questions/25701/bibtex-vs-biber-and-biblatex-vs-natbib for discussion
@@ -382,12 +329,12 @@
 % \bibliographystyle{econ-aea}
 
 % Biblatex
-% 
+%
 % Source: https://social-science-data-editors.github.io/guidance/citations/guidance_data_citations_biblatex.pdf
 % Source: https://github.com/dmsul/biblatex-aer/blob/master/biblatex-aer.tex
 \usepackage[
   style = chicago-authordate,
-  doi = true, 
+  doi = true,
   backend = biber,
   backref = true, % Prints back references e.g (cit. pp. 1)
   backrefstyle = none, % How to sequence page numbers in back references
@@ -396,9 +343,9 @@
   natbib = true
 ]{biblatex}
 \usepackage[
-  authordate, 
+  authordate,
   backend = biber,
-  uniquename = false, 
+  uniquename = false,
   noibid
 ]{biblatex-chicago}
 
@@ -415,10 +362,10 @@
 
 % Make author names bold in References but not in body of paper
 % 1. Check if name belongs to 'labelname' (Whoever the bib entry is sorted on, i.e., the author(s) or, if no author, editor(s), but not an editor if an author is present). This check keeps entries with both authors and editors from having both sets of names bolded.
-\def\ifmknamebold{\ifboolexpr{%  
-  test {\ifcurrentname{labelname}}
-  or test {\ifcurrentname{author}}
-  or ( test {\ifnameundef{author}} and test {\ifcurrentname{editor}} )
+\def\ifmknamebold{\ifboolexpr{%
+    test {\ifcurrentname{labelname}}
+    or test {\ifcurrentname{author}}
+    or ( test {\ifnameundef{author}} and test {\ifcurrentname{editor}} )
 }}
 
 % Re-define naming commands to bold if necessary (but only in bibliography)
@@ -428,10 +375,10 @@
   \renewcommand*{\mkbibnameprefix}[1]{\ifmknamebold{\mkbibbold{#1}}{#1}}
   \renewcommand*{\mkbibnamesuffix}[1]{\ifmknamebold{\mkbibbold{#1}}{#1}}
   \renewcommand*{\finalnamedelim}{\ifmknamebold{%
-    \mkbibbold{\finalandcomma\addspace\bibstring{and}\addspace}%
-  }{%     
-    % Check for 'if editors with no author, only add a comma before 'and' if there are more than three authors. ('labelname' guys don't need these check because first name is reversed and so always has a comma, even with only two people, e.g., Nash, Steve, and Amare Stoudamire.
-    \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}\addspace\bibstring{and}\addspace%
+      \mkbibbold{\finalandcomma\addspace\bibstring{and}\addspace}%
+    }{%
+      % Check for 'if editors with no author, only add a comma before 'and' if there are more than three authors. ('labelname' guys don't need these check because first name is reversed and so always has a comma, even with only two people, e.g., Nash, Steve, and Amare Stoudamire.
+      \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}\addspace\bibstring{and}\addspace%
   }}
 }
 
@@ -440,7 +387,7 @@
 %   \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
 %   \bibhyperref{#1}%
 % }
-% 
+%
 % \DeclareFieldFormat{textcitehyperref}{%
 %   \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
 %   \bibhyperref{%
@@ -448,13 +395,13 @@
 %     \ifbool{cbx:parens}{\bibcloseparen\global\boolfalse{cbx:parens}}{}%
 %   }%
 % }
-% 
+%
 % \savebibmacro{cite}
 % \savebibmacro{textcite}
 % \renewbibmacro*{cite}{%
 %   \printtext[citehyperref]{\restorebibmacro{cite}\usebibmacro{cite}}
 % }
-% 
+%
 % \renewbibmacro*{textcite}{%
 %   \ifboolexpr{
 %     ( not test {\iffieldundef{prenote}} and test {\ifnumequal{\value{citecount}}{1}} )
@@ -469,16 +416,14 @@
 \usepackage[shortlabels]{enumitem}
 \setlist{nosep}
 \setlist[itemize,1]{leftmargin=\parindent,label=\color{zinc600}{\upshape\textbullet}}
-\setlist[itemize,2]{leftmargin=2\parindent,label=\color{zinc600}{\upshape\textendash}}
+\setlist[itemize,2]{leftmargin=\parindent,label=\color{zinc600}{\upshape\textendash}}
 \setlist[enumerate,1]{leftmargin=\parindent,label=\color{zinc600}{\upshape\arabic*.}}
-\setlist[enumerate,2]{leftmargin=2\parindent,label=\color{zinc600}{\upshape\roman*.}}
-
+\setlist[enumerate,2]{leftmargin=\parindent,label=\color{zinc600}{\upshape\roman*.}}
 
 % tikz support -----------------------------------------------------------------
 \usepackage{tikz}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
-
 
 % Coauthors comments that you can hide -----------------------------------------
 % Define in the main document:
@@ -486,5 +431,61 @@
 % \newcommand{\kyle}[1]{\comment[Kyle]{#1}}
 \newbool{INCLUDECOMMENTS}
 \NewDocumentCommand{\coauthorComment}{O{NAME} +m}{%
-    \ifbool{INCLUDECOMMENTS}{{\color{cranberry}\textbf{#1:} #2}}{}
+  \ifbool{INCLUDECOMMENTS}{{\color{cranberry}\textbf{#1:} #2}}{}
+}
+
+% For callout boxes
+\usepackage[most]{tcolorbox}
+\usepackage{fontawesome5}
+
+% Code listings ----------------------------------------------------------------
+\usepackage{listings}
+\tcbuselibrary{listings,listingsutf8,skins}
+% \tcbset{
+%   codelanguage/.style={language = #1},
+%   codelanguage/.default = R,
+%   % basicstyle = \small\ttfamily,
+%   % columns = fixed,
+%   % keepspaces = true
+% }
+
+\DeclareTCBListing{codeblock}{ !O{R} }{
+  listing only,
+  interior hidden,
+  top = -6pt,
+  bottom = -6pt,
+  left = 4pt,
+  right = 0pt,
+  boxrule = 0pt,
+  frame hidden,
+  sharp corners,
+  borderline west = {2pt}{0pt}{zinc400},
+  enhanced,
+  breakable,
+  listing options={
+    basicstyle = \small\ttfamily,
+    columns = fixed,
+    keepspaces = true,
+    language = #1
+  }
+}
+
+\DeclareTCBListing{smallcodeblock}{ !O{R} }{
+  listing only,
+  interior hidden,
+  top = -12pt,
+  bottom = -6pt,
+  left = 4pt,
+  right = 0pt,
+  boxrule = 0pt,
+  frame hidden,
+  sharp corners,
+  borderline west = {2pt}{0pt}{zinc400},
+  enhanced,
+  breakable,
+  listing options={
+    basicstyle = \footnotesize\ttfamily,
+    columns = fixed,
+    language = #1
+  }
 }
