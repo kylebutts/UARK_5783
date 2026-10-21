@@ -1,0 +1,51 @@
+\documentclass[12pt]{article}
+\usepackage{../../../lecture_notes}
+\usepackage{../../../math}
+\usepackage{../../../uark_colors}
+
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\begin{document}
+\begin{center}
+  {\Huge\bf Quiz --- Assignment 2}
+
+  \smallskip
+  {\large\it ECON 5783 --- University of Arkansas}
+\end{center}
+
+\vspace{5mm}
+\noindent\textbf{Name:} \rule{0.7\textwidth}{0.4pt}
+
+\bigskip
+\begin{enumerate}
+  \item Let
+  $$
+    m(t) \equiv \expec{\text{Exam Score}_i}{\text{Tutoring Hours}_i = t}.
+  $$
+  In words, what does $m(4)$ represent?
+  Describe how you could estimate it from a sample without imposing a linear relationship between tutoring hours and exam scores.
+
+  
+  \vspace*{10\bigskipamount}
+  \item An analyst models exam scores as a linear function of tutoring hours:
+  $$
+    \text{Exam Score}_i = \alpha + \beta \text{Tutoring Hours}_i + u_i.
+  $$
+  How does this model restrict the conditional expectation function compared with a fully flexible model?
+
+  
+%   \vspace*{\bigskipamount}
+%   \item \pts{4} The following regression relates monthly electricity use to home type and electric-vehicle ownership.
+%   Assume \texttt{home\_type} includes \texttt{Apartment}, \texttt{Detached}, and \texttt{Townhouse}.
+%   What indicators does \texttt{i()} create, which home type is omitted, and how can the relationship between EV ownership and electricity use vary across home types?
+%   \begin{codeblock}
+% feols(monthly_kwh ~ i(home_type, ref = "Apartment"), data = homes)
+%   \end{codeblock}
+\end{enumerate}
+
+\end{document}
