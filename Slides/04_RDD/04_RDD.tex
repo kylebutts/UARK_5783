@@ -19,7 +19,7 @@
 % -----------------------------------------------------------------------------
 
 \begin{frame}{Regression Discontinuity Design (RDD)}{Example 1}
-  Lee (2008, JOE) sutdies the ``incumbency advantage'', the hypothesis that being a serving elected official improves future election outcomes
+  Lee (2008, JOE) studies the ``incumbency advantage'', the hypothesis that being a serving elected official improves future election outcomes
 
   \pause
   \bigskip
@@ -39,16 +39,16 @@
 \imageframe{figures/lee_win_tp1.pdf}
 
 \begin{frame}{Regression Discontinuity Design (RDD)}{Example 1}
-  There is a clear jump from candidates that narrowly lost to candidates that narrowly won
+  There is a clear jump in the probability of winning in period $t+1$ for candidates that narrowly lost to candidates that narrowly won
   \begin{itemize}
-    \item The main concern is that candidates that just lost look different in terms of unobservables to those that just won
+    \item The main concern is that candidates that just lost look different in terms of unobservables to those that just won, i.e. ``sorting'' at the cutoff
   \end{itemize}
 
   \pause
   \bigskip
   To try and alleviate this concern, Lee checks if other observed variables `jump' at the cutoff 
   \begin{itemize}
-    \item A jump in other `pre-determined' variables at the cutoff would be problematic to our story
+    \item A jump in other `pre-determined' variables at the cutoff would be problematic to our story because units just above and below would not be comparable
   \end{itemize}
 \end{frame}
 
@@ -66,7 +66,7 @@
 \end{frame}
 
 \begin{frame}{Regression Discontinuity Design (RDD)}{Example 2}
-  Bleemer and Mehta (2022, AEJ Applied) study the returns to being an economics major by leveraging a requirement of a 2.8 GPA threshhold in Econ 1 and 2 at UCSC:
+  Bleemer and Mehta (2022, AEJ Applied) study the returns to being an economics major by leveraging a requirement of a 2.8 GPA threshold in Econ 1 and 2 at UCSC:
 
   \begin{itemize}
     \item Comparing students just above a 2.8 GPA to those just below helps address selection into economics major
@@ -149,6 +149,27 @@
 \end{frame}
 
 \section{Formalizing RDD Identification Arguments}
+
+\begin{frame}{Continuity-based RDD}{Overview}
+  The main identification argument allows the running variable to be related to outcomes while assuming that both potential-outcome curves evolve smoothly at the cutoff.
+
+  \bigskip
+  The treatment is the only feature that changes discontinuously at $c$, so the jump in observed outcomes identifies the treatment effect at the cutoff.
+  \begin{itemize}
+    \item This formalizes the visual comparison we make when inspecting an RDD plot
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Two perspectives on RDD identification}
+  We will develop two complementary perspectives:
+  \begin{enumerate}
+    \item A local-randomization argument, where noise in the running variable creates a quasi-experiment near the cutoff
+    \item A continuity argument, where smooth potential-outcome curves let us estimate the jump at the cutoff
+  \end{enumerate}
+
+  \bigskip
+  The continuity argument motivates the local-polynomial methods used in most empirical applications. The local-randomization argument provides a useful experimental interpretation.
+\end{frame}
 
 \begin{frame}{Formalizing RDD (Take 1)}{``Noisy'' running variable}
   Let's use a canonical example of students taking a test ($X_i$) and students above a certain cutoff, $c$, are treated (e.g. put in honor's class).
@@ -269,9 +290,9 @@ rdwinselect(
 \end{frame}
 
 \begin{frame}{Formalizing RDD (Take 2)}{Continuity of outcomes}
-  The second approach we will discuss is the older (and more commonly used) approach to RDD estimation
+  We now formalize the continuity-based approach that motivates the standard RDD plots and local-polynomial estimators
   \begin{itemize}
-    \item Instead of assumping the score is randomly assigned, this method will rely on a `continuity assumption' of potential outcomes
+    \item Instead of assuming the score is randomly assigned, this method relies on a `continuity assumption' for potential outcomes
   \end{itemize}
 
   \pause
@@ -285,42 +306,45 @@ rdwinselect(
 \imageframe{figures/lee_win_tp1.pdf}
 
 \begin{frame}{Formalizing continuity}
-  The goal of our treatment effect estimator is to identify the following:
+  The goal of our RDD estimator is to identify the following:
   $$
     \expec{Y_i(0)}{X_i = c} \ \text{ and }\ \expec{Y_i(1)}{X_i = c}
   $$
 
-  We don't typically observe anyone with $X_i$ exactly equal to 0 (assuming continuous $X_i$)
+  The difference between these two quantities is the `jump' we seek in an RDD graph.
+
+  \bigskip
+  We don't typically observe anyone with $X_i$ exactly equal to $c$ when $X_i$ is continuous
   \begin{itemize}
     \item So, necessarily we need to extrapolate to the cutoff using observations away from the cutoff
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Formalizing continuity}
-  Simliar to the selection on observables, define:
+  Similar to the selection-on-observables setup, define:
   $$
     \mu_d(x) = \expec{Y_i(d)}{X_i = x}
   $$
-  to be the conditional expectation of $Y_i(0)/Y_i(1)$ conditional on the running variable being equal to $x$
+  to be the conditional expectation of $Y_i(d)$ given that the running variable equals $x$
 
   \bigskip
-  We will fit $\mu_0(x)$ using obseravtions with $X_i < c$ and $\mu_1(x)$ using $X_i > c$
+  We will fit $\mu_0(x)$ using observations with $X_i < c$ and $\mu_1(x)$ using $X_i > c$
   \begin{itemize}
     \item E.g. fit a linear model of $X_i$ with observations in $(c - h, c)$ / $(c, c+h)$
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Extrapolation as limits}
-  We are able to learn about the relationship between $Y_i$ and $X_i$ away from the cutoff. We are going to need to take out model and \alert{extrapolate} it to the cutoff 
+  We can learn about the relationship between $Y_i$ and $X_i$ away from the cutoff. We then use our model to \alert{extrapolate} to the cutoff
   \begin{itemize}
-    \item Imagine taking averages of $Y_i$ from $(c, c+h)$ to estimate $\expec{Y_i(1)}{X_i = c}$. Assuming infinite data, as $h \to 0$ our average should get closer to closer to the true CEF.
+    \item Imagine taking averages of $Y_i$ from $(c, c+h)$ to estimate $\expec{Y_i(1)}{X_i = c}$. With infinite data, as $h \to 0$ our average should approach the true CEF.
   \end{itemize}
   
   \bigskip
   More formally, under `continuity' we have
   \begin{align*}
     \expec{Y_i(1)}{X_i = c} 
-    &= \lim_{s \downarrow c} \expec{Y_i(1)}{X_i = x}
+    &= \lim_{x \downarrow c} \expec{Y_i(1)}{X_i = x}
   \end{align*}
   \begin{itemize}
     \item Note here, we are taking the limit from above to only use obs. with $Y_i = Y_i(1)$
@@ -417,7 +441,7 @@ rdwinselect(
   \bigskip
   The simplest estimator is the \emph{locally constant estimator}
   $$
-    \mu_0(x) = \expechat{Y_i}{X_i \in (c-h, c)} \ \text{ and }\ \mu_1(x) = \expechat{Y_i}{X_i \in (c-h, c)}
+    \mu_0(x) = \expechat{Y_i}{X_i \in (c-h, c)} \ \text{ and }\ \mu_1(x) = \expechat{Y_i}{X_i \in (c, c+h)}
   $$
   \begin{itemize}
     \item This is our difference-in-means estimator
@@ -460,19 +484,19 @@ rdwinselect(
   on the subsample with $X_i \in (c-h, c+h)$
 
   \begin{itemize}
-    \item Note we recenter, $X_i - c$, so that $\hat{alpha}_1$ is the RDD estimate (e.g. "margin of victory" instead of "vote-share" in Lee, 2008)
+    \item Note we recenter, $X_i - c$, so that $\hat{\alpha}_1$ is the RDD estimate (e.g. "margin of victory" instead of "vote-share" in Lee, 2008)
   \end{itemize}
 \end{frame}
 
 \imageframe{figures/plot_dgp_2_local_linear_estimator.pdf}
 
-\begin{frame}{Why linear if our data looks wiggly?}
+\begin{frame}{Why use a linear function if our data looks wiggly?}
   There is a lingering question, if we think our data is very `wiggly' why are we assuming linearity in $X_i$?
 
   \begin{itemize}
     \item Remember we are using only observations \emph{local} to the cutoff, so (at least asymptotically) wiggly functions are approximately linear on small bandwidths
     
-    \item Essentially we are using the logic of the Taylor expansion that we can approximate a function locally using a lienar function
+    \item This uses the logic of a Taylor expansion: locally, we can approximate a smooth function with a linear function
   \end{itemize}
 \end{frame}
 
@@ -491,7 +515,7 @@ rdwinselect(
 \begin{frame}{Local polynomial estimation}{}
   We can extend our logic to higher-order polynomials:
   $$
-    Y_i = \alpha_0 + \alpha_1 D_i \sum_{p = 1}^\rho \beta_{0,p} (X_i - c)^p + \sum_{p = 1}^\rho \beta_{1,p} (X_i - c)^p + u_i
+    Y_i = \alpha_0 + \alpha_1 D_i + \sum_{p = 1}^\rho \beta_{0,p} (X_i - c)^p + D_i \sum_{p = 1}^\rho \beta_{1,p} (X_i - c)^p + u_i
   $$
   
   Still, $\hat{\alpha_1}$ is our RDD estimator
@@ -623,7 +647,7 @@ summary(est)
 \imageframe{figures/hansen_balance_check_white.pdf}
 
 \begin{frame}{Check 2: McCrary Density}{}
-  If you don't have extra covariates, you can check for `continuous density' a la McCrary (2006, JOE)
+  If you don't have extra covariates, you can check for `continuous density' a la McCrary (2008, JOE)
 
   \bigskip
   The idea is that if we think there is no sorting, then we would expect to see no strong `jump' in the histogram of the running variable
@@ -690,10 +714,30 @@ summary(est)
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Coding example: Hansen regression discontinuity}
+  The file \texttt{hansen\_2015.R} collects the complete empirical workflow:
+  \begin{itemize}
+    \item Raw averages and locally constant and locally linear estimates
+    \item RDD estimation and visualization with \texttt{rdrobust} and \texttt{rdplot}
+    \item Predetermined-covariate balance checks and a density test
+  \end{itemize}
+\end{frame}
+
 % TODO: Discuss discrete running variable?
 
 
 \section{Spatial RDD}
+
+\begin{frame}{Spatial RDD}{Overview}
+  A spatial RDD compares units on opposite sides of a geographic boundary, using signed distance to the boundary as the running variable.
+
+  \bigskip
+  Identification requires potential outcomes to vary continuously at the boundary.
+  \begin{itemize}
+    \item Geographic sorting or other policies that change at the same boundary can create unrelated discontinuities
+    \item Researchers can strengthen the design by using boundaries within the same jurisdiction or by comparing discontinuities before and after a policy change
+  \end{itemize}
+\end{frame}
 
 \begin{frame}{Spatial RDD}{Example}
   Dell (2010, ECTA) considers the impact of historical colonizer institutions on long-run impacts:
@@ -879,6 +923,7 @@ summary(est)
   \bigskip
   I.e. use \texttt{rdrobust} using \texttt{df\$y1 - df\$y0} as the outcome variable
 \end{frame}
+
 
 \end{document}
     
