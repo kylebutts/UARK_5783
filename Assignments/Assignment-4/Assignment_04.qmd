@@ -1,0 +1,66 @@
+---
+title: "Assignment #4"
+author: "YOUR NAME"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+format: pdf
+---
+
+These assignments should be completed in groups of 1 or 2 but submitted individually. My preference is for you to use Quarto files so that your code, results, and answers are intermixed. Since coding in R is not required for these assignments, you may alternatively use LaTeX or Microsoft Word for written answers; in that case, upload your code separately.
+
+# Theoretical Questions
+
+1. Hansen (2015, AER) studies whether crossing the legal blood-alcohol limit affects future drunk-driving behavior. Let $X_i$ be a driver's blood-alcohol content (BAC), let the cutoff be $c = 0.08$, and define treatment as $D_i = 1\{X_i \geq c\}$. The outcome, $Y_i$, is an indicator for future drunk-driving recidivism.
+
+   a. In words, describe the continuity assumption we need for the potential outcomes at the cutoff. What does this assumption mean in this application?
+
+   b. Tell me a story about how drivers or officers might manipulate the measured BAC around 0.08. How would this create a problem for our RDD argument?
+
+   c. Why would it be useful to show that the race indicators do not display a jump at the cutoff?
+
+   d. Note that our RDD estimate is the estimated effect for people with a `bac1` around 0.08. Why might this effect differ from the average treatment effect for all drivers?
+
+# Coding Exercise
+
+We will use the Hansen (2015, AER) data to estimate an RDD around the legal BAC limit. Load `data/hansen_dwi.dta` using `haven::read_dta()`. The running variable is `bac1`, the outcome is `recidivism`, and the cutoff is 0.08. The variables `male`, `white`, and `aged` are driver characteristics that we can use for balance checks.
+
+```{r}
+#| message: false
+
+library(haven)
+library(dplyr)
+
+hansen <- read_dta("data/hansen_dwi.dta") |>
+  mutate(
+    over_limit = bac1 >= 0.08
+  )
+```
+
+## 1. Plot the discontinuity
+
+Use `rdrobust::rdplot()` to make a plot of recidivism against BAC around the cutoff. Use a bandwidth of 0.04. Describe what you see. Does the plot suggest a jump in recidivism at 0.08?
+
+```{r}
+
+```
+
+## 2. Estimate the RDD using `rdrobust`
+
+Use `rdrobust::rdrobust()` to estimate the discontinuity in recidivism at 0.08. Report the point estimate and robust 95\% confidence interval. Does the estimate suggest a jump in recidivism, and how does it compare to what you saw in the plot?
+
+```{r}
+
+```
+
+## 3. Check the RDD assumptions
+
+First, use `rdrobust()` to estimate the discontinuity at the cutoff in `male`, `white`, and `aged`, one at a time. These are predetermined driver characteristics, so we would not expect the BAC cutoff to cause them to change. Do you see evidence of a jump in any of these characteristics? What would a jump suggest?
+
+```{r}
+
+```
+
+Next, make a histogram of BAC around 0.08 and use `rddensity::rddensity()` to test for a discontinuity in the density of the running variable. BAC is rounded in the data, so follow the in-class example and add a small amount of random noise to `bac1` before running the density test. Set a seed so your results are reproducible. What would a jump in the density suggest? What do you conclude from this check?
+
+```{r}
+
+```
