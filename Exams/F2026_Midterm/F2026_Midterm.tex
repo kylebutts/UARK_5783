@@ -1,0 +1,139 @@
+\documentclass[12pt]{article}
+\usepackage{../../../assignment}
+\usepackage{../../../math}
+\usepackage{../../../uark_colors}
+\hypersetup{
+  colorlinks = true,
+  allcolors = ozark_mountains,
+  breaklinks = true,
+  bookmarksopen = true
+}
+
+\begin{document}
+\begin{center}
+  {\Huge\bf Midterm - Fall 2026}
+
+  \smallskip
+  {\large\it ECON 5783 — University of Arkansas}
+\end{center}
+
+% {\fontsize{18}{24}\selectfont
+\medskip
+\begin{enumerate}
+  \item Say a researcher wants to model the conditional expectation of annual earnings given gender, state of residence, and whether a worker has a college degree.
+  They have a sample of 1,000 workers.
+  Gender is recorded male and female, state of residence (50 states), and college degree is a binary indicator.
+  \begin{enumerate}[label=(\alph*)]
+    \item Describe how you would estimate this conditional expectation function ``fully flexibly''. 
+    Use college-educated women in Arkansas as an example.
+
+    \item Why might this approach be impractical with this data?
+
+    \item The researcher instead uses a linear model with an intercept, an indicator for being male, an indicator for having a college degree, and indicators for each of the 50 states (omitting a reference category for each variable).
+    What does this model leave out relative to the fully flexible CEF?
+    Give an example of a pattern in average earnings that this model would not be able to capture.
+  \end{enumerate}
+
+  \newpage
+  \item A researcher wants to estimate the returns to college using men in the National Longitudinal Survey of Young Men.
+  The outcome is hourly wages in 1976, and treatment is completing at least 16 years of schooling.
+  The table below compares average characteristics of men who attended and did not attend college (before any matching).
+  The characteristics describe family background and where the men lived in 1966.
+
+  % Source: wooldridge::card. Unweighted means among complete cases for
+  % educ, wage, motheduc, fatheduc, momdad14, south66, and smsa66.
+  % Treatment: educ >= 16. Differences are treated minus untreated.
+  \begin{center}
+    \begin{tabular}{lrrr}
+      \toprule
+      % & \multicolumn{2}{c}{Years of schooling} & \\
+      & High School & College & Difference \\
+      \midrule
+      Mother's years of schooling & $9.98$ & $12.03$ & $2.15$ \\
+      Father's years of schooling & $9.05$ & $11.94$ & $2.89$ \\
+      Lived with both parents at age 14 & $0.933$ & $0.967$ & $0.034$ \\
+      Lived in the South in 1966 & $0.359$ & $0.313$ & $-0.046$ \\
+      \midrule
+      Number of observations & 685 & 703 & \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \bigskip
+  \begin{enumerate}[label=(\alph*)]
+    \item What does this table tell you about the comparability of the two groups?
+    Discuss at least two differences and explain which direction they would likely bias  the difference-in-means estimate.
+
+    \item The researcher decides to use nearest-neighbor matching on the four variables in the table.
+    Describe in words the nearest-neighbor matching procedure. 
+    You do not need to write a formula or code; just describe in words the steps that one would do.
+
+    \item Instead of matching, the researcher might want to use a regression adjustment approach. 
+    Describe in words the steps to implement this estimator. 
+    You do not need to write a formula or code; just describe in words the steps that one would do.
+  \end{enumerate}
+\end{enumerate}
+
+\newpage
+\noindent
+% https://eml.berkeley.edu/~sdellavi/wp/FoxVoteQJEAug07.pdf
+The following questions refer to ``The Fox News Effect: Media Bias and Voting'' by DellaVigna and Kaplan (2007).
+The authors study whether making Fox News available on local cable affects voting.
+By the 2000 presidential election, some towns had access to Fox News while others did not.
+
+\medskip
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item Say a researcher compares the average Republican vote share in 2000 between towns with and without Fox News.
+  Do you think this difference-in-means estimate identifies the causal effect of Fox News availability?
+  Give a reason why the estimate might be biased, predict the sign of the bias, and explain your thinking.
+
+  \medskip
+  \item The authors present evidence that, conditional on geographic and cable-market controls, Republican vote share in 1996 did not predict whether a town had Fox News by 2000.
+  Why might this be useful information for assessing the plausibility of the seleciton on observables assumption?
+  Explain your thinking.
+\end{enumerate}
+
+\newpage
+\noindent
+For the following questions refer to Figure \ref{fig:sat_rdd}.
+These are two figures created using synthetic data.
+The setup is that students in Michigan are guaranteed admission to the University of Michigan if they get at least a 1350 on their SAT.
+Students, of course, are allowed to retake the SAT as many times as they want and the top score is used.
+A researcher wants to estimate the effect of guaranteed admission on students' future earnings.
+
+\medskip
+\begin{enumerate}
+  \setcounter{enumi}{4}
+  \item Figure \ref{fig:sat_rdd}(a) presents the researcher's main result.
+  What do we need to assume for the jump in future earnings at 1350 to identify the causal effect of guaranteed admission?
+  % I am not looking for the `generic' assumption here; I want you to describe the assumption in the context of the research question.
+
+  \medskip
+  \item Figure \ref{fig:sat_rdd}(b) shows average family income, measured before students take the SAT.
+  Do you think this figure strengthens or weakens the researcher's causal claim?
+  Explain how it relates to the assumption you discussed in the previous question.
+
+  \medskip
+  \item The researcher responds by using only students with SAT scores very close to 1350.
+  Do you think using a smaller bandwidth fixes the concern you described above?
+  Why or why not?
+\end{enumerate}
+
+\medskip
+\begin{figure}[htb!]
+  \caption{Simulated Data}
+  \label{fig:sat_rdd}
+  \begin{center}
+    \includegraphics[width = 0.8\textwidth]{sat_sorting_earnings.pdf}
+    \subcaption{RDD Estimate on Student's Future Earnings}
+  \end{center}
+
+  \begin{center}
+    \includegraphics[width = 0.8\textwidth]{sat_sorting_family_income.pdf}
+    \subcaption{RDD Estimate on Family Income}
+  \end{center}
+\end{figure}
+% }
+
+\end{document}
