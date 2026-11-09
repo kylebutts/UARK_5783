@@ -1,0 +1,85 @@
+---
+title: "Assignment #5"
+author: "YOUR NAME"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+format: pdf
+---
+
+These assignments should be completed in groups of 1 or 2 but submitted individually. My preference is for you to use `.qmd` files so that your code, results, and answers are intermixed. Since coding in R is not required for these assignments, you may alternatively use LaTeX or Microsoft Word for written answers; in that case, upload your code separately.
+
+# Theoretical Questions
+
+1. In each example, give a reason why the exclusion restriction might fail.
+
+   a. You regress future wages (`y_i`) on attending post-secondary school (`D_i`), using whether someone lives within a 15-minute drive of a community college (`Z_i`) as an instrument.
+  
+   b. You regress house prices (`y_i`) on town school quality (`X_i`), using whether a town levied an extra school-funding tax (`Z_i`) as an instrument.
+
+   c. You regress a person's happiness (`y_i`) on wealth (`X_i`), using parental wealth (`Z_i`) as an instrument.
+
+2. In your own words, why is inference difficult for the two-stage least-squares coefficient when the instrument is weak?
+
+### Answers
+
+1a.
+
+1b.
+
+1c.
+
+2.
+
+
+# Coding Exercise: Gerber, Huber, and Washington (2010, APSR)
+
+This exercise uses replication material from Gerber, Huber, and Washington. The dataset is `data/gerber_et_al_2010.csv`; full documentation is available from the [Yale data archive](https://isps.yale.edu/research/data/d055).
+
+The paper studies whether registering with a political party, rather than as an Independent, changes political beliefs. In a randomized experiment in Connecticut before the 2008 election, some unregistered voters received information (`Z = treat`) explaining that registration with a party was required to vote in that party's primary. The treatment may cause voters to register with a party (`D = pt_id_with_lean`). The outcome (`y = pt_voteevalalignindex`) measures ideological alignment with the voter's political party, with larger values indicating stronger alignment.
+
+## Overview of the experiment
+
+- `Z_i`: whether voters were randomly told that party registration was required to vote in the primary.
+- `D_i`: whether voters registered with a party before the primary.
+- `y_i`: ideological alignment measured in a later survey.
+
+## Questions
+
+1. Estimate the first-stage regression of `D` on `Z`. Interpret the first-stage F-statistic and assess whether the first stage is strong.
+
+```{r}
+
+```
+
+2. Estimate the reduced-form regression of `y` on `Z`.
+
+```{r}
+
+```
+
+3. Using the coefficients from 1. and 2., calculate the 2SLS by hand:
+
+```{r}
+
+```
+
+
+
+4. Estimate the 2SLS effect using `feols()`. Interpret whether registering with a political party changes ideology. Is the estimate statistically significant?
+
+```{r}
+
+```
+
+**Replace with answer to question**
+
+
+
+5. Characterize compliers using the method from the lecture slides: estimate the 2SLS regression of `D_i X_i` on `D_i`, instrumented by `Z_i`. For `age`, `voted2006`, and `pt_church`, compare complier means with overall population means.
+
+   - Given these comparisons, how should you interpret the LATE estimate?
+
+```{r}
+
+```
+
+**Replace with answer to question**

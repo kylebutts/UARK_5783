@@ -35,6 +35,13 @@ est_complier <- feols(
 ) 
 Xbar_complier <- coef(est_complier)["fit_training"]
 
+cat(
+  sprintf("Always-takers avg. age: %0.2f\n", Xbar_at),
+  sprintf(" Never-takers avg. age: %0.2f\n", Xbar_nt),
+  sprintf("    Compliers avg. age: %0.2f\n", Xbar_complier),
+  sep = ""
+)
+
 # Similar alternative from 
 # Marbach and Hangartner (2020, Political Analysis)
 # "Profiling Compliers and Non-compliers for Instrumental-Variable Analysis"
