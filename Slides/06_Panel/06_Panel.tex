@@ -213,7 +213,7 @@
 \end{frame}
 
 \begin{frame}{Example of Fixed Effects usage}
-  This semester, Sarah Cordes from Temple University presented her work estimating the returns to high-quality schooling on student outcomes among low-income families in New York City
+  Last year, Sarah Cordes from Temple University presented her work estimating the returns to high-quality schooling on student outcomes among low-income families in New York City
 
   \bigskip
   She uses the fact that families are placed randomly within public-housing complexes and are therefore sent to different NYC public schools (of varying quality)
@@ -356,8 +356,15 @@ feols(y ~ x | school, data = df, vcov = "hc1")
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Selection bias after using fixed-effects}
+  Returning to our original example: AP classes with school fixed effects 
 
-
+  \bigskip
+  Our estimator compares still compares students who take AP classes to those that do not
+  \begin{itemize}
+    \item We should try to think of variables that would drive students in a given school to take or not take AP classes.
+  \end{itemize}
+\end{frame}
 
 \section{Fixed Effects in Panel Data}
 
@@ -496,6 +503,8 @@ feols(y ~ x | school, data = df, vcov = "hc1")
 
 \section{Difference-in-Differences}
 
+\subsection{Difference-in-Differences}
+
 \begin{frame}{What is difference-in-differences (DiD)}
 
   \alert{Difference-in-differences} compares a group assigned to treatment versus a group not assigned to treatment
@@ -508,9 +517,9 @@ feols(y ~ x | school, data = df, vcov = "hc1")
 
 \end{frame}
 
-\subsection{Initial Difference-in-difference usage}
+\subsubsection{Initial Difference-in-difference usage}
 
-\begin{frame}{Ignaz Semmelweis and washing hands}
+\begin{frame}{Origin story: Ignaz Semmelweis and washing hands}
   Early 1820s, Vienna passed legislation requiring that if a pregnant
   women giving birth went to a public hospital (free care)
   \begin{itemize}
@@ -519,11 +528,11 @@ feols(y ~ x | school, data = df, vcov = "hc1")
   \end{itemize}
   
   \bigskip
-  Pregnant women died after delivery in the (male) wing at a rate of 13-18\%, but only 3\% in the (female) midwife wing
+  Pregnant women died after delivery in the (male) wing at a rate of 13--18\%, but only 3\% in the (female) midwife wing
 \end{frame}
 
 \begin{frame}{Ignaz Semmelweis and washing hands}
-  Ignaz Semmelweis, after a lot of observation, conjectures that the cause is:
+  Ignaz Semmelweis, after a lot of observations, conjectures that the cause is:
   \begin{itemize}
     \item the teaching faculty would teach anatomy using cadavers and then delivering babies without washing hands
   \end{itemize}
@@ -588,7 +597,7 @@ feols(y ~ x | school, data = df, vcov = "hc1")
 %   
 % \end{frame}
 
-\subsection{Classic Example: Card and Krueger (2000, AER)}
+\subsubsection{Classic Example: Card and Krueger (1994, AER)}
 
 \begin{frame}{Card and Krueger (1994, AER)}
   The first ``modern'' economics paper to use difference-in-differences
@@ -597,9 +606,6 @@ feols(y ~ x | school, data = df, vcov = "hc1")
   Card and Krueger studied the 1992 minimum wage increase in New Jersey from \$4.25 to \$5.05
   \begin{itemize}
     \item The story goes that they heard about the minimum wage change and \emph{ran to the field} to start collecting data on fast-food employment prior to the minimum wage
-    \begin{itemize}
-      \item 
-    \end{itemize}
   \end{itemize}
 
   \pause
@@ -722,7 +728,7 @@ feols(y ~ x | school, data = df, vcov = "hc1")
 
 
 
-\subsection{Econometric formulation to DID}
+\subsubsection{Econometric formulation to DID}
 
 \begin{frame}{2 $\times$ 2 Difference-in-Differences}
   The Card and Krueger minimum wage paper is an example of the canonical $2 \times 2$ DID, so we will begin there
@@ -732,6 +738,7 @@ feols(y ~ x | school, data = df, vcov = "hc1")
   \begin{itemize}
     \item Let $D_i$ be an indicator for which units receive treatment
     \item Let $\text{Post}_t = \one{t = 1}$ be an indicator for being in the post-period
+    \item Let $d_{it} = D_i\text{Post}_t$ denote active treatment status
   \end{itemize}
 
 
@@ -973,9 +980,22 @@ feols(y ~ x | school, data = df, vcov = "hc1")
   \begin{itemize}
     \item People have been using OLS for DID for a long time and it turns out to create problems when treatment starts at different points in time for different units
   \end{itemize}
+
+  \pause
+  \bigskip
+  \alert{When treatment timing is staggered, do not reach for OLS/TWFE.} Instead, use a package that implements a modern estimator:
+  \begin{itemize}
+    \item \texttt{did} (Callaway and Sant'Anna) or \texttt{did2s} (two-stage imputation)
+  \end{itemize}
+
+  \bigskip
+  For a guide to choosing a design and estimator, see Baker, Callaway, Cunningham, Goodman-Bacon, and Sant'Anna (2026, JEL):
+  \begin{itemize}
+    \item \url{https://www.aeaweb.org/articles?id=10.1257/jel.20251650}
+  \end{itemize}
 \end{frame}
 
-\subsection{Event-study}
+\subsubsection{Event-study}
 
 \begin{frame}{Multiple pre- and post- periods}
   Now, consider an extension of the $2 \times 2$ DID where we observe $N$ units over $t = 1, \dots, T_0, T_0 + 1, \dots, T$ time periods
@@ -987,20 +1007,21 @@ feols(y ~ x | school, data = df, vcov = "hc1")
 \begin{frame}{Dynamic treatment effects}
   However, we now have many post-periods, so we will look at $\text{ATT}^\ell$ coefficients:
   $$
-    \text{ATT}^\ell = \expec{ y_{it}(1) - y_{it}(0) }{D_i = 1}
+    \text{ATT}^\ell = \expec{ y_{i,t}(1) - y_{i,t}(0) }{D_i = 1}, \qquad \ell = t - (T_0 + 1)
   $$  
 
+  This is the impact of being treated for $\ell$ periods
   \begin{itemize}
-    \item The impact of being treated in period $t > T_0$
-    
-    \item No anticipation implies $\text{ATT}^\ell = 0$ for $l \leq T_0$
+    \item Event time $\ell = 0$ is the first post-treatment period
+    \item Equivalently, this is the impact in post-treatment period $t > T_0$
+    \item No anticipation implies $\text{ATT}^\ell = 0$ for $\ell < 0$
   \end{itemize}
 
   \pause
   \bigskip
   These are called \alert{dynamic treatment effects}
   \begin{itemize}
-    \item E.g. policies might take a while to be in full-effect ($\text{ATT}^\ell$ growing)
+    \item E.g. policies might take a while to be in full effect ($\text{ATT}^\ell$ growing)
     
     \item Or, the policy has a large initial shock that fades away as people adapt
   \end{itemize}
@@ -1009,11 +1030,12 @@ feols(y ~ x | school, data = df, vcov = "hc1")
 \begin{frame}{Dynamic Treatment Effects}
   These can be identified using a similar $2 \times 2$ strategy:
   $$
-    \text{ATT}^\ell = \expec{y_{it} - y_{iT_0}}{D_i = 1} - \expec{y_{it} - y_{iT_0}}{D_i = 0}
+    \text{ATT}^\ell = \expec{y_{i,t} - y_{iT_0}}{D_i = 1} - \expec{y_{i,t} - y_{iT_0}}{D_i = 0},
+    \qquad t = T_0 + 1 + \ell
   $$
 
   \bigskip
-  Comparing ``long-differences'' from period $T_0$ to period $t$. This requires parallel trends holds for all post-periods:
+  Comparing ``long-differences'' from period $T_0$ to period $t = T_0 + 1 + \ell$. This requires parallel trends holds for all post-periods:
   $$
     \expec{y_{it}(0) - y_{iT_0}(0)}{D_i = 1} = \expec{y_{it}(0) - y_{iT_0}(0)}{D_i = 0}
   $$
@@ -1022,15 +1044,15 @@ feols(y ~ x | school, data = df, vcov = "hc1")
 \begin{frame}{Estimating dynamic effects using OLS}
   Similarly, we can estimate these using OLS:
   $$
-    y_{it} = \mu_i + \lambda_t + \sum_{\ell = T_0 + 1}^T d_{it}^\ell \tau^\ell + v_{it},
+    y_{it} = \mu_i + \lambda_t + \sum_{\ell \neq -1} d_{it}^\ell \tau^\ell + v_{it},
   $$
   
-  where $d_{it}^\ell = \one{D_i = 1} * \one{t = \ell}$ are called the \alert{event-study indicators}
+  where the \alert{event-study indicators} are $d_{it}^\ell = \one{D_i = 1} * \one{t - (T_0 + 1) = \ell}$ and we omit the base period $\ell = -1$
 
   \bigskip
   Just like the $2 \times 2$, the OLS estimates are the sample analogue 
   $$
-    \hat{\tau}^{\ell} = \expechat{y_{it} - y_{iT_0}}{D_i = 1} - \expechat{y_{it} - y_{iT_0}}{D_i = 0}
+    \hat{\tau}^{\ell} = \expechat{y_{i,T_0 + 1 + \ell} - y_{iT_0}}{D_i = 1} - \expechat{y_{i,T_0 + 1 + \ell} - y_{iT_0}}{D_i = 0}
   $$ 
 \end{frame}
 
@@ -1084,7 +1106,7 @@ feols(y ~ x | school, data = df, vcov = "hc1")
 
 
 
-\section{Conditional Parallel Trends}
+\subsection{Conditional Parallel Trends}
 
 \begin{frame}{Conditional Parallel trends}
   Just like in the first two topics of the course, economists often times find the parallel trends assumption to be too strong and want to use covariates to relax this assumption
@@ -1245,14 +1267,16 @@ feols(y ~ x | school, data = df, vcov = "hc1")
 
 \section{Staggered Treatment Timing}
 
+\subsection{Staggered Treatment Timing}
+
 \begin{frame}{Staggered Treatment Timing}
-  Now we turn to settings where treatment begins at different time for different units
+  Now we turn to settings where treatment begins at different times for different units
   \begin{itemize}
     \item E.g. states roll out a policy over time
   \end{itemize}
 
   \bigskip
-  Let $G_i$ denote the time-period where a unit $i$ is first starts treatment. The literature refers to $G_i$ as `treatment-timing group', or `group' for short
+  Let $G_i$ denote the time period where unit $i$ starts treatment. The literature refers to $G_i$ as its `treatment-timing group', or `group' for short
   \begin{itemize}
     \item By convention, units that are never treated in the sample have $G_i = \infty$
     
@@ -1267,7 +1291,7 @@ feols(y ~ x | school, data = df, vcov = "hc1")
   \begin{enumerate}
     \item The `building blocks' approach where you estimate small parameters using $2 \times 2$ DID and aggregate them up
     \begin{itemize}
-      \item E.g. Callaway and Sant'Anna (2021); deChasiemartin and D'Haultfoeuille (many); Callaway Goodman-Bacon and Sant'Anna (2024)
+      \item E.g. Callaway and Sant'Anna (2021); de Chaisemartin and D'Haultfoeuille (many); Callaway, Goodman-Bacon, and Sant'Anna (2024)
     \end{itemize}
 
     \bigskip
@@ -1279,7 +1303,7 @@ feols(y ~ x | school, data = df, vcov = "hc1")
   \end{enumerate}
 \end{frame}
 
-\subsection{Estimating Group-Time ATTs (Callaway and Sant'Anna)}
+\subsubsection{Estimating Group-Time ATTs (Callaway and Sant'Anna)}
 
 \begin{frame}{Heterogeneity}
   There are going to be two sources of heterogeneity in this setting:
@@ -1382,9 +1406,11 @@ feols(y ~ x | school, data = df, vcov = "hc1")
 \end{frame}
 
 \begin{frame}{Overall ATT}
-  To get an overall treatment effect, you could do:
+  To get an overall treatment effect, take a weighted average of the $\text{ATT}(g, t)$:
   $$
-    \text{ATT}_{\text{overall}} = \sum_{g} \sum_{t} \one{t \geq g} \frac{1}{N_{g,t}} \text{ATT}(g, t),
+    \text{ATT}_{\text{overall}} =
+    \frac{\sum_{g} \sum_{t} \one{t \geq g} N_{g,t} \text{ATT}(g, t)}
+    {\sum_{g} \sum_{t} \one{t \geq g} N_{g,t}},
   $$
   where $N_{g,t}$ is the number of units in group $g$ in period $t$
 
@@ -1400,7 +1426,9 @@ feols(y ~ x | school, data = df, vcov = "hc1")
 \begin{frame}{Dynamic ATT / Event-Study}
   We can estimate `dynamic effects' / `event-study effects' by averaging over an \emph{event-time} $\ell$:
   $$
-    \text{ATT}^\ell = \sum_{g} \sum_{t} \one{t - g = \ell} \frac{1}{N_{g,t}} \text{ATT}(g,t)
+    \text{ATT}^\ell =
+    \frac{\sum_{g} \sum_{t} \one{t - g = \ell} N_{g,t} \text{ATT}(g,t)}
+    {\sum_{g} \sum_{t} \one{t - g = \ell} N_{g,t}}
   $$
 
   \bigskip

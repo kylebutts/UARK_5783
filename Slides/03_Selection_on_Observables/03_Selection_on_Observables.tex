@@ -33,132 +33,6 @@
   \end{itemize}
 \end{frame}
 
-\section{Selecting Controls}
-
-\begin{frame}{Confounders and Lurking Variables}
-  The biggest thing to consider when picking controls is identifying \alert{confounders}, or \alert{lurking variables}.
-
-  \bigskip
-  Omitted-variable bias requires the confounder to be related to treatment and to affect the outcome.
-
-  \bigskip
-  \begin{center}
-    \begin{tikzpicture}[>=stealth]
-      \node (D) at (0,0) {$D$};
-      \node (U) at (2,1) {$U$};
-      \node (Y) at (4,0) {$Y$};
-      \draw[->, thick] (U) -- (D);
-      \draw[->, thick] (U) -- (Y);
-      \draw[->, thick] (D) to (Y);
-      \draw[purple, ultra thick] (U) circle (0.35);
-    \end{tikzpicture}
-
-    \tcbhighmath[colback = bgPurple]{\text{Control for lurking variables to remove selection bias}}
-  \end{center}
-\end{frame}
-
-\begin{frame}{Controls to Improve Precision}
-  We might want to control for variables that affect $Y$ even if they are not related to treatment.
-  \begin{itemize}
-    \item These variables remove residual variation and can decrease our standard errors.
-    \item Unlike confounders, we do not have to control for them to identify the effect.
-  \end{itemize}
-
-  \bigskip
-  \begin{center}
-    \begin{tikzpicture}[>=stealth]
-      \node (D) at (0,0) {$D$};
-      \node (V) at (2,1) {$V$};
-      \node (Y) at (4,0) {$Y$};
-      \draw[->, thick] (V) -- (Y);
-      \draw[->, thick] (D) -- (Y);
-      \draw[purple, ultra thick] (V) circle (0.35);
-    \end{tikzpicture}
-
-    \tcbhighmath[colback = bgPurple]{\text{Extra controls can increase our estimate's precision}}
-  \end{center}
-\end{frame}
-
-\subsection{What Not to Control For}
-
-\begin{frame}{Mediators}{Job training and earnings}
-  Suppose $D$ is assignment to job training and $Y$ is later earnings.
-
-  \bigskip
-  \begin{center}
-    \begin{tikzpicture}[>=stealth]
-      \node (D) at (0,0) {Job training};
-      \node (M) at (3.6,0) {Employment};
-      \node (Y) at (7.2,0) {Earnings};
-      \draw[->, thick] (D) -- (M);
-      \draw[->, thick] (M) -- (Y);
-      \draw[->, thick, bend left=30] (D) to (Y);
-    \end{tikzpicture}
-  \end{center}
-
-  \pause
-  \bigskip
-  Employment measured after training is part of the mechanism.
-  \begin{itemize}
-    \item Controlling for employment removes any earnings gain that occurs because training helps people find work.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Collider Bias}{GPA, the SAT, and college admission}
-  Admission to a selective college depends on both high-school GPA and SAT score.
-  \begin{itemize}
-    \item Admission is a collider because both variables cause admission.
-  \end{itemize}
-
-  \pause
-  \bigskip
-  Among admitted students, GPA and SAT are \alert{negatively} correlated: a lower GPA must be offset by a higher SAT score, and vice versa.
-
-  \pause
-  \bigskip
-  In the full applicant population, the variables are likely positively correlated. The negative relationship is an artifact of conditioning on admission.
-\end{frame}
-
-\begin{frame}{Indicators Are Common Colliders}
-  In practice, a collider is often an indicator variable, such as being employed, admitted, surviving, or included in the sample.
-
-  \pause
-  \bigskip
-  When $U$ is an indicator, \alert{analyzing only units with $U = 1$} is a form of controlling for $U$.
-
-  \pause
-  \bigskip
-  \begin{center}
-    \emph{Restricting the sample is a way of controlling for a variable.}
-  \end{center}
-\end{frame}
-
-\begin{frame}{Subgroup Data Implicitly Conditions on Selection}
-  A dataset on a subgroup of the population is already conditioned on subgroup membership.
-  \begin{itemize}
-    \item Examples include analyses of employed workers, admitted students, surviving firms, or emergency-room patients.
-    \item Analyzing that dataset is an analysis among units with subgroup membership $U=1$.
-  \end{itemize}
-
-  \pause
-  \bigskip
-  If $D$ and $Y$ both determine who enters the subgroup, the subgroup estimate is \alert{not} the causal effect for that subgroup.
-\end{frame}
-
-\begin{frame}{Choosing Controls}
-  Before controlling for a variable, ask which type it is:
-  \begin{itemize}
-    \item \textbf{Confounder:} causes both $D$ and $Y$ $\implies$ \alert{control for it}
-    \item \textbf{Precision variable:} causes only $Y$ $\implies$ \alert{control to improve precision}
-    \item \textbf{Mediator:} is caused by $D$ and lies on the path to $Y$ $\implies$ \alert{do not control for it}
-    \item \textbf{Collider:} is caused by both $D$ and $Y$ $\implies$ \alert{do not control for it}
-  \end{itemize}
-
-  \bigskip
-  Subsetting on a variable also counts as conditioning on it.
-\end{frame}
-
-
 \section{Conditional Independence Assumption}
 
 \begin{frame}{Selection into Treatment}
@@ -366,32 +240,32 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Generalization}
-  In more general settings where $\bm{X}_i$ is (possibly) continuous and multi-dimensional, we can still do the same procedure:
+\begin{frame}{Generalization to the ATT}
+  In more general settings where $\bm{X}_i$ is (possibly) continuous and multi-dimensional, we can still do the same procedure for the treated group:
   \begin{itemize}
     \item For each value of $\bm{x}$, calculate difference in means of treated and control units with $\bm{X}_i = \bm{x}$
     
-    \item Integrate (average) the difference-in-means estiamtes using the distribution of $X$ 
+    \item Integrate (average) the difference-in-means estimates using the distribution of $X$ among treated units
   \end{itemize}
 
   \pause
   \vspace*{-\medskipamount}
   $$
-    \tau_{\texttt{ATE}} = 
-    \int_{\bm{x} \in \mathbb{X}} \tau(\bm{X}_i = \bm{x}) d\prob{\bm{X} = \bm{x}}
+    \tau_{\texttt{ATT}} =
+    \int_{\bm{x} \in \mathbb{X}} \tau(\bm{X}_i = \bm{x}) d\prob{\bm{X} = \bm{x}}{D_i = 1}
   $$
   
   % Estimation
   % &= \int_{\bm{x} \in \mathbb{X}} \expec{Y_i}{D_i = 1, \bm{X}_i = \bm{x}} - \expec{Y_i}{D_i = 0, \bm{X}_i = \bm{x}} d\prob{\bm{X} = \bm{x}}
 \end{frame}
 
-\begin{frame}{Generalization}
-  If we want the average treatment effect on the treated, we average over the distribution of $\bm{X}$ for the treated group
+\begin{frame}{Adapting to the ATE}
+  If we want the average treatment effect for the full population, we average over the population distribution of $\bm{X}$
   
   \vspace*{-\medskipamount}
   $$
-    \tau_{\text{ATT}} = 
-    \int_{\bm{x} \in \mathbb{X}} \tau(\bm{X}_i = \bm{x}) d\prob{\bm{X} = \bm{x}}{D_i = 1}
+    \tau_{\text{ATE}} =
+    \int_{\bm{x} \in \mathbb{X}} \tau(\bm{X}_i = \bm{x}) d\prob{\bm{X} = \bm{x}}
   $$
 \end{frame}
 
@@ -500,6 +374,131 @@
 %   Aizer and Doyle (2015, QJE)  find similar dynamics with teenages and crime courts
 % \end{frame}
 
+\section{Selecting Controls}
+
+\begin{frame}{Confounders and Lurking Variables}
+  The biggest thing to consider when picking controls is identifying \alert{confounders}, or \alert{lurking variables}.
+
+  \bigskip
+  Omitted-variable bias requires the confounder to be related to treatment and to affect the outcome.
+
+  \bigskip
+  \begin{center}
+    \begin{tikzpicture}[>=stealth]
+      \node (D) at (0,0) {$D$};
+      \node (U) at (2,1) {$U$};
+      \node (Y) at (4,0) {$Y$};
+      \draw[->, thick] (U) -- (D);
+      \draw[->, thick] (U) -- (Y);
+      \draw[->, thick] (D) to (Y);
+      \draw[purple, ultra thick] (U) circle (0.35);
+    \end{tikzpicture}
+
+    \tcbhighmath[colback = bgPurple]{\text{Control for lurking variables to remove selection bias}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Controls to Improve Precision}
+  We might want to control for variables that affect $Y$ even if they are not related to treatment.
+  \begin{itemize}
+    \item These variables remove residual variation and can decrease our standard errors.
+    \item Unlike confounders, we do not have to control for them to identify the effect.
+  \end{itemize}
+
+  \bigskip
+  \begin{center}
+    \begin{tikzpicture}[>=stealth]
+      \node (D) at (0,0) {$D$};
+      \node (V) at (2,1) {$V$};
+      \node (Y) at (4,0) {$Y$};
+      \draw[->, thick] (V) -- (Y);
+      \draw[->, thick] (D) -- (Y);
+      \draw[purple, ultra thick] (V) circle (0.35);
+    \end{tikzpicture}
+
+    \tcbhighmath[colback = bgPurple]{\text{Extra controls can increase our estimate's precision}}
+  \end{center}
+\end{frame}
+
+\subsection{What Not to Control For}
+
+\begin{frame}{Mediators}{Job training and earnings}
+  Suppose $D$ is assignment to job training and $Y$ is later earnings.
+
+  \bigskip
+  \begin{center}
+    \begin{tikzpicture}[>=stealth]
+      \node (D) at (0,0) {Job training};
+      \node (M) at (3.6,0) {Employment};
+      \node (Y) at (7.2,0) {Earnings};
+      \draw[->, thick] (D) -- (M);
+      \draw[->, thick] (M) -- (Y);
+      \draw[->, thick, bend left=30] (D) to (Y);
+    \end{tikzpicture}
+  \end{center}
+
+  \pause
+  \bigskip
+  Employment measured after training is part of the mechanism.
+  \begin{itemize}
+    \item Controlling for employment removes any earnings gain that occurs because training helps people find work.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Collider Bias}{GPA, the SAT, and college admission}
+  Admission to a selective college depends on both high-school GPA and SAT score.
+  \begin{itemize}
+    \item Admission is a collider because both variables cause admission.
+  \end{itemize}
+
+  \pause
+  \bigskip
+  Among admitted students, GPA and SAT are \alert{negatively} correlated: a lower GPA must be offset by a higher SAT score, and vice versa.
+
+  \pause
+  \bigskip
+  In the full applicant population, the variables are likely positively correlated. The negative relationship is an artifact of conditioning on admission.
+\end{frame}
+
+\begin{frame}{Indicators Are Common Colliders}
+  In practice, a collider is often an indicator variable, such as being employed, admitted, surviving, or included in the sample.
+
+  \pause
+  \bigskip
+  When $U$ is an indicator, \alert{analyzing only units with $U = 1$} is a form of controlling for $U$.
+
+  \pause
+  \bigskip
+  \begin{center}
+    \emph{Restricting the sample is a way of controlling for a variable.}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Subgroup Data Implicitly Conditions on Selection}
+  A dataset on a subgroup of the population is already conditioned on subgroup membership.
+  \begin{itemize}
+    \item Examples include analyses of employed workers, admitted students, surviving firms, or emergency-room patients.
+    \item Analyzing that dataset is an analysis among units with subgroup membership $U=1$.
+  \end{itemize}
+
+  \pause
+  \bigskip
+  If $D$ and $Y$ both determine who enters the subgroup, the subgroup estimate is \alert{not} the causal effect for that subgroup.
+\end{frame}
+
+\begin{frame}{Choosing Controls}
+  Before controlling for a variable, ask which type it is:
+  \begin{itemize}
+    \item \textbf{Confounder:} causes both $D$ and $Y$ $\implies$ \alert{control for it}
+    \item \textbf{Precision variable:} causes only $Y$ $\implies$ \alert{control to improve precision}
+    \item \textbf{Mediator:} is caused by $D$ and lies on the path to $Y$ $\implies$ \alert{do not control for it}
+    \item \textbf{Collider:} is caused by both $D$ and $Y$ $\implies$ \alert{do not control for it}
+  \end{itemize}
+
+  \bigskip
+  Subsetting on a variable also counts as conditioning on it.
+\end{frame}
+
 
 \section{Matching estimators}
 
@@ -545,24 +544,26 @@
 \end{frame}
 
 \begin{frame}{Matching estimator}
-  Let $j(i)$ be the unit that is matched to treated unit $i$. Let $N_1 = \sum_i D_i$ be the number of treated units. 
+  Let $\mathcal{J}_M(i)$ be the set of $M$ control units matched to treated unit $i$. Let $N_1 = \sum_i D_i$ be the number of treated units.
   
   \bigskip 
-  Our treatment effect estimator is given by:
+  For each treated unit, the average outcome among its matched controls estimates the missing untreated potential outcome:
   $$
-    \hat{\tau}_{\text{Matching}, ATT} =
-    \underbrace{\frac{1}{N_1} \sum_{i = 1}^N D_i Y_i}_{\text{Treated group average}} -
-    \underbrace{\frac{1}{N_1} \sum_{i = 1}^N D_i Y_{j(i)}}_{\text{Imputed untreated outcome for treated units}}
+    \widehat{Y}_i(0) = \frac{1}{M} \sum_{j \in \mathcal{J}_M(i)} Y_j.
   $$
 \end{frame}
 
 \begin{frame}{Matching estimator}
+  Using these estimates of the treated units' missing untreated potential outcomes, the ATT estimator is:
   $$
-    \expechat{Y_i(0)}{D_i = 1} = \frac{1}{N_1} \sum_{i = 1}^N D_i Y_{j(i)}
+    \hat{\tau}_{\text{Matching}, ATT} =
+    \frac{1}{N_1} \sum_{i = 1}^N D_i
+    \left( Y_i -
+    \underbrace{\widehat{Y}_i(0)}_{\text{estimated untreated potential outcome}} \right).
   $$
 
   \bigskip
-  Each control unit has (approximately) the same $\bm{X}$ as it's respective treated unit, so under conditional independence, their $Y(0)$ is a good estimate (on average) for the treated unit's $Y(0)$.
+  We average the estimated treatment effects over treated units.
 \end{frame}
     
 \begin{frame}{The `matched' control group}
@@ -575,6 +576,22 @@
     
     \item Supposes there is no \emph{remaining} selection after matching on $\bm{X}$
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Adapting matching to the ATE}
+  To estimate the ATE, we also need the missing $Y_i(1)$ for control units.
+  \begin{itemize}
+    \item Match each treated unit to comparable control units to predict $Y_i(0)$.
+    \item Match each control unit to comparable treated units to predict $Y_i(1)$.
+    \item Average the two imputed treatment effects over the full sample.
+  \end{itemize}
+
+  \bigskip
+  If $j(i)$ is a matched control for treated unit $i$ and $k(i)$ is a matched treated unit for control unit $i$:
+  $$
+    \hat{\tau}_{\text{Matching}, ATE} =
+    \frac{1}{N} \sum_{i=1}^N \left[D_i\{Y_i - Y_{j(i)}\} + (1-D_i)\{Y_{k(i)} - Y_i\}\right]
+  $$
 \end{frame}
 
 \begin{frame}{Defining ``close''}
@@ -764,39 +781,32 @@
 
   \pause
   \bigskip
-  Our average-treatment effect estimate can be written as the average of CATE (averaged over distribution of $X$)
+  We start with the average treatment effect on the treated, which is the average CATE over the treated group's distribution of $X$:
   $$
-    \tau_{\texttt{ATE}} = \expec{\ \expec{Y_i(1) - Y_i(0)}{\bm{X}_i}\ }
+    \tau_{\texttt{ATT}} = \expec{\expec{Y_i(1) - Y_i(0)}{\bm{X}_i}}{D_i = 1}
   $$
 \end{frame}
 
 \begin{frame}{Conditional Expectation Function}
   $$
-  \tau_{\texttt{ATE}} = \expec{\ \expec{Y_i(1)}{\bm{X}_i} - \expec{Y_i(0)}{\bm{X}_i} \ }
+  \tau_{\texttt{ATT}} = \expec{\expec{Y_i(1)}{\bm{X}_i} - \expec{Y_i(0)}{\bm{X}_i}}{D_i = 1}
   $$
 
   \bigskip
-  There are two conditional expectation functions in the above terms. Define
+  To estimate this, we first need the conditional expectation function for untreated outcomes:
   $$
     \mu_0(\bm{x}) = \expec{Y_i(0)}{\bm{X}_i = \bm{x}} 
-    \text{ and }
-    \mu_1(\bm{x}) = \expec{Y_i(1)}{\bm{X}_i = \bm{x}}
   $$
 
   \pause
   \bigskip
-  Then, the above becomes $\tau_{\texttt{ATE}} = \expec{ \mu_1(\bm{X}_i) - \mu_0(\bm{X}_i) }$
-  \begin{itemize}
-    \item If we knew the CEF, then we can estimate this with $\frac{1}{n} \sum_{i=1}^N \mu_1(\bm{X}_i) - \mu_0(\bm{X}_i)$
-  \end{itemize}
+  The observed outcome gives us $Y_i(1)$ for treated units. The missing piece is their $Y_i(0)$.
 \end{frame}
 
 \begin{frame}{Estimation of the conditional expectation functions}
   \vspace*{-\bigskipamount}
   $$
-    \mu_0(\bm{x}) = \expec{Y_i(0)}{\bm{X}_i = \bm{x}} 
-    \text{ and }
-    \mu_1(\bm{x}) = \expec{Y_i(1)}{\bm{X}_i = \bm{x}}
+    \mu_0(\bm{x}) = \expec{Y_i(0)}{\bm{X}_i = \bm{x}}
   $$
 
   \bigskip
@@ -804,60 +814,60 @@
   $$
     \expec{Y_i(0)}{\bm{X}_i = \bm{x}, D_i = 0} = \expec{Y_i(0)}{\bm{X}_i = \bm{x}} = \mu_0(\bm{x})
   $$ 
+  We can estimate $\mu_0(\cdot)$ using the untreated group and then predict $Y_i(0)$ for treated units.
   \begin{itemize}
-    \item We can estimate $\mu_0(\cdot)$ and $\mu_1(\cdot)$ using the untreated and treated group, respectively
-
-    \item We have talked about many different ways to estimate the CEF (e.g. linear regression)
+    \item We have talked about many different ways to estimate the CEF, such as linear regression.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Linear model for CEF}
-  Say we estimate $\mu_0(\bm{x})$ and $\mu_1(\bm{x})$ using linear regressions of $Y$ on $\bm{X}$ for the untreated and treated groups respectively:
+  Estimate $\mu_0(\bm{x})$ using a linear regression of $Y$ on $\bm{X}$ among untreated units:
   $$
-    Y_i = \alpha_{d} + \bm{X}_{i}' \beta_d + u_{id}
+    Y_i = \alpha_{0} + \bm{X}_{i}' \beta_0 + u_{i0}
   $$
   \begin{itemize}
-    \item The control-sample regression gives us $\hat{\alpha}_{0}$, $\hat{\beta}_{0}$ and the treated-sample regression gives us $\hat{\alpha}_{1}$, $\hat{\beta}_{1}$
+    \item The control-sample regression gives us $\hat{\alpha}_{0}$ and $\hat{\beta}_{0}$.
+    \item Use these estimates to predict the missing $Y_i(0)$ for each treated unit.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Regression Adjustment}{\texttt{ATE} Estimator}
-  The \alert{regression adjustment treatment effect estimators} are given by:
+\begin{frame}{Regression Adjustment}{\texttt{ATT} Estimator}
+  The regression-adjustment estimator compares observed outcomes for treated units with their predicted untreated outcomes:
   $$
-    \hat{\tau}_{\texttt{ATE}} = 
+    \hat{\tau}_{\texttt{ATT}} =
     \underbrace{
-      \frac{1}{n} \sum_{i=1}^N \left( \hat{\alpha}_1 + \bm{X}_i' \hat{\beta}_1 \right)
-    }_{\expechat{Y_i(1)}} -
+      \frac{1}{n_1} \sum_{i=1}^N D_i Y_i
+    }_{\expechat{Y_i(1)}{D_i = 1}} -
     \underbrace{
-      \frac{1}{n} \sum_{i=1}^N \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right)
-    }_{\expechat{Y_i(0)}} 
+      \frac{1}{n_1} \sum_{i=1}^N D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right)
+    }_{\expechat{Y_i(0)}{D_i = 1}}
   $$
   
   \bigskip
-  Predicting everyone's $Y_i(1)$ and $Y_i(0)$ given their $\bm{X}_i$ and taking the difference
-  \begin{itemize}
-    \item Quality of estimator therefore depends on quality of conditional expectation model
-  \end{itemize}
+  This requires only a model for $\mu_0(\bm{x})$.
+\end{frame}
+
+\begin{frame}{Adapting regression adjustment to the ATE}
+  To estimate the ATE, also model $\mu_1(\bm{x})$ using the treated group:
+  $$
+    \mu_1(\bm{x}) = \expec{Y_i(1)}{\bm{X}_i = \bm{x}}
+  $$
+
+  \bigskip
+  Predict both potential outcomes for every observation and average the difference over the full sample:
+  $$
+    \hat{\tau}_{\texttt{ATE}} =
+    \frac{1}{n} \sum_{i=1}^N \left( \hat{\alpha}_1 + \bm{X}_i' \hat{\beta}_1 \right) -
+    \frac{1}{n} \sum_{i=1}^N \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right)
+  $$
 \end{frame}
 
 \begin{frame}{Correctly specified CEF}
-  When the linear regression models we use are \emph{correctly specified}, then $\hat{\tau}_{\texttt{ATE}}$ is consistent for $\tau_{\texttt{ATE}}$
-
+  If the model for $\mu_0(\bm{x})$ is correctly specified, the regression-adjustment estimator is consistent for the ATT.
   \begin{itemize}
-    \item Might want to include polynomials of $X$ variables, interactions, etc.
+    \item For the ATE, the models for both $\mu_0(\bm{x})$ and $\mu_1(\bm{x})$ must be correctly specified.
+    \item We might want to include polynomials of $X$ variables, interactions, and other flexible terms.
   \end{itemize}
-\end{frame}
-
-\begin{frame}{Regression Adjustment}{\text{ATT} Estimator}
-  $$
-    \hat{\tau}_{\text{ATT}} = 
-    \underbrace{
-      \frac{1}{n_1} \sum_{i=1}^N Y_i
-    }_{\expechat{Y_i(1)}{D_i = 1}} - 
-    \underbrace{
-      \frac{1}{n_1} \sum_{i=1}^N D_i \left( \hat{\alpha}_0 + \bm{X}_i' \hat{\beta}_0 \right)
-    }_{\expechat{Y_i(0)}{D_i = 1}} 
-  $$
 \end{frame}
 
 % \begin{frame}{Regression Adjustment}
@@ -883,8 +893,8 @@
     Y_i = \alpha_0 + \alpha_1 D_i + \beta_0 \bm{X}_i + \beta_1 D_i \cdot (\bm{X}_i - \bar{\bm{X}}) + u_i
   $$
   \begin{itemize}
-    \item Then our $\hat{\tau}_{\texttt{ATE}}$ estimate is given by $\hat{\alpha}_1$
-    \item If you subtract of the average of $\bm{X}$ for the treated group, $\hat{\alpha}_1$ will be $\hat{\tau}_{\text{ATT}}$
+    \item Centering $\bm{X}$ at the treated-group mean makes $\hat{\alpha}_1$ estimate the $\texttt{ATT}$.
+    \item Centering $\bm{X}$ at the population mean makes $\hat{\alpha}_1$ estimate the $\texttt{ATE}$.
   \end{itemize}
 \end{frame}
 
@@ -1027,9 +1037,9 @@
     0 < \pi(\bm{x}) \equiv \prob{D_i = 1}{\bm{X}_i = \bm{x}} < 1
   $$
 
-  Our estimand of interest is the \texttt{ATE}/\text{ATT}
+  We start with the average treatment effect on the treated:
   $$
-    \tau_{\texttt{ATE}} = \expec{\ \expec{Y_i(1)}{\bm{X}_i = \bm{x}} - \expec{Y_i(0)}{\bm{X}_i = \bm{x}} \ }
+    \tau_{\texttt{ATT}} = \expec{\expec{Y_i(1)}{\bm{X}_i = \bm{x}} - \expec{Y_i(0)}{\bm{X}_i = \bm{x}}}{D_i = 1}
   $$
 \end{frame}
 
@@ -1060,7 +1070,27 @@
   $$
 \end{frame}
 
-\begin{frame}{Inverse Probability of Treatment}
+\begin{frame}{Inverse Probability of Treatment}{\texttt{ATT} Estimator}
+  For the ATT, we average $Y_i$ for the treated group and modify the control-group weights:
+  \begin{align*}
+    \hat{\tau}_{\texttt{IPTW},\text{ATT}}
+    &\equiv \expec{\frac{W_i}{n_1} Y_i} - \expec{\frac{\pi(\bm{X}_i)}{n_1} \frac{(1 - W_i)}{1 - \pi(\bm{X}_i)} Y_i} \\
+    &= \expec{Y_i(1)}{D_i = 1} - \expec{Y_i(0)}{D_i = 1}
+  \end{align*}
+\end{frame}
+
+\begin{frame}{\text{ATT} proof}
+  \begin{align*}
+    \expec{\frac{\pi(\bm{X}_i)}{n_1} \frac{(1 - W_i)}{1 - \pi(\bm{X}_i)} Y_i}
+    &= \expec{ \expec{ \frac{\pi(\bm{X}_i)}{n_1} \frac{(1 - W_i)}{1 - \pi(\bm{X}_i)} Y_i }{\bm{X}_i} } \\ \pause
+    &= \expec{ \expec{\frac{\pi(\bm{X}_i)}{n_1} Y_i(0)}{\bm{X}_i} } \\
+    &= \expec{ \expec{\frac{D_i}{n_1} Y_i(0)}{\bm{X}_i} } \\ \pause
+    &= \expec{ \expec{Y_i(0)}{\bm{X}_i, D_i = 1} } \\
+    &= \expec{Y_i(0)}{D_i = 1}
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Adapting inverse probability weighting to the ATE}
   Instead, consider weighing by the inverse probability of treatment:
   \begin{align*}
     \expec{\frac{(1 - W_i) Y_i}{1 - \pi(\bm{X}_i)}} \pause 
@@ -1089,26 +1119,6 @@
     \hat{\tau}_{\texttt{IPTW},\texttt{ATE}} 
     &\equiv \expec{\frac{W_i}{\pi(\bm{X}_i)} Y_i} - \expec{\frac{(1 - W_i)}{1 - \pi(\bm{X}_i)} Y_i} \\
     &= \expec{Y_i(1)} - \expec{Y_i(0)}
-  \end{align*}
-\end{frame}
-
-\begin{frame}{Inverse Probability of Treatment}{\text{ATT} Estimator}
-  For the ATT estimator, we can just average $Y_i$ for the treated group and modify our control group weights
-  \begin{align*}
-    \hat{\tau}_{\texttt{IPTW},\text{ATT}}
-    &\equiv \expec{\frac{W_i}{n_1} Y_i} - \expec{\frac{\pi(\bm{X}_i)}{n_1} \frac{(1 - W_i)}{1 - \pi(\bm{X}_i)} Y_i} \\
-    &= \expec{Y_i(1)}{D_i = 1} - \expec{Y_i(0)}{D_i = 1}
-  \end{align*}
-\end{frame}
-
-\begin{frame}{\text{ATT} proof}
-  \begin{align*}
-    \expec{\frac{\pi(\bm{X}_i)}{n_1} \frac{(1 - W_i)}{1 - \pi(\bm{X}_i)} Y_i} 
-    &= \expec{ \expec{ \frac{\pi(\bm{X}_i)}{n_1} \frac{(1 - W_i)}{1 - \pi(\bm{X}_i)} Y_i }{\bm{X}_i} } \\ \pause
-    &= \expec{ \expec{\frac{\pi(\bm{X}_i)}{n_1} Y_i(0)}{\bm{X}_i} } \\
-    &= \expec{ \expec{\frac{D_i}{n_1} Y_i(0)}{\bm{X}_i} } \\ \pause
-    &= \expec{ \expec{Y_i(0)}{\bm{X}_i, D_i = 1} } \\
-    &= \expec{Y_i(0)}{D_i = 1}
   \end{align*}
 \end{frame}
 
@@ -1365,6 +1375,29 @@
   \begin{center}
     All three approaches rely on conditional independence and adequate overlap.
   \end{center}
+\end{frame}
+
+\appendix
+
+\subsection{Proof of Unconfoundedness given propensity score}
+
+\begin{frame}{Proof}
+  This proof is from Imbens (2005, RESTAT) (may skip in class). 
+  
+  Show $\prob{D_i = 1}{Y_i(0), Y_i(1), \pi(\bm{X}_i)} = \prob{D_i = 1}{\pi(\bm{X}_i)} = \pi(\bm{X})_i$ which implies that $D_i$ and the potential outcomes are independent conditional on the propensity score
+\end{frame}
+
+\begin{frame}{Proof}
+  \vspace*{-2\bigskipamount}
+  \begin{align*}
+    \prob{D_i = 1}{Y_i(0), Y_i(1), \pi(\bm{X}_i)} 
+    &= \expec{D_i = 1}{Y_i(0), Y_i(1), \pi(\bm{X}_i)} \\ 
+    &= \expec{\expec{D_i = 1}{Y_i(0), Y_i(1), \pi(\bm{X}_i), \bm{X}_i}}{Y_i(0), Y_i(1), \pi(\bm{X}_i)} \\
+    &= \expec{\expec{D_i = 1}{Y_i(0), Y_i(1), \bm{X}_i}}{Y_i(0), Y_i(1), \pi(\bm{X}_i)} \\
+    &= \expec{\expec{D_i = 1}{\bm{X}_i}}{Y_i(0), Y_i(1), \pi(\bm{X}_i)} \\
+    &= \expec{\pi(\bm{X}_i)}{Y_i(0), Y_i(1), \pi(\bm{X}_i)} = \pi(\bm{X}_i),
+  \end{align*}
+  where 1st equality comes from $D_i$ being a 0/1 variable, 2nd from LIE, 4th from CIA (conditional on $\bm{X}$), and fifth from definition of the propensity score
 \end{frame}
 
 \end{document}
