@@ -123,13 +123,14 @@ For each possible value $\bm{x}$, we can estimate the conditional treatment effe
 This is just our difference-in-means estimator for a specific value of $\bm{x}$.
 Under our selection on observables assumption, this equals the true CATE: $\tau(\bm{x}) = \mathbb{E}[Y_i(1) - Y_i(0) \mid \bm{X}_i = \bm{x}]$.
 
-To recover population-level treatment effects, we integrate over the appropriate distribution:
+For the ATT, we first integrate over the distribution of covariates among treated units. To recover the ATE, we instead integrate over the population distribution:
 \begin{align*}
-\tau_{\text{ATE}} &= \int \tau(\bm{x}) \, d\mathbb{P}(\bm{X} = \bm{x}) \\
 \tau_{\text{ATT}} &= \int \tau(\bm{x}) \, d\mathbb{P}(\bm{X} = \bm{x} \mid D = 1)
+\\
+\tau_{\text{ATE}} &= \int \tau(\bm{x}) \, d\mathbb{P}(\bm{X} = \bm{x})
 \end{align*}
 
-The ATE uses the population distribution of $\bm{X}$, while the ATT uses the distribution among treated units.
+The ATT is the natural starting point because the treated units' outcomes are observed and we only need to predict their missing $Y(0)$.
 This framework shows that selection on observables methods are fundamentally about aggregating evidence from many conditional comparisons, each of which is internally valid under the CIA.
 
 \section*{Regression Adjustment}
@@ -144,14 +145,13 @@ Instead of stratifying the data into discrete cells, we assume the conditional e
 
 \subsection*{The Conditional Expectation Approach}
 
-Since we have two potential outcomes, there are two distinct conditional expectations: 
+We begin with the ATT. Since treated units' $Y_i(1)$ is observed, we only need to model the untreated potential outcome:
 \begin{align*}
-  \mu_1(\bm{x}) &= \mathbb{E}[Y_i(1) \mid \bm{X}_i = \bm{x}] \\[0.5em]
   \mu_0(\bm{x}) &= \mathbb{E}[Y_i(0) \mid \bm{X}_i = \bm{x}].
 \end{align*}
 
 The regression adjustment method rests on a simple insight: if we can model how outcomes depend on characteristics, we can predict the missing counterfactuals.
-For example, we could try using the control units to estimate $\mu_0(\bm{x})$, and then predict $Y_i(0)$ for everyone.
+For example, we can use the control units to estimate $\mu_0(\bm{x})$, and then predict $Y_i(0)$ for treated units.
 But, there's a problem. 
 If there is selection into treatment, then the relationship between $Y_i(0)$ and $\bm{X}_i$ might differ between the control and the treated groups.
 
@@ -161,15 +161,13 @@ This is written as:
   \expec{Y_i(1){\bm{X}_i = \bm{x}}, D_i = 1} &= \expec{Y_i(1){\bm{X}_i = \bm{x}}}  \\[0.5em]
   \expec{Y_i(0){\bm{X}_i = \bm{x}}, D_i = 0} &= \expec{Y_i(0){\bm{X}_i = \bm{x}}}  
 \end{align*}
-This means we can estimate each potential outcome function using only the corresponding observed data.
-To estimate $\mu_1(\bm{x})$, we use outcomes from treated units; to estimate $\mu_0(\bm{x})$, we use outcomes from control units.
+This means we can estimate $\mu_0(\bm{x})$ using outcomes from control units.
 
-Once we have estimates $\hat{\mu}_1(\bm{x})$ and $\hat{\mu}_0(\bm{x})$, we can predict both potential outcomes for every unit in our sample:
+Once we have an estimate $\hat{\mu}_0(\bm{x})$, we can estimate the ATT by comparing treated units' observed outcomes with their predicted untreated outcomes:
 \begin{itemize}
-  \item For any unit $i$, we predict $\hat{Y}_i(1) = \hat{\mu}_1(\bm{X}_i)$ and $\hat{Y}_i(0) = \hat{\mu}_0(\bm{X}_i)$
-  \item The predicted individual treatment effect is $\hat{\tau}_i = \hat{Y}_i(1) - \hat{Y}_i(0)$  
-  \item The ATE estimate is the average predicted effect: $\hat{\tau}_{\text{ATE}} = \frac{1}{n}\sum_{i=1}^N \hat{\tau}_i$
-  \item The ATT estimate uses only treated units: $\hat{\tau}_{\text{ATT}} = \frac{1}{N_1}\sum_{D_i=1} \hat{\tau}_i$
+  \item For treated unit $i$, predict $\hat{Y}_i(0) = \hat{\mu}_0(\bm{X}_i)$.
+  \item Average $Y_i - \hat{Y}_i(0)$ over treated units.
+  \item To adapt this strategy to the ATE, also estimate $\mu_1(\bm{x})$ using treated units, predict both potential outcomes for everyone, and average the predicted difference over the full sample.
 \end{itemize}
 
 This approach transforms the causal inference problem into a prediction problem.
@@ -187,17 +185,17 @@ We estimate separate regressions for treated and control groups:
 These regressions give us estimated conditional expectation functions:
 $\hat{\mu}_1(\bm{x}) = \hat{\alpha}_1 + \bm{w}'\hat{\beta}_1$ and $\hat{\mu}_0(\bm{w}) = \hat{\alpha}_0 + \bm{w}'\hat{\beta}_0$.
 
-Using these fitted functions, we can compute treatment effect estimates:
+Using these fitted functions, we can compute the ATT first:
+$$
+\hat{\tau}_{\text{ATT}} = \frac{1}{n_1} \sum_{D_i=1} [Y_i - (\hat{\alpha}_0 + \bm{W}_i'\hat{\beta}_0)]
+$$
+
+To adapt the estimator to the ATE, also estimate $\mu_1(\bm{x})$ using treated units and average the predicted difference over everyone:
 \begin{align*}
 \hat{\tau}_{\text{ATE}} 
 &= \frac{1}{n} \sum_{i=1}^n [(\hat{\alpha}_1 + \bm{W}_i'\hat{\beta}_1) - (\hat{\alpha}_0 + \bm{W}_i'\hat{\beta}_0)] \\
 &= (\hat{\alpha}_1 - \hat{\alpha}_0) + (\hat{\beta}_1 - \hat{\beta}_0)'\bar{\bm{W}}
 \end{align*}
-
-For the ATT, we focus only on treated units and rely primarily on the control group model:
-$$\hat{\tau}_{\text{ATT}} = \frac{1}{n_1} \sum_{D_i=1} [Y_i - (\hat{\alpha}_0 + \bm{W}_i'\hat{\beta}_0)]$$
-
-This takes the observed outcomes for treated units and subtracts their predicted counterfactual outcomes based on the control group regression.
 
 \subsection*{Single Regression Implementation}
 
@@ -207,8 +205,8 @@ $$Y_i = \alpha_0 + \alpha_1 D_i + \beta_0' \bm{W}_i + \beta_1' D_i \cdot (\bm{W}
 
 In this specification:
 \begin{itemize}
-  \item $\hat{\alpha}_1$ directly estimates $\hat{\tau}_{\text{ATE}}$ when $\bm{W}_i$ is centered around the population mean
-  \item To get $\hat{\tau}_{\text{ATT}}$, center $\bm{W}_i$ around the treated group mean instead
+  \item Centering $\bm{W}_i$ around the treated group mean makes $\hat{\alpha}_1$ estimate the $\hat{\tau}_{\text{ATT}}$
+  \item Centering $\bm{W}_i$ around the population mean makes $\hat{\alpha}_1$ estimate the $\hat{\tau}_{\text{ATE}}$
   \item Standard errors are automatically correct, avoiding complex calculations needed with two-step procedures
   \item The coefficients have the same interpretation as the separate regression approach
 \end{itemize}
@@ -292,6 +290,14 @@ We then average these individual estimates across all treated units.
 The key insight is that matching creates a control group with the same distribution of $\bm{X}$ as the treated group \emph{by construction}.
 Since we match each treated unit to controls with similar characteristics, the matched control group necessarily has characteristics similar to the treated group.
 This removes selection bias on observable characteristics.
+
+The ATT is the natural first matching estimand because we match each treated unit to a comparable control and predict only the treated unit's missing $Y_i(0)$.
+To adapt matching to the ATE, we also match each control unit to comparable treated units and predict its missing $Y_i(1)$.
+We then average the imputed treatment effects over the full sample:
+$$
+\hat{\tau}_{\text{ATE}} = \frac{1}{n} \sum_{i=1}^n \left[D_i\{Y_i - Y_{j(i)}\} + (1-D_i)\{Y_{k(i)} - Y_i\}\right],
+$$
+where $j(i)$ is a matched control for treated unit $i$ and $k(i)$ is a matched treated unit for control unit $i$.
 
 Several implementation choices affect the estimator:
 \begin{enumerate}
@@ -434,16 +440,16 @@ Consider a control unit with characteristics that make treatment very likely---s
 If this person doesn't attend college despite high probability, they provide especially valuable information about what would happen to treated units if they weren't treated.
 IPW gives such observations higher weight in our analysis.
 
-The IPW estimator for the ATE is:
+For the ATT, we average outcomes for treated units and modify the control-group weighting to match the treated group distribution:
+$$\hat{\tau}_{\text{ATT}} = \mathbb{E}_n\left[\frac{D_i Y_i}{n_1}\right] - \mathbb{E}_n\left[\frac{\pi(\bm{X}_i)(1-D_i)Y_i}{(1-\pi(\bm{X}_i))}\right]$$
+
+Here, we weight control units by $\pi(\bm{X}_i)/(1-\pi(\bm{X}_i))$, which upweights controls that look more like treated units.
+
+To adapt IPW to the ATE, reweight both groups to represent the full population:
 $$\hat{\tau}_{\text{IPTW}} = \mathbb{E}_n\left[\frac{D_i Y_i}{\pi(\bm{X}_i)}\right] - \mathbb{E}_n\left[\frac{(1-D_i)Y_i}{1-\pi(\bm{X}_i)}\right]$$
 
 The first term reweights treated units by $1/\pi(\bm{X}_i)$, giving more weight to treated units with low treatment probability.
 The second term reweights control units by $1/(1-\pi(\bm{X}_i))$, giving more weight to control units with high treatment probability.
-
-For the ATT, we modify the control group weighting to match the treated group distribution:
-$$\hat{\tau}_{\text{ATT}} = \mathbb{E}_n\left[\frac{D_i Y_i}{n_1}\right] - \mathbb{E}_n\left[\frac{\pi(\bm{X}_i)(1-D_i)Y_i}{(1-\pi(\bm{X}_i))}\right]$$
-
-Here, we weight control units by $\pi(\bm{X}_i)/(1-\pi(\bm{X}_i))$, which upweights controls that look more like treated units.
 
 \subsection*{Practical Concerns}
 
