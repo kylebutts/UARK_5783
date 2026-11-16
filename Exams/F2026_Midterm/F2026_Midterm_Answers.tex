@@ -27,21 +27,21 @@
   They have a sample of 1,000 workers.
   Gender is recorded male and female, state of residence (50 states), and college degree is a binary indicator.
   \begin{enumerate}[label=(\alph*)]
-    \item Describe how you would estimate this conditional expectation function ``fully flexibly''. 
+    \item \pts{10} Describe how you would estimate this conditional expectation function ``fully flexibly''. 
     Use college-educated women in Arkansas as an example.
 
     \answer{
-      We woudl estimate the conditional expectation function by taking sub-samples defined by $X_i = x$ and take sub-sample averages.
+      We would estimate the conditional expectation function by taking sub-samples defined by $X_i = x$ and take sub-sample averages.
     }
 
-    \item Why might this approach be impractical with this data?
+    \item \pts{10} Why might this approach be impractical with this data?
     
     \answer{
       This is a classic example of the curse of dimensionality. 
       There are likely very few, if any, college-educated women in Arkansas in our sample of 1000 workers.
     }
 
-    \item The researcher instead uses a linear model with an intercept, an indicator for being male, an indicator for having a college degree, and indicators for each of the 50 states (omitting a reference category for each variable).
+    \item \pts{5} The researcher instead uses a linear model with an intercept, an indicator for being male, an indicator for having a college degree, and indicators for each of the 50 states (omitting a reference category for each variable).
     What does this model leave out relative to the fully flexible CEF?
     Give an example of a pattern in average earnings that this model would not be able to capture.
 
@@ -79,12 +79,12 @@
 
   \bigskip
   \begin{enumerate}[label=(\alph*)]
-    \item What does this table tell you about the comparability of the two groups?
+    \item \pts{5} What does this table tell you about the comparability of the two groups?
     Discuss at least two differences and explain which direction they would likely bias  the difference-in-means estimate.
 
     \answer{These two groups look very different. I think these estimates bias our estimated returns to schooling in the positive direction. For example, take parental education. College students tend to have more educated parents which likely has a positive impact on earnings.}
 
-    \item The researcher decides to use nearest-neighbor matching on the four variables in the table.
+    \item \pts{10} The researcher decides to use nearest-neighbor matching on the four variables in the table.
     Describe in words the nearest-neighbor matching procedure. 
     You do not need to write a formula or code; just describe in words the steps that one would do.
 
@@ -95,7 +95,7 @@
       From here, form a difference-in-means estimator using the treated and matched control group.
     }
 
-    \item Instead of matching, the researcher might want to use a regression adjustment approach. 
+    \item \pts{10} Instead of matching, the researcher might want to use a regression adjustment approach. 
     Describe in words the steps to implement this estimator. 
     You do not need to write a formula or code; just describe in words the steps that one would do.
 
@@ -119,7 +119,7 @@ By the 2000 presidential election, some towns had access to Fox News while other
 \medskip
 \begin{enumerate}
   \setcounter{enumi}{2}
-  \item Say a researcher compares the average Republican vote share in 2000 between towns with and without Fox News.
+  \item \pts{10} Say a researcher compares the average Republican vote share in 2000 between towns with and without Fox News.
   Do you think this difference-in-means estimate identifies the causal effect of Fox News availability?
   Give a reason why the estimate might be biased, predict the sign of the bias, and explain your thinking.
 
@@ -130,7 +130,7 @@ By the 2000 presidential election, some towns had access to Fox News while other
   }
 
   \medskip
-  \item The authors present evidence that, conditional on geographic and cable-market controls, Republican vote share in 1996 did not predict whether a town had Fox News by 2000.
+  \item \pts{10} The authors present evidence that, conditional on geographic and cable-market controls, Republican vote share in 1996 did not predict whether a town had Fox News by 2000.
   Why might this be useful information for assessing the plausibility of the seleciton on observables assumption?
   Explain your thinking.
 
@@ -151,7 +151,7 @@ A researcher wants to estimate the effect of guaranteed admission on students' f
 \medskip
 \begin{enumerate}
   \setcounter{enumi}{4}
-  \item Figure \ref{fig:sat_rdd}(a) presents the researcher's main result.
+  \item \pts{10} Figure \ref{fig:sat_rdd}(a) presents the researcher's main result.
   What do we need to assume for the jump in future earnings at 1350 to identify the causal effect of guaranteed admission?
   % I am not looking for the `generic' assumption here; I want you to describe the assumption in the context of the research question.
 
@@ -161,7 +161,7 @@ A researcher wants to estimate the effect of guaranteed admission on students' f
   }
 
   \medskip
-  \item Figure \ref{fig:sat_rdd}(b) shows average family income, measured before students take the SAT.
+  \item \pts{10} Figure \ref{fig:sat_rdd}(b) shows average family income, measured before students take the SAT.
   Do you think this figure strengthens or weakens the researcher's causal claim?
   Explain how it relates to the assumption you discussed in the previous question.
 
@@ -172,7 +172,7 @@ A researcher wants to estimate the effect of guaranteed admission on students' f
   }
 
   \medskip
-  \item The researcher responds by using only students with SAT scores very close to 1350.
+  \item \pts{10} The researcher responds by using only students with SAT scores very close to 1350.
   Do you think using a smaller bandwidth fixes the concern you described above?
   Why or why not?
 
